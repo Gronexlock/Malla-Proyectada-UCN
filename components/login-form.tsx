@@ -24,6 +24,8 @@ export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,7 +42,8 @@ export function LoginForm() {
       console.log("Respuesta API:", data)
 
       if (data.error) {
-        alert(data.error)
+        setErrorMessage(data.error || "Credenciales Inválidas.")
+        setShowError(true)
       } else {
         setShowSuccess(true) 
       }
@@ -149,6 +152,28 @@ export function LoginForm() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open = {showError} onOpenChange={setShowError}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
+                <AlertDialogDescription>
+                    Credenciales Incorrectas.
+                </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction 
+                onClick={() => {
+                  setShowError(false)
+                  router.push("/login")
+                }}
+              >
+                Continuar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </>
   )
 }
