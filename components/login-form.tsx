@@ -144,7 +144,7 @@ export function LoginForm() {
             <AlertDialogAction
               onClick={() => {
                 setShowSuccess(false)
-                router.push("/login")
+                router.push("/")
               }}
             >
               Continuar
