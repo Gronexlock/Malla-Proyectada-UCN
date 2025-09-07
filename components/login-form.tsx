@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useUserStore } from "@/src/store/useUserStore";
 
 export function LoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +25,7 @@ export function LoginForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { setRut, setCarreras } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +46,9 @@ export function LoginForm() {
         setShowError(true);
         return;
       }
+
+      setRut(data.user.rut);
+      setCarreras(data.user.carreras);
 
       setShowSuccess(true);
     } catch (err) {
@@ -157,9 +160,7 @@ export function LoginForm() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
-            <AlertDialogDescription>
-              Credenciales Incorrectas.
-            </AlertDialogDescription>
+            <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
