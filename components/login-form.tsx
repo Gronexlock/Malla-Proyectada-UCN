@@ -32,22 +32,25 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(
-        `https://puclaro.ucn.cl/eross/avance/login.php?email=${encodeURIComponent(
-          email
-        )}&password=${encodeURIComponent(password)}`
-      );
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+        redirect: "follow",
+      });
 
       const data = await res.json();
 
-      if (data.error) {
-        setErrorMessage(data.error || "Credenciales Inválidas.");
+      if (!res.ok) {
+        setErrorMessage(data.error || "Error desconocido");
         setShowError(true);
-      } else {
-        setShowSuccess(true);
+        return;
       }
+
+      setShowSuccess(true);
     } catch (err) {
-      alert("Error de conexión con el servidor");
+      setErrorMessage("Error de red. Inténtalo de nuevo.");
+      setShowError(true);
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +144,7 @@ export function LoginForm() {
             <AlertDialogAction
               onClick={() => {
                 setShowSuccess(false);
-                router.push("/");
+                window.location.href = "/";
               }}
             >
               Continuar
@@ -162,7 +165,6 @@ export function LoginForm() {
             <AlertDialogAction
               onClick={() => {
                 setShowError(false);
-                router.push("/login");
               }}
             >
               Continuar
