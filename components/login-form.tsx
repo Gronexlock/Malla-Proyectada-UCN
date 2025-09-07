@@ -50,12 +50,11 @@ export function LoginForm() {
       setRut(data.user.rut);
       setCarreras(data.user.carreras);
 
-      setShowSuccess(true);
+      //setShowSuccess(true);
+      window.location.href = "/";
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");
       setShowError(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -112,7 +111,7 @@ export function LoginForm() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <input
                   id="remember"
@@ -126,7 +125,7 @@ export function LoginForm() {
                   Recordarme
                 </Label>
               </div>
-            </div>
+            </div> */}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
@@ -135,10 +134,10 @@ export function LoginForm() {
         </CardContent>
       </Card>
 
-      <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
+      {/* <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Inicio de sesión exitoso </AlertDialogTitle>
+            <AlertDialogTitle>Inicio de sesión exitoso</AlertDialogTitle>
             <AlertDialogDescription>
               Bienvenido al sistema. Haz clic en continuar.
             </AlertDialogDescription>
@@ -154,18 +153,19 @@ export function LoginForm() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
 
       <AlertDialog open={showError} onOpenChange={setShowError}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
+            <AlertDialogTitle>Error al iniciar sesión</AlertDialogTitle>
             <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
               onClick={() => {
                 setShowError(false);
+                setIsLoading(false);
               }}
             >
               Continuar
