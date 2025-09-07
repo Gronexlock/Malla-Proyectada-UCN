@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,45 +15,43 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 export function LoginForm() {
-  const router = useRouter()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [showError, setShowError] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
       const res = await fetch(
         `https://puclaro.ucn.cl/eross/avance/login.php?email=${encodeURIComponent(
           email
         )}&password=${encodeURIComponent(password)}`
-      )
+      );
 
-      const data = await res.json()
-      console.log("Respuesta API:", data)
+      const data = await res.json();
 
       if (data.error) {
-        setErrorMessage(data.error || "Credenciales Inválidas.")
-        setShowError(true)
+        setErrorMessage(data.error || "Credenciales Inválidas.");
+        setShowError(true);
       } else {
-        setShowSuccess(true) 
+        setShowSuccess(true);
       }
     } catch (err) {
-      console.error("Error en login:", err)
-      alert("Error de conexión con el servidor")
+      alert("Error de conexión con el servidor");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -131,7 +129,6 @@ export function LoginForm() {
         </CardContent>
       </Card>
 
-      {/* AlertDialog de éxito */}
       <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -143,8 +140,8 @@ export function LoginForm() {
           <AlertDialogFooter>
             <AlertDialogAction
               onClick={() => {
-                setShowSuccess(false)
-                router.push("/")
+                setShowSuccess(false);
+                router.push("/");
               }}
             >
               Continuar
@@ -153,27 +150,26 @@ export function LoginForm() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open = {showError} onOpenChange={setShowError}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
-                <AlertDialogDescription>
-                    Credenciales Incorrectas.
-                </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogAction 
-                onClick={() => {
-                  setShowError(false)
-                  router.push("/login")
-                }}
-              >
-                Continuar
-              </AlertDialogAction>
-            </AlertDialogFooter>
+      <AlertDialog open={showError} onOpenChange={setShowError}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
+            <AlertDialogDescription>
+              Credenciales Incorrectas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => {
+                setShowError(false);
+                router.push("/login");
+              }}
+            >
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
     </>
-  )
+  );
 }
