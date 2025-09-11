@@ -18,12 +18,12 @@ export async function POST(req: Request) {
     );
   }
 
-  const token = await new jose.SignJWT({ email, data })
+  const token = await new jose.SignJWT({ email })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("1h")
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
 
-  const response = NextResponse.json(new URL("/", req.url));
+  const response = NextResponse.json({ success: true, user: data });
   response.cookies.set("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

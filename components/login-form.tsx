@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +15,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useUserStore } from "@/src/store/useUserStore";
 
 export function LoginForm() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +25,7 @@ export function LoginForm() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { setRut, setCarreras } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,12 +47,14 @@ export function LoginForm() {
         return;
       }
 
-      setShowSuccess(true);
+      setRut(data.user.rut);
+      setCarreras(data.user.carreras);
+
+      //setShowSuccess(true);
+      window.location.href = "/";
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");
       setShowError(true);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -109,7 +111,7 @@ export function LoginForm() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <input
                   id="remember"
@@ -123,19 +125,19 @@ export function LoginForm() {
                   Recordarme
                 </Label>
               </div>
-            </div>
+            </div> */}
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
+              {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
+      {/* <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Inicio de sesión exitoso </AlertDialogTitle>
+            <AlertDialogTitle>Inicio de sesión exitoso</AlertDialogTitle>
             <AlertDialogDescription>
               Bienvenido al sistema. Haz clic en continuar.
             </AlertDialogDescription>
@@ -151,20 +153,19 @@ export function LoginForm() {
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
 
       <AlertDialog open={showError} onOpenChange={setShowError}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Error al iniciar sesión.</AlertDialogTitle>
-            <AlertDialogDescription>
-              Credenciales Incorrectas.
-            </AlertDialogDescription>
+            <AlertDialogTitle>Error al iniciar sesión</AlertDialogTitle>
+            <AlertDialogDescription>{errorMessage}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogAction
               onClick={() => {
                 setShowError(false);
+                setIsLoading(false);
               }}
             >
               Continuar

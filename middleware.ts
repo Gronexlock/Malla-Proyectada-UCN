@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    const { payload } = await jose.jwtVerify(
+    await jose.jwtVerify(
       token,
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
