@@ -1,60 +1,75 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, NotebookPen, User } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
 } from "@/components/ui/sidebar";
 
 const items = [
   {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
+    title: "Mallas",
     icon: Calendar,
+    subitems: ["ICI", "ICCI", "ITI"],
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
+    title: "Proyecciones",
+    icon: NotebookPen,
+    subitems: ["Crear proyección", "Mis proyecciones"],
   },
   {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
+    title: "Estudiante",
+    icon: User,
+    subitems: ["Mi avance curricular"],
   },
 ];
 
 export function AppSidebar() {
   return (
     <Sidebar>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <a href="#">
+                <span className="text-base font-semibold">
+                  Proyección de Avance
+                </span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <span>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </span>
                   </SidebarMenuButton>
+                  <SidebarMenuSub>
+                    {item.subitems.map((subitem) => (
+                      <SidebarMenuItem key={subitem}>
+                        <SidebarMenuButton asChild>
+                          <a href="#">{subitem}</a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenuSub>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
