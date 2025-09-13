@@ -19,17 +19,27 @@ const items = [
   {
     title: "Mallas",
     icon: Calendar,
-    subitems: ["ICI", "ICCI", "ITI"],
+    subitems: [
+      { title: "ICI", url: "/mallas/iti" },
+      { title: "ICCI", url: "/mallas/icci" },
+      { title: "ITI", url: "/mallas/iti" },
+    ],
   },
   {
     title: "Proyecciones",
     icon: NotebookPen,
-    subitems: ["Crear proyección", "Mis proyecciones"],
+    subitems: [
+      {
+        title: "Crear proyección",
+        url: "/proyecciones/nueva",
+      },
+      { title: "Mis proyecciones", url: "/proyecciones" },
+    ],
   },
   {
     title: "Estudiante",
     icon: User,
-    subitems: ["Mi avance curricular"],
+    subitems: [{ title: "Mi avance curricular", url: "/estudiante/avance" }],
   },
 ];
 
@@ -66,9 +76,9 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                   <SidebarMenuSub>
                     {item.subitems.map((subitem) => (
-                      <SidebarMenuItem key={subitem}>
+                      <SidebarMenuItem key={subitem.title}>
                         <SidebarMenuButton asChild>
-                          <a href="#">{subitem}</a>
+                          <Link href={subitem.url}>{subitem.title}</Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
