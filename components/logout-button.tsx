@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "./ui/button";
+import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
   const handleLogout = async () => {
@@ -16,5 +17,10 @@ export default function LogoutButton() {
     }
   };
 
-  return <Button onClick={handleLogout}>Cerrar sesión</Button>;
+  return (
+    <Button onClick={handleLogout}>
+      <LogOut />
+      Cerrar sesión
+    </Button>
+  );
 }
