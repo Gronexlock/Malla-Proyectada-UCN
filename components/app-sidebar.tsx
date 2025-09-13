@@ -13,6 +13,7 @@ import {
   SidebarMenuSub,
 } from "@/components/ui/sidebar";
 import LogoutButton from "./logout-button";
+import Link from "next/link";
 
 const items = [
   {
@@ -42,11 +43,11 @@ export function AppSidebar() {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link href="/">
                 <span className="text-base font-semibold">
                   Proyección de Avance
                 </span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
