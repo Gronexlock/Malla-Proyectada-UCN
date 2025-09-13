@@ -1,6 +1,7 @@
 import LogoutButton from "@/components/logout-button";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { CourseCard } from "@/components/course-card";
 
 export default function HomePage() {
   return (
@@ -11,6 +12,14 @@ export default function HomePage() {
           <Button>Ver información del usuario</Button>
         </Link>
         <LogoutButton />
+        <CourseCard
+          name="Introducción a la Programación"
+          code="CS101"
+          nf={85}
+          sct={4}
+          status="aprobado"
+          prereqsCount={0}
+        />
       </div>
     </div>
   );
