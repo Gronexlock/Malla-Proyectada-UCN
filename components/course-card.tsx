@@ -6,7 +6,6 @@ import { Lock, Info } from "lucide-react";
 type CourseCardProps = {
   name: string;
   code: string;
-  nf?: number;
   sct: number;
   status?: "aprobado" | "pendiente" | "cursando" | "bloqueado";
   prereqsCount?: number;
@@ -15,12 +14,10 @@ type CourseCardProps = {
 export function CourseCard({
   name,
   code,
-  nf,
   sct,
   status = "pendiente",
   prereqsCount = 0,
 }: CourseCardProps) {
-  // Color lateral según estado
   const statusColor = {
     aprobado: "bg-green-500",
     cursando: "bg-yellow-500",
@@ -41,12 +38,6 @@ export function CourseCard({
         </div>
 
         <h3 className="font-semibold text-sm leading-tight">{name}</h3>
-
-        {nf !== undefined && (
-          <Badge variant="outline" className="mt-1 w-fit">
-            NF: {nf}
-          </Badge>
-        )}
 
         <div className="absolute top-2 right-2 flex gap-1">
           {status === "bloqueado" && (
