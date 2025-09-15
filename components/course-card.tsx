@@ -26,7 +26,7 @@ export function CourseCard({
   }[status];
 
   return (
-    <Card className="relative w-60 mb-4 shadow-sm overflow-hidden">
+    <Card className="relative w-36 mb-4 shadow-sm overflow-hidden">
       <div
         className={cn("absolute left-0 top-0 h-full", statusColor, "w-2")}
         aria-hidden="true"
@@ -37,7 +37,9 @@ export function CourseCard({
           <span>{sct} SCT</span>
         </div>
 
-        <h3 className="font-semibold text-sm leading-tight">{name}</h3>
+        <h3 className="font-semibold text-sm text-center leading-tight">
+          {name}
+        </h3>
 
         <div className="absolute top-2 right-2 flex gap-1">
           {status === "bloqueado" && (

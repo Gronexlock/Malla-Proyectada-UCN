@@ -18,6 +18,8 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
         );
         const data = await response.json();
 
+        data.sort((a: CursoMalla, b: CursoMalla) => a.nivel - b.nivel);
+
         if (!response.ok) {
           throw new Error(data.error);
         }
@@ -36,13 +38,31 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
   if (isLoading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
 
+  const cursosPorNivel: Record<number, CursoMalla[]> = {};
+  cursos.forEach((curso) => {
+    if (!cursosPorNivel[curso.nivel]) {
+      cursosPorNivel[curso.nivel] = [];
+    }
+    cursosPorNivel[curso.nivel].push(curso);
+  });
+
   return (
-    <ul>
-      {cursos.map((course) => (
-        <li key={course.codigo}>
-          {course.asignatura} ({course.codigo}) - {course.creditos} credits
-        </li>
-      ))}
-    </ul>
+    <div>
+      {Object.keys(cursosPorNivel)
+        .sort((a, b) => Number(a) - Number(b))
+        .map((level) => (
+          <div key={level} style={{ marginBottom: "1rem" }}>
+            <h2>Nivel {level}</h2>
+            <ul>
+              {cursosPorNivel[Number(level)].map((course) => (
+                <li key={course.codigo}>
+                  {course.asignatura} ({course.codigo}) - {course.creditos}{" "}
+                  credits
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+    </div>
   );
 }
