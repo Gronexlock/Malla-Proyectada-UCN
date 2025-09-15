@@ -71,16 +71,19 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
           .map((level) => (
             <div key={level} className="flex flex-col gap-4 min-w-[170px]">
               <h2 className="text-center font-semibold mb-2">Nivel {level}</h2>
-              <ul>
-                {cursosPorNivel[Number(level)].map((course) => (
-                  <li key={course.codigo}>
-                    {course.asignatura} ({course.codigo}) - {course.creditos}{" "}
-                    credits
-                  </li>
-                ))}
-              </ul>
+
+               {cursosPorNivel[Number(level)].map((course) => (
+                <CourseCard
+                  key={course.codigo}
+                  name={course.asignatura}
+                  code={course.codigo}
+                  sct={course.creditos}
+                  status={mapStatus(course.status)}
+                  prereqsCount={0} // 🔹 La API no trae prerequisitos
+                />
+              ))}
             </div>
-        ))}
+          ))}
       </div>
     </ScrollArea>
   );
