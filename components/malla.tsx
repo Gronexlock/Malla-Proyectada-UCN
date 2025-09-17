@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { CursoMalla, Malla } from "@/src/types/curso";
+import { ScrollArea } from "./ui/scroll-area";
+import { CourseCard } from "./course-card";
 
 interface MallaProps extends Malla {}
 
@@ -45,6 +47,21 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
     }
     cursosPorNivel[curso.nivel].push(curso);
   });
+
+  const mapStatus = (
+    estadoApi?: string
+  ): "aprobado" | "pendiente" | "cursando" | "bloqueado" => {
+    switch (estadoApi?.toLowerCase()) {
+      case "aprobado":
+        return "aprobado";
+      case "cursando":
+        return "cursando";
+      case "bloqueado":
+        return "bloqueado";
+      default:
+        return "pendiente";
+    }
+  };
 
   return (
     <ScrollArea className="w-full whitespace-nowrap">

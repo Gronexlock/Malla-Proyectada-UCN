@@ -20,7 +20,7 @@ const items = [
     title: "Mallas",
     icon: Calendar,
     subitems: [
-      { title: "ICI", url: "/mallas/iti" },
+      { title: "ICI", url: "/mallas/ici" },
       { title: "ICCI", url: "/mallas/icci" },
       { title: "ITI", url: "/mallas/iti" },
     ],
