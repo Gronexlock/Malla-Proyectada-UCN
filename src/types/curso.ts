@@ -4,7 +4,6 @@ export interface CursoMalla {
   creditos: number;
   nivel: number;
   prereq: string;
-  status: string;
 }
 
 export interface Malla {

@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CursoMalla, Malla } from "@/src/types/curso";
+import type { CursoMalla, Malla } from "@/src/types/curso";
 import { ScrollArea } from "./ui/scroll-area";
-import { CourseCard } from "./course-card";
+import { CursoMalla as CursoMallaComponent } from "./curso-malla";
 
-interface MallaProps extends Malla {}
-
-export function MallaComponent({ codigo, catalogo }: MallaProps) {
+export function Malla({ codigo, catalogo }: Malla) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,21 +46,6 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
     cursosPorNivel[curso.nivel].push(curso);
   });
 
-  const mapStatus = (
-    estadoApi?: string
-  ): "aprobado" | "pendiente" | "cursando" | "bloqueado" => {
-    switch (estadoApi?.toLowerCase()) {
-      case "aprobado":
-        return "aprobado";
-      case "cursando":
-        return "cursando";
-      case "bloqueado":
-        return "bloqueado";
-      default:
-        return "pendiente";
-    }
-  };
-
   return (
     <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-6 min-w-max p-4">
@@ -73,13 +56,13 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
               <h2 className="text-center font-semibold mb-2">Nivel {level}</h2>
 
               {cursosPorNivel[Number(level)].map((course) => (
-                <CourseCard
+                <CursoMallaComponent
                   key={course.codigo}
-                  name={course.asignatura}
-                  code={course.codigo}
-                  sct={course.creditos}
-                  status={mapStatus(course.status)}
-                  prereqsCount={0} // 🔹 La API no trae prerequisitos
+                  asignatura={course.asignatura}
+                  codigo={course.codigo}
+                  creditos={course.creditos}
+                  nivel={course.nivel}
+                  prereq={course.prereq}
                 />
               ))}
             </div>

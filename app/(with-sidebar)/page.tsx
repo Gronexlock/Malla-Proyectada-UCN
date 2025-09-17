@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CourseCard } from "@/components/course-card";
 
 export default function HomePage() {
   return (
@@ -12,13 +11,6 @@ export default function HomePage() {
         <Link href="/usuario">
           <Button>Ver información del usuario</Button>
         </Link>
-        <CourseCard
-          name="Introducción a la Programación"
-          code="CS101"
-          sct={4}
-          status="aprobado"
-          prereqsCount={0}
-        />
       </div>
     </div>
   );
