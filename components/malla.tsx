@@ -47,22 +47,27 @@ export function MallaComponent({ codigo, catalogo }: MallaProps) {
   });
 
   return (
-    <div>
-      {Object.keys(cursosPorNivel)
-        .sort((a, b) => Number(a) - Number(b))
-        .map((level) => (
-          <div key={level} style={{ marginBottom: "1rem" }}>
-            <h2>Nivel {level}</h2>
-            <ul>
+    <ScrollArea className="w-full whitespace-nowrap">
+      <div className="flex gap-6 min-w-max p-4">
+        {Object.keys(cursosPorNivel)
+          .sort((a, b) => Number(a) - Number(b))
+          .map((level) => (
+            <div key={level} className="flex flex-col gap-4 min-w-[170px]">
+              <h2 className="text-center font-semibold mb-2">Nivel {level}</h2>
+
               {cursosPorNivel[Number(level)].map((course) => (
-                <li key={course.codigo}>
-                  {course.asignatura} ({course.codigo}) - {course.creditos}{" "}
-                  credits
-                </li>
+                <CourseCard
+                  key={course.codigo}
+                  name={course.asignatura}
+                  code={course.codigo}
+                  sct={course.creditos}
+                  status={mapStatus(course.status)}
+                  prereqsCount={0} // 🔹 La API no trae prerequisitos
+                />
               ))}
-            </ul>
-          </div>
-        ))}
-    </div>
+            </div>
+          ))}
+      </div>
+    </ScrollArea>
   );
 }
