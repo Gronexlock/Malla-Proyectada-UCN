@@ -1,5 +1,5 @@
-import { Malla } from "@/components/malla";
+import { MallaView } from "@/components/malla-view";
 
 export default function Page() {
-  return <Malla codigo="8266" catalogo="202410" />;
+  return <MallaView codigo="8266" catalogo="202410" />;
 }

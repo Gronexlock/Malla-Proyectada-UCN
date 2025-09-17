@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { CursoMalla, Malla } from "@/src/types/curso";
+import { CursoMalla, Malla } from "@/src/types/curso";
 import { ScrollArea } from "./ui/scroll-area";
-import { CursoMalla as CursoMallaComponent } from "./curso-malla";
+import { CursoMallaCard } from "./curso-malla-card";
 
-export function Malla({ codigo, catalogo }: Malla) {
+export function MallaView({ codigo, catalogo }: Malla) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,17 +46,32 @@ export function Malla({ codigo, catalogo }: Malla) {
     cursosPorNivel[curso.nivel].push(curso);
   });
 
+  const romanNumerals = [
+    "I",
+    "II",
+    "III",
+    "IV",
+    "V",
+    "VI",
+    "VII",
+    "VIII",
+    "IX",
+    "X",
+  ];
+
   return (
     <ScrollArea className="w-full whitespace-nowrap">
-      <div className="flex gap-6 min-w-max p-4">
+      <div className="flex min-w-max p-4 gap-4">
         {Object.keys(cursosPorNivel)
           .sort((a, b) => Number(a) - Number(b))
           .map((level) => (
-            <div key={level} className="flex flex-col gap-4 min-w-[170px]">
-              <h2 className="text-center font-semibold mb-2">Nivel {level}</h2>
+            <div key={level} className="flex flex-col gap-4">
+              <h2 className="text-center font-semibold mb-2">
+                {romanNumerals[Number(level) - 1]}
+              </h2>
 
               {cursosPorNivel[Number(level)].map((course) => (
-                <CursoMallaComponent
+                <CursoMallaCard
                   key={course.codigo}
                   asignatura={course.asignatura}
                   codigo={course.codigo}
