@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { CursoMalla, Malla } from "@/src/types/curso";
-import { ScrollArea } from "./ui/scroll-area";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { CursoMallaCard } from "./curso-malla-card";
-import { parse } from "path";
+import { romanNumerals } from "@/src/constants/numerosRomanos";
 
 export function MallaView({ codigo, catalogo }: Malla) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
@@ -54,35 +54,22 @@ export function MallaView({ codigo, catalogo }: Malla) {
     cursosPorAnio[anio].push(Number(level));
   });
 
-  const romanNumerals = [
-    "I",
-    "II",
-    "III",
-    "IV",
-    "V",
-    "VI",
-    "VII",
-    "VIII",
-    "IX",
-    "X",
-  ];
-
   return (
-    <ScrollArea className="w-full whitespace-nowrap">
-      <div className="flex min-w-max p-4 gap-4">
+    <ScrollArea className="w-full whitespace-nowrap pb-5">
+      <div className="flex justify-center min-w-max p-4 gap-4">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))
           .map((anio) => (
             <div key={anio} className="flex flex-col gap-2">
-              <div className="rounded-sm text-center text-white font-bold mb-2 bg-gray-600">
+              <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
                 Año {anio}
               </div>
               <div className="flex gap-4">
                 {cursosPorAnio[Number(anio)].map((level) => (
                   <div key={level} className="flex flex-col gap-2">
-                    <div className="bg-gray-400 rounded-sm flex justify-center items-center">
+                    <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
                       <h2 className="text-center font-semibold">
-                        {romanNumerals[level - 1]}
+                        {romanNumerals[level]}
                       </h2>
                     </div>
 
@@ -102,6 +89,7 @@ export function MallaView({ codigo, catalogo }: Malla) {
             </div>
           ))}
       </div>
+      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
 }
