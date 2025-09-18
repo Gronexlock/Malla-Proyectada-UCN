@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CursoMalla, Malla } from "@/src/types/curso";
 import { ScrollArea } from "./ui/scroll-area";
 import { CursoMallaCard } from "./curso-malla-card";
+import { parse } from "path";
 
 export function MallaView({ codigo, catalogo }: Malla) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
@@ -46,6 +47,13 @@ export function MallaView({ codigo, catalogo }: Malla) {
     cursosPorNivel[curso.nivel].push(curso);
   });
 
+  const cursosPorAnio: Record<number, number[]> = {};
+  Object.keys(cursosPorNivel).forEach((level) => {
+    const anio = Math.ceil(Number(level) / 2);
+    if (!cursosPorAnio[anio]) cursosPorAnio[anio] = [];
+    cursosPorAnio[anio].push(Number(level));
+  });
+
   const romanNumerals = [
     "I",
     "II",
@@ -62,24 +70,35 @@ export function MallaView({ codigo, catalogo }: Malla) {
   return (
     <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex min-w-max p-4 gap-4">
-        {Object.keys(cursosPorNivel)
+        {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))
-          .map((level) => (
-            <div key={level} className="flex flex-col gap-4">
-              <h2 className="text-center font-semibold mb-2">
-                {romanNumerals[Number(level) - 1]}
-              </h2>
+          .map((anio) => (
+            <div key={anio} className="flex flex-col gap-2">
+              <div className="rounded-sm text-center text-white font-bold mb-2 bg-gray-600">
+                Año {anio}
+              </div>
+              <div className="flex gap-4">
+                {cursosPorAnio[Number(anio)].map((level) => (
+                  <div key={level} className="flex flex-col gap-2">
+                    <div className="bg-gray-400 rounded-sm flex justify-center items-center">
+                      <h2 className="text-center font-semibold">
+                        {romanNumerals[level - 1]}
+                      </h2>
+                    </div>
 
-              {cursosPorNivel[Number(level)].map((course) => (
-                <CursoMallaCard
-                  key={course.codigo}
-                  asignatura={course.asignatura}
-                  codigo={course.codigo}
-                  creditos={course.creditos}
-                  nivel={course.nivel}
-                  prereq={course.prereq}
-                />
-              ))}
+                    {cursosPorNivel[level].map((course) => (
+                      <CursoMallaCard
+                        key={course.codigo}
+                        asignatura={course.asignatura}
+                        codigo={course.codigo}
+                        creditos={course.creditos}
+                        nivel={course.nivel}
+                        prereq={course.prereq}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
       </div>
