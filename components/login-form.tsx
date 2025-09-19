@@ -22,10 +22,9 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { setRut, setCarreras } = useUserStore();
+  const { setRut, setCarreras, setSelectedCarrera } = useUserStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +48,8 @@ export function LoginForm() {
 
       setRut(data.user.rut);
       setCarreras(data.user.carreras);
+      setSelectedCarrera(data.user.carreras[0]);
 
-      //setShowSuccess(true);
       window.location.href = "/";
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");

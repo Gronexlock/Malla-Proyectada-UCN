@@ -5,7 +5,7 @@ import { formatRut } from "@/src/utils/formatRut";
 import { nombresCompletos } from "@/src/constants/carreras";
 
 export default function UsuarioPage() {
-  const { rut, carreras } = useUserStore();
+  const { rut, carreras, selectedCarrera } = useUserStore();
 
   return (
     <div className="p-6">
@@ -16,6 +16,10 @@ export default function UsuarioPage() {
       <p>
         <strong>Carreras:</strong>{" "}
         {carreras.map((c) => nombresCompletos[c.codigo] || c.nombre).join(", ")}
+      </p>
+      <p>
+        <strong>Carrera seleccionada:</strong>{" "}
+        {nombresCompletos[selectedCarrera.codigo] || selectedCarrera.nombre}
       </p>
     </div>
   );

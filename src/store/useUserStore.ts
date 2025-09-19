@@ -5,10 +5,10 @@ import { Carrera } from "../types/carrera";
 interface UserState {
   rut: string;
   carreras: Carrera[];
-  selectedCarrera: string;
+  selectedCarrera: Carrera;
   setRut: (rut: string) => void;
   setCarreras: (carreras: Carrera[]) => void;
-  setSelectedCarrera: (codigo: string) => void;
+  setSelectedCarrera: (selectedCarrera: Carrera) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -16,10 +16,10 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       rut: "",
       carreras: [],
-      selectedCarrera: "",
+      selectedCarrera: {} as Carrera,
       setRut: (rut) => set({ rut }),
       setCarreras: (carreras) => set({ carreras }),
-      setSelectedCarrera: (codigo) => set({ selectedCarrera: codigo }),
+      setSelectedCarrera: (selectedCarrera) => set({ selectedCarrera }),
     }),
     { name: "user-storage" }
   )
