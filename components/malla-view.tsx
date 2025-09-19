@@ -55,7 +55,7 @@ export function MallaView({ codigo, catalogo }: Malla) {
   });
 
   return (
-    <ScrollArea className="w-full whitespace-nowrap pb-5">
+    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max p-4 gap-4">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))
