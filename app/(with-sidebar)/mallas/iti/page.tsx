@@ -6,7 +6,7 @@ export default async function Page() {
   const malla: CursoMalla[] = await fetchMalla("8266", "202410");
 
   return (
-    <div>
+    <div className="p-4">
       <MallaView cursos={malla} />
     </div>
   );

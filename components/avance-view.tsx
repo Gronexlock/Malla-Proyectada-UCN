@@ -1,13 +1,48 @@
-import { CursoMalla } from "@/src/types/curso";
+import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { CursoMallaCard } from "./curso-malla-card";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
+import { useState, useEffect } from "react";
+import { CursoAvanceCard } from "./curso-avance-card";
 
-type MallaViewProps = {
-  cursos: CursoMalla[];
+type AvanceViewProps = {
+  codigo: string;
+  catalogo: string;
+  rut: string;
 };
 
-export function MallaView({ cursos }: MallaViewProps) {
+export function AvanceView({ codigo, catalogo, rut }: AvanceViewProps) {
+  const [cursos, setCursos] = useState<CursoMalla[]>([]);
+  const [avance, setAvance] = useState<CursoAvance[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [cursosResponse, avanceResponse] = await Promise.all([
+        fetch(`/api/mallas/?codigo=${codigo}-${catalogo}`),
+        fetch(`/api/avance/?rut=${rut}&codCarrera=${codigo}`),
+      ]);
+      const [cursosData, avanceData] = await Promise.all([
+        cursosResponse.json(),
+        avanceResponse.json(),
+      ]);
+      setCursos(cursosData);
+      setAvance(avanceData);
+    };
+
+    fetchData();
+  }, [codigo, catalogo]);
+
+  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
+    const cursoAvance = avance.filter((curso) => curso.course === codigo);
+    if (cursoAvance.length === 0) return "PENDIENTE";
+    if (cursoAvance.length === 1) return cursoAvance[0].status;
+    else {
+      const statuses = cursoAvance.map((curso) => curso.status);
+      if (statuses.includes("APROBADO")) return "APROBADO";
+      if (statuses.includes("INSCRITO")) return "INSCRITO";
+      return "REPROBADO";
+    }
+  }
+
   const cursosPorNivel: Record<number, CursoMalla[]> = {};
   cursos.forEach((curso) => {
     if (!cursosPorNivel[curso.nivel]) {
@@ -43,13 +78,12 @@ export function MallaView({ cursos }: MallaViewProps) {
                     </div>
 
                     {cursosPorNivel[level].map((course) => (
-                      <CursoMallaCard
+                      <CursoAvanceCard
                         key={course.codigo}
                         asignatura={course.asignatura}
                         codigo={course.codigo}
                         creditos={course.creditos}
-                        nivel={course.nivel}
-                        prereq={course.prereq}
+                        status={getCursoStatus(course.codigo)}
                       />
                     ))}
                   </div>

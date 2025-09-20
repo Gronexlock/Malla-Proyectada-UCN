@@ -6,7 +6,12 @@ export interface CursoMalla {
   prereq: string;
 }
 
-export interface Malla {
-  codigo: string;
-  catalogo: string;
+export interface CursoAvance {
+  nrc: string;
+  period: string;
+  student: string;
+  course: string;
+  excluded: boolean;
+  inscriptionType: string;
+  status: "APROBADO" | "REPROBADO" | "INSCRITO";
 }

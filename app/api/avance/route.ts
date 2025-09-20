@@ -14,7 +14,7 @@ export async function GET(req: Request) {
 
   const url = `https://puclaro.ucn.cl/eross/avance/avance.php?rut=${encodeURIComponent(
     rut
-  )}&codCarrera=${encodeURIComponent(codCarrera)}`;
+  )}&codcarrera=${encodeURIComponent(codCarrera)}`;
 
   try {
     const response = await fetch(url);
