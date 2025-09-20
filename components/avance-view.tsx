@@ -3,33 +3,49 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { useState, useEffect } from "react";
 import { CursoAvanceCard } from "./curso-avance-card";
+import { MallaSkeleton } from "./skeletons/malla-skeleton";
+import { Carrera } from "@/src/types/carrera";
 
 type AvanceViewProps = {
-  codigo: string;
-  catalogo: string;
+  carrera: Carrera;
   rut: string;
 };
 
-export function AvanceView({ codigo, catalogo, rut }: AvanceViewProps) {
+export function AvanceView({ carrera, rut }: AvanceViewProps) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      const [cursosResponse, avanceResponse] = await Promise.all([
-        fetch(`/api/mallas/?codigo=${codigo}-${catalogo}`),
-        fetch(`/api/avance/?rut=${rut}&codCarrera=${codigo}`),
-      ]);
-      const [cursosData, avanceData] = await Promise.all([
-        cursosResponse.json(),
-        avanceResponse.json(),
-      ]);
-      setCursos(cursosData);
-      setAvance(avanceData);
-    };
+      if (!carrera || !rut) return;
+      setLoading(true);
 
+      try {
+        const [cursosResponse, avanceResponse] = await Promise.all([
+          fetch(`/api/mallas/?codigo=${carrera.codigo}-${carrera.catalogo}`),
+          fetch(`/api/avance/?rut=${rut}&codCarrera=${carrera.codigo}`),
+        ]);
+        const [cursosData, avanceData] = await Promise.all([
+          cursosResponse.json(),
+          avanceResponse.json(),
+        ]);
+        setCursos(cursosData);
+        setAvance(avanceData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setCursos([]);
+        setAvance([]);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchData();
-  }, [codigo, catalogo]);
+  }, [carrera, rut]);
+
+  if (loading) {
+    return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
+  }
 
   function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
     const cursoAvance = avance.filter((curso) => curso.course === codigo);
@@ -59,7 +75,7 @@ export function AvanceView({ codigo, catalogo, rut }: AvanceViewProps) {
   });
 
   return (
-    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
+    <ScrollArea className="w-full p-4 whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))

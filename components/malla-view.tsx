@@ -24,7 +24,7 @@ export function MallaView({ cursos }: MallaViewProps) {
   });
 
   return (
-    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
+    <ScrollArea className="w-full whitespace-nowrap p-4 h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))
