@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { CursoAvanceCard } from "./curso-avance-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
-import CarreraSelect from "./carrera-select";
 
 type AvanceViewProps = {
   carrera: Carrera;

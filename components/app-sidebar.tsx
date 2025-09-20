@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import LogoutButton from "./logout-button";
 import Link from "next/link";
+import CarreraSelect from "./carrera-select";
 
 const items = [
   {
@@ -39,7 +40,10 @@ const items = [
   {
     title: "Estudiante",
     icon: User,
-    subitems: [{ title: "Mi avance curricular", url: "/estudiante/avance" }],
+    subitems: [
+      { title: "Mi avance curricular", url: "/estudiante/avance" },
+      { title: "Mi avance cronológico", url: "/estudiante/avance-cronologico" },
+    ],
   },
 ];
 
@@ -66,6 +70,9 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem className="pb-4">
+                <CarreraSelect />
+              </SidebarMenuItem>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>

@@ -21,7 +21,7 @@ export default function CarreraSelect() {
         if (carrera) setSelectedCarrera(carrera);
       }}
     >
-      <SelectTrigger>
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecciona una carrera" />
       </SelectTrigger>
       <SelectContent>
