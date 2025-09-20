@@ -48,7 +48,28 @@ export function LoginForm() {
 
       setRut(data.user.rut);
       setCarreras(data.user.carreras);
-      setSelectedCarrera(data.user.carreras[0]);
+
+      const storedCarrera = localStorage.getItem("user-storage");
+      let ultimaSeleccion: string | null = null;
+
+      if (storedCarrera) {
+        try {
+          const parsed = JSON.parse(storedCarrera);
+          ultimaSeleccion = parsed.state?.selectedCarrera?.codigo ?? null;
+        } catch {
+          ultimaSeleccion = null;
+        }
+      }
+
+      const carreraValida = data.user.carreras.find(
+        (c: any) => c.codigo === ultimaSeleccion
+      );
+
+      if (carreraValida) {
+        setSelectedCarrera(carreraValida);
+      } else {
+        setSelectedCarrera(data.user.carreras[0]);
+      }
 
       window.location.href = "/";
     } catch (err) {
@@ -110,49 +131,12 @@ export function LoginForm() {
               </div>
             </div>
 
-            {/* <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <input
-                  id="remember"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-border"
-                />
-                <Label
-                  htmlFor="remember"
-                  className="text-sm text-muted-foreground"
-                >
-                  Recordarme
-                </Label>
-              </div>
-            </div> */}
-
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
             </Button>
           </form>
         </CardContent>
       </Card>
-
-      {/* <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Inicio de sesión exitoso</AlertDialogTitle>
-            <AlertDialogDescription>
-              Bienvenido al sistema. Haz clic en continuar.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => {
-                setShowSuccess(false);
-                window.location.href = "/";
-              }}
-            >
-              Continuar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog> */}
 
       <AlertDialog open={showError} onOpenChange={setShowError}>
         <AlertDialogContent>
