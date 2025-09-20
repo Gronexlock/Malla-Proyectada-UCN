@@ -3,7 +3,7 @@ import { CursoMalla } from "@/src/types/curso";
 import { fetchMalla } from "@/src/lib/fetchMalla";
 
 export default async function Page() {
-  const malla: CursoMalla[] = await fetchMalla("8606", "201610");
+  const malla: CursoMalla[] = await fetchMalla("8606", "202320");
 
   return (
     <div className="">
