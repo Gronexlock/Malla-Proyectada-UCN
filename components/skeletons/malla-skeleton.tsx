@@ -12,7 +12,7 @@ export function MallaSkeleton({ nombreCarrera }: MallaSkeletonProps) {
   const años = nombreCarrera === "iti" ? 4 : 5;
 
   return (
-    <div className="flex justify-center min-w-max p-4 gap-4">
+    <div className="flex justify-center min-w-max gap-4">
       {Array.from({ length: años }).map((_, añoIndex) => (
         <div key={añoIndex} className="flex flex-col gap-2">
           <Skeleton className="rounded-sm h-6 w-full bg-zinc-800 mb-2" />

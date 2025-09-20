@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { CursoAvanceCard } from "./curso-avance-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
+import CarreraSelect from "./carrera-select";
 
 type AvanceViewProps = {
   carrera: Carrera;
@@ -75,7 +76,7 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
   });
 
   return (
-    <ScrollArea className="w-full p-4 whitespace-nowrap h-[calc(100vh-64px)]">
+    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))

@@ -1,5 +1,9 @@
 import { MallaSkeleton } from "@/components/skeletons/malla-skeleton";
 
 export default function Loading() {
-  return <MallaSkeleton nombreCarrera="iti" />;
+  return (
+    <div className="p-4">
+      <MallaSkeleton nombreCarrera="iti" />
+    </div>
+  );
 }

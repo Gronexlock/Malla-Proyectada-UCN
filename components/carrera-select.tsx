@@ -11,10 +11,11 @@ import { useUserStore } from "@/src/store/useUserStore";
 import { nombresCompletos } from "@/src/constants/carreras";
 
 export default function CarreraSelect() {
-  const { carreras, setSelectedCarrera } = useUserStore();
+  const { carreras, setSelectedCarrera, selectedCarrera } = useUserStore();
 
   return (
     <Select
+      value={selectedCarrera?.codigo || ""}
       onValueChange={(codigo) => {
         const carrera = carreras.find((c) => c.codigo === codigo);
         if (carrera) setSelectedCarrera(carrera);
