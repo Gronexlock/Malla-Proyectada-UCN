@@ -1,16 +1,15 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { cursosPorSemestre } from "@/src/constants/cursosPorSemestre";
 
 interface MallaSkeletonProps {
   nombreCarrera: string;
 }
 
 export function MallaSkeleton({ nombreCarrera }: MallaSkeletonProps) {
-  const cursos = cursosPorSemestre[nombreCarrera] ?? [];
   const semestresPorAño = 2;
-  const años = Math.ceil(cursos.length / semestresPorAño);
+  const cursosPorSemestre = 6;
+  const años = nombreCarrera === "iti" ? 4 : 5;
 
   return (
     <div className="flex justify-center min-w-max p-4 gap-4">
@@ -19,8 +18,11 @@ export function MallaSkeleton({ nombreCarrera }: MallaSkeletonProps) {
           <Skeleton className="rounded-sm h-6 w-full bg-zinc-800 mb-2" />
           <div className="flex gap-4">
             {Array.from({ length: semestresPorAño }).map((_, semIndex) => {
-              const semestreIndex = añoIndex * semestresPorAño + semIndex;
-              const cursosEnEsteSemestre = cursos[semestreIndex] ?? 0;
+              const isLastSemester =
+                añoIndex === años - 1 && semIndex === semestresPorAño - 1;
+              const cursosEnEsteSemestre = isLastSemester
+                ? 1
+                : cursosPorSemestre;
               return (
                 <div key={semIndex} className="flex flex-col gap-2">
                   <Skeleton className="rounded-sm w-full h-6 bg-zinc-400 mb-2" />
