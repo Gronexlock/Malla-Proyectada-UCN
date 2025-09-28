@@ -1,6 +1,6 @@
 "use client";
 
-import { AvanceView } from "@/components/avance-view";
+import { CrearProyeccionView } from "@/components/crear-proyeccion-view";
 import { useUserStore } from "@/src/store/useUserStore";
 
 export default function Page() {
@@ -8,7 +8,7 @@ export default function Page() {
 
   return (
     <div className="p-4">
-      <AvanceView carrera={selectedCarrera} rut={rut} />
+      <CrearProyeccionView carrera={selectedCarrera} rut={rut} />
     </div>
   );
 }
