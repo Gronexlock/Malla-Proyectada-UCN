@@ -8,7 +8,11 @@ type ProyeccionContainerProps = {
   proyeccion: CursoMalla[];
   semestre: string;
   onGuardar: (semestre: string) => void;
-  getCursoStatus: (codigo: string) => CursoAvance["status"] | "PENDIENTE";
+  avance: CursoAvance[];
+  getCursoStatus: (
+    codigo: string,
+    avance: CursoAvance[]
+  ) => CursoAvance["status"] | "PENDIENTE";
 };
 
 export function ProyeccionContainer({
@@ -16,6 +20,7 @@ export function ProyeccionContainer({
   proyeccion,
   semestre,
   onGuardar,
+  avance,
   getCursoStatus,
 }: ProyeccionContainerProps) {
   return (
@@ -39,7 +44,7 @@ export function ProyeccionContainer({
                   asignatura={curso.asignatura}
                   codigo={curso.codigo}
                   creditos={curso.creditos}
-                  status={getCursoStatus(curso.codigo)}
+                  status={getCursoStatus(curso.codigo, avance)}
                 />
               </li>
             ))}

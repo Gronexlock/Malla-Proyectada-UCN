@@ -9,6 +9,8 @@ import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
 import { CursoProyeccion } from "@/src/types/curso";
 import { useUserStore } from "@/src/store/useUserStore";
+import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
+import { getCursoStatus } from "@/src/utils/proyeccion";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -25,6 +27,8 @@ export function CrearProyeccionView({
   const [proyeccion, setProyeccion] = useState<CursoMalla[]>([]);
   const { setCursosProyeccion } = useUserStore();
   const [altura, setAltura] = useState(0);
+  const cursosPorNivel = getCursosPorNivel(cursos);
+  const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
 
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
@@ -60,35 +64,6 @@ export function CrearProyeccionView({
   if (loading) {
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
-
-  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
-    const cursoAvance = avance.filter((curso) => curso.course === codigo);
-    if (cursoAvance.length === 0) return "PENDIENTE";
-    if (cursoAvance.length === 1) {
-      if (cursoAvance[0].status !== "REPROBADO") return "APROBADO";
-      return "REPROBADO";
-    } else {
-      const statuses = cursoAvance.map((curso) => curso.status);
-      if (statuses.includes("APROBADO") || statuses.includes("INSCRITO"))
-        return "APROBADO";
-      return "REPROBADO";
-    }
-  }
-
-  const cursosPorNivel: Record<number, CursoMalla[]> = {};
-  cursos.forEach((curso) => {
-    if (!cursosPorNivel[curso.nivel]) {
-      cursosPorNivel[curso.nivel] = [];
-    }
-    cursosPorNivel[curso.nivel].push(curso);
-  });
-
-  const cursosPorAnio: Record<number, number[]> = {};
-  Object.keys(cursosPorNivel).forEach((level) => {
-    const anio = Math.ceil(Number(level) / 2);
-    if (!cursosPorAnio[anio]) cursosPorAnio[anio] = [];
-    cursosPorAnio[anio].push(Number(level));
-  });
 
   function isSelected(codigo: string) {
     return proyeccion.some((c) => c.codigo === codigo);
@@ -130,7 +105,7 @@ export function CrearProyeccionView({
                       </h2>
                     </div>
                     {cursosPorNivel[level].map((course) => {
-                      const status = getCursoStatus(course.codigo);
+                      const status = getCursoStatus(course.codigo, avance);
                       return (
                         <div
                           key={course.codigo}
@@ -168,6 +143,7 @@ export function CrearProyeccionView({
           proyeccion={proyeccion}
           semestre="2025-1"
           onGuardar={guardarProyeccion}
+          avance={avance}
           getCursoStatus={getCursoStatus}
         />
       </div>
