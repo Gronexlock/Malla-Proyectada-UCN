@@ -25,7 +25,7 @@ export function CrearProyeccionView({
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
   const [proyeccion, setProyeccion] = useState<CursoMalla[]>([]);
-  const { setCursosProyeccion } = useUserStore();
+  const { setProyecciones } = useUserStore();
   const [altura, setAltura] = useState(0);
   const cursosPorNivel = getCursosPorNivel(cursos);
   const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
@@ -77,14 +77,7 @@ export function CrearProyeccionView({
     }
   }
 
-  function guardarProyeccion(semestre: string) {
-    const proyeccionData: CursoProyeccion[] = proyeccion.map((curso) => ({
-      asignatura: curso.asignatura,
-      codigo: curso.codigo,
-      semestre,
-    }));
-    setCursosProyeccion(proyeccionData);
-  }
+  function guardarProyeccion(semestre: string) {}
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
@@ -141,7 +134,7 @@ export function CrearProyeccionView({
         <ProyeccionContainer
           altura={altura}
           proyeccion={proyeccion}
-          semestre="2025-1"
+          semestre="2026-1"
           onGuardar={guardarProyeccion}
           avance={avance}
           getCursoStatus={getCursoStatus}

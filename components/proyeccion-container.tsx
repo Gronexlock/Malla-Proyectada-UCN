@@ -27,7 +27,7 @@ export function ProyeccionContainer({
     <div
       className={`sticky right-0 w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
     >
-      <h2 className="font-bold text-lg mb-4">Proyección</h2>
+      <h2 className="font-bold text-lg mb-4">Proyección {semestre}</h2>
       {proyeccion.length === 0 ? (
         <div className="text-gray-400 text-sm">
           Selecciona cursos pendientes o reprobados para agregarlos aquí.
@@ -50,7 +50,7 @@ export function ProyeccionContainer({
             ))}
           </ul>
           <Button
-            className="cursor-pointer"
+            className="cursor-pointer mt-4"
             onClick={() => onGuardar(semestre)}
           >
             Guardar Proyección
