@@ -15,7 +15,7 @@ export default function Page() {
       </p>
       <p>
         Cursos Proyección:{" "}
-        {cursosProyeccion.map((c) => `${c.codigo}`).join(", ")}
+        {cursosProyeccion.map((c) => `${c.asignatura}`).join(", ")}
       </p>
     </div>
   );

@@ -24,6 +24,11 @@ export function CrearProyeccionView({
   const [loading, setLoading] = useState(true);
   const [proyeccion, setProyeccion] = useState<CursoMalla[]>([]);
   const { setCursosProyeccion } = useUserStore();
+  const [altura, setAltura] = useState(0);
+
+  const callbackRef = (node: HTMLDivElement | null) => {
+    if (node) setAltura(node.offsetHeight);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,6 +104,7 @@ export function CrearProyeccionView({
 
   function guardarProyeccion(semestre: string) {
     const proyeccionData: CursoProyeccion[] = proyeccion.map((curso) => ({
+      asignatura: curso.asignatura,
       codigo: curso.codigo,
       semestre,
     }));
@@ -106,68 +112,66 @@ export function CrearProyeccionView({
   }
 
   return (
-    <div className="flex justify-center w-full h-[calc(100vh-64px)] gap-6">
-      <ScrollArea className="w-full max-w-5xl whitespace-nowrap h-full">
-        <div className="flex justify-center min-w-max gap-4">
-          {Object.keys(cursosPorAnio)
-            .sort((a, b) => Number(a) - Number(b))
-            .map((anio) => (
-              <div key={anio} className="flex flex-col gap-2">
-                <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
-                  Año {anio}
-                </div>
-                <div className="flex gap-4">
-                  {cursosPorAnio[Number(anio)].map((level) => (
-                    <div key={level} className="flex flex-col gap-2">
-                      <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
-                        <h2 className="text-center font-semibold">
-                          {romanNumerals[level]}
-                        </h2>
-                      </div>
-                      {cursosPorNivel[level].map((course) => {
-                        const status = getCursoStatus(course.codigo);
-                        return (
-                          <div
-                            key={course.codigo}
-                            className={cn(
-                              "rounded-md border border-transparent",
-                              status !== "APROBADO" &&
-                                `cursor-pointer transition ${
-                                  isSelected(course.codigo)
-                                    ? "border-blue-500"
-                                    : "hover:border-blue-300 transition"
-                                }`
-                            )}
-                            onClick={
-                              status === "APROBADO"
-                                ? undefined
-                                : () => toggleCursoProyeccion(course)
-                            }
-                          >
-                            <CursoAvanceCard
-                              asignatura={course.asignatura}
-                              codigo={course.codigo}
-                              creditos={course.creditos}
-                              status={status}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
+    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
+      <div className="flex justify-center min-w-max gap-4">
+        {Object.keys(cursosPorAnio)
+          .sort((a, b) => Number(a) - Number(b))
+          .map((anio) => (
+            <div ref={callbackRef} key={anio} className="flex flex-col gap-2">
+              <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
+                Año {anio}
               </div>
-            ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-
-      <ProyeccionContainer
-        proyeccion={proyeccion}
-        semestre="2025-1"
-        onGuardar={guardarProyeccion}
-        getCursoStatus={getCursoStatus}
-      />
-    </div>
+              <div className="flex gap-4">
+                {cursosPorAnio[Number(anio)].map((level) => (
+                  <div key={level} className="flex flex-col gap-2">
+                    <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
+                      <h2 className="text-center font-semibold">
+                        {romanNumerals[level]}
+                      </h2>
+                    </div>
+                    {cursosPorNivel[level].map((course) => {
+                      const status = getCursoStatus(course.codigo);
+                      return (
+                        <div
+                          key={course.codigo}
+                          className={cn(
+                            "rounded-md border border-transparent",
+                            status !== "APROBADO" &&
+                              `cursor-pointer transition ${
+                                isSelected(course.codigo)
+                                  ? "border-blue-500"
+                                  : "hover:border-blue-300 transition"
+                              }`
+                          )}
+                          onClick={
+                            status === "APROBADO"
+                              ? undefined
+                              : () => toggleCursoProyeccion(course)
+                          }
+                        >
+                          <CursoAvanceCard
+                            asignatura={course.asignatura}
+                            codigo={course.codigo}
+                            creditos={course.creditos}
+                            status={status}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        <ProyeccionContainer
+          altura={altura}
+          proyeccion={proyeccion}
+          semestre="2025-1"
+          onGuardar={guardarProyeccion}
+          getCursoStatus={getCursoStatus}
+        />
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 }

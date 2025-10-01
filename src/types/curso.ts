@@ -17,6 +17,7 @@ export interface CursoAvance {
 }
 
 export interface CursoProyeccion {
+  asignatura: string;
   codigo: string;
   semestre: string;
 }
