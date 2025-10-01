@@ -20,7 +20,7 @@ export function ProyeccionContainer({
 }: ProyeccionContainerProps) {
   return (
     <div
-      className={`w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
+      className={`sticky right-0 w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
     >
       <h2 className="font-bold text-lg mb-4">Proyección</h2>
       {proyeccion.length === 0 ? (
