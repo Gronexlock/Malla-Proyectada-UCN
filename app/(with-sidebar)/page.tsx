@@ -17,8 +17,6 @@ export default function HomePage() {
         <Link href="/test">
           <Button>Ver información del usuario</Button>
         </Link>
-        <CarreraSelect />
-        <p>Selected Carrera: {selectedCarrera.nombre}</p>
       </div>
     </div>
   );

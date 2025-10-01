@@ -7,7 +7,8 @@ import { ProyeccionContainer } from "./proyeccion-container";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
-import { get } from "http";
+import { CursoProyeccion } from "@/src/types/curso";
+import { useUserStore } from "@/src/store/useUserStore";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -22,6 +23,7 @@ export function CrearProyeccionView({
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
   const [proyeccion, setProyeccion] = useState<CursoMalla[]>([]);
+  const { setCursosProyeccion } = useUserStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,6 +97,14 @@ export function CrearProyeccionView({
     }
   }
 
+  function guardarProyeccion(semestre: string) {
+    const proyeccionData: CursoProyeccion[] = proyeccion.map((curso) => ({
+      codigo: curso.codigo,
+      semestre,
+    }));
+    setCursosProyeccion(proyeccionData);
+  }
+
   return (
     <div className="flex justify-center w-full h-[calc(100vh-64px)] gap-6">
       <ScrollArea className="w-full max-w-5xl whitespace-nowrap h-full">
@@ -154,7 +164,8 @@ export function CrearProyeccionView({
 
       <ProyeccionContainer
         proyeccion={proyeccion}
-        onQuitar={toggleCursoProyeccion}
+        semestre="2025-1"
+        onGuardar={guardarProyeccion}
         getCursoStatus={getCursoStatus}
       />
     </div>

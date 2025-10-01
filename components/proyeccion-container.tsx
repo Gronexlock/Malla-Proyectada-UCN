@@ -4,13 +4,15 @@ import { CursoAvance } from "@/src/types/curso";
 
 type ProyeccionContainerProps = {
   proyeccion: CursoMalla[];
-  onQuitar: (curso: CursoMalla) => void;
+  semestre: string;
+  onGuardar: (semestre: string) => void;
   getCursoStatus: (codigo: string) => CursoAvance["status"] | "PENDIENTE";
 };
 
 export function ProyeccionContainer({
   proyeccion,
-  onQuitar,
+  semestre,
+  onGuardar,
   getCursoStatus,
 }: ProyeccionContainerProps) {
   return (
@@ -21,18 +23,26 @@ export function ProyeccionContainer({
           Selecciona cursos pendientes o reprobados para agregarlos aquí.
         </div>
       ) : (
-        <ul className="space-y-4">
-          {proyeccion.map((curso) => (
-            <li key={curso.codigo} className="relative group">
-              <CursoAvanceCard
-                asignatura={curso.asignatura}
-                codigo={curso.codigo}
-                creditos={curso.creditos}
-                status={getCursoStatus(curso.codigo)}
-              />
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="space-y-4">
+            {proyeccion.map((curso) => (
+              <li key={curso.codigo} className="relative group">
+                <CursoAvanceCard
+                  asignatura={curso.asignatura}
+                  codigo={curso.codigo}
+                  creditos={curso.creditos}
+                  status={getCursoStatus(curso.codigo)}
+                />
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => onGuardar(semestre)}
+            className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+          >
+            Guardar Proyección
+          </button>
+        </>
       )}
     </div>
   );
