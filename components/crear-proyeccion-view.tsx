@@ -24,8 +24,6 @@ export function CrearProyeccionView({
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
-  const [proyeccion, setProyeccion] = useState<CursoMalla[]>([]);
-  const { setProyecciones } = useUserStore();
   const [altura, setAltura] = useState(0);
   const cursosPorNivel = getCursosPorNivel(cursos);
   const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
@@ -35,6 +33,11 @@ export function CrearProyeccionView({
   ]);
   const [semestreIndex, setSemestreIndex] = useState(0);
   const semestreActual = semestres[semestreIndex];
+
+  const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
+    Record<string, CursoMalla[]>
+  >({});
+  const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
 
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
@@ -72,15 +75,34 @@ export function CrearProyeccionView({
   }
 
   function isSelected(codigo: string) {
-    return proyeccion.some((c) => c.codigo === codigo);
+    return proyeccionActual.some((c) => c.codigo === codigo);
   }
 
   function toggleCursoProyeccion(curso: CursoMalla) {
-    if (isSelected(curso.codigo)) {
-      setProyeccion((prev) => prev.filter((c) => c.codigo !== curso.codigo));
-    } else {
-      setProyeccion((prev) => [...prev, curso]);
+    setProyeccionesPorSemestre((prev) => {
+      const proyeccionActual = prev[semestreActual] || [];
+      const isCursoSelected = proyeccionActual.some(
+        (c) => c.codigo === curso.codigo
+      );
+
+      return {
+        ...prev,
+        [semestreActual]: isCursoSelected
+          ? proyeccionActual.filter((c) => c.codigo !== curso.codigo)
+          : [...proyeccionActual, curso],
+      };
+    });
+  }
+
+  function isAlreadySelected(codigo: string): boolean {
+    for (let i = 0; i < semestres.length; i++) {
+      const semestre = semestres[i];
+      const proyeccion = proyeccionesPorSemestre[semestre] || [];
+      if (proyeccion.some((c) => c.codigo === codigo)) {
+        return true;
+      }
     }
+    return false;
   }
 
   function irSiguienteSemestre() {
@@ -120,12 +142,17 @@ export function CrearProyeccionView({
                     </div>
                     {cursosPorNivel[level].map((course) => {
                       const status = getCursoStatus(course.codigo, avance);
+                      const alreadySelected = isAlreadySelected(course.codigo);
+                      const canBeSelected =
+                        status !== "APROBADO" && !alreadySelected;
+
                       return (
                         <div
                           key={course.codigo}
                           className={cn(
                             "rounded-md border border-transparent",
-                            status !== "APROBADO" &&
+                            alreadySelected && "opacity-50",
+                            canBeSelected &&
                               `cursor-pointer transition ${
                                 isSelected(course.codigo)
                                   ? "border-blue-500"
@@ -133,16 +160,16 @@ export function CrearProyeccionView({
                               }`
                           )}
                           onClick={
-                            status === "APROBADO"
-                              ? undefined
-                              : () => toggleCursoProyeccion(course)
+                            canBeSelected
+                              ? () => toggleCursoProyeccion(course)
+                              : undefined
                           }
                         >
                           <CursoAvanceCard
                             asignatura={course.asignatura}
                             codigo={course.codigo}
                             creditos={course.creditos}
-                            status={status}
+                            status={alreadySelected ? "APROBADO" : status}
                           />
                         </div>
                       );
@@ -158,14 +185,14 @@ export function CrearProyeccionView({
           <h2 className="font-bold text-lg mb-4">
             Proyección {semestreActual}
           </h2>
-          {proyeccion.length === 0 ? (
+          {proyeccionActual.length === 0 ? (
             <div className="text-gray-400 text-sm">
               Selecciona cursos pendientes o reprobados para agregarlos aquí.
             </div>
           ) : (
             <div className="flex flex-col h-full justify-between">
               <ul className="space-y-4">
-                {proyeccion.map((curso) => (
+                {proyeccionActual.map((curso) => (
                   <li
                     key={curso.codigo}
                     className="relative group flex justify-center"
