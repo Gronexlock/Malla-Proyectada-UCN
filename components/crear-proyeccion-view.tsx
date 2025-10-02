@@ -6,11 +6,12 @@ import { CursoAvanceCard } from "./curso-avance-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
-import { useUserStore } from "@/src/store/useUserStore";
 import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
 import { getCursoStatus } from "@/src/utils/proyeccion";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 import { Button } from "./ui/button";
+import { useUserStore } from "@/src/store/useUserStore";
+import { Proyeccion } from "@/src/types/proyeccion";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -27,6 +28,7 @@ export function CrearProyeccionView({
   const [altura, setAltura] = useState(0);
   const cursosPorNivel = getCursosPorNivel(cursos);
   const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
+  const { proyecciones, setProyecciones } = useUserStore();
 
   const [semestres, setSemestres] = useState([
     getSemestreSiguiente(getSemestreActual()),
@@ -74,8 +76,19 @@ export function CrearProyeccionView({
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
 
-  function isSelected(codigo: string) {
-    return proyeccionActual.some((c) => c.codigo === codigo);
+  function guardarProyecciones() {
+    const proyeccionesNueva: Proyeccion = { proyecciones: [] };
+    Object.keys(proyeccionesPorSemestre).forEach((semestre) => {
+      proyeccionesNueva.proyecciones.push({
+        semestre,
+        cursos: proyeccionesPorSemestre[semestre].map((curso) => ({
+          codigo: curso.codigo,
+          asignatura: curso.asignatura,
+          semestre,
+        })),
+      });
+    });
+    setProyecciones([...proyecciones, proyeccionesNueva]);
   }
 
   function toggleCursoProyeccion(curso: CursoMalla) {
@@ -151,13 +164,9 @@ export function CrearProyeccionView({
                           key={course.codigo}
                           className={cn(
                             "rounded-md border border-transparent",
-                            alreadySelected && "opacity-50",
+                            alreadySelected && "opacity-50 transition-opacity",
                             canBeSelected &&
-                              `cursor-pointer transition ${
-                                isSelected(course.codigo)
-                                  ? "border-blue-500"
-                                  : "hover:border-blue-300 transition"
-                              }`
+                              "cursor-pointer hover:border-blue-300 transition"
                           )}
                           onClick={
                             canBeSelected
@@ -207,20 +216,29 @@ export function CrearProyeccionView({
                   </li>
                 ))}
               </ul>
-              <div className="flex justify-between gap-4">
-                {/* Implementar funcinalidad */}
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-between gap-4">
+                  <Button
+                    className="cursor-pointer mt-4"
+                    onClick={irSemestreAnterior}
+                    disabled={semestreIndex === 0}
+                  >
+                    Anterior
+                  </Button>
+                  <Button
+                    className="cursor-pointer mt-4"
+                    onClick={irSiguienteSemestre}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
                 <Button
-                  className="cursor-pointer mt-4"
-                  onClick={irSemestreAnterior}
-                  disabled={semestreIndex === 0}
+                  onClick={guardarProyecciones}
+                  className="w-full cursor-pointer"
+                  variant="default"
+                  disabled={Object.keys(proyeccionesPorSemestre).length === 0}
                 >
-                  Anterior
-                </Button>
-                <Button
-                  className="cursor-pointer mt-4"
-                  onClick={irSiguienteSemestre}
-                >
-                  Siguiente
+                  Guardar Proyección
                 </Button>
               </div>
             </div>

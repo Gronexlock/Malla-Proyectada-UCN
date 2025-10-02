@@ -3,7 +3,7 @@
 import { useUserStore } from "@/src/store/useUserStore";
 
 export default function Page() {
-  const { rut, carreras, cursosProyeccion } = useUserStore();
+  const { rut, carreras, proyecciones } = useUserStore();
   return (
     <div>
       <p>RUT: {rut}</p>
@@ -15,7 +15,16 @@ export default function Page() {
       </p>
       <p>
         Cursos Proyección:{" "}
-        {cursosProyeccion.map((c) => `${c.asignatura}`).join(", ")}
+        {proyecciones.map((p) =>
+          p.proyecciones
+            .map(
+              (ps) =>
+                `${ps.semestre}: [${ps.cursos
+                  .map((c) => c.codigo)
+                  .join(", ")}] `
+            )
+            .join("; ")
+        )}
       </p>
     </div>
   );

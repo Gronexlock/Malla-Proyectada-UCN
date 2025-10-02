@@ -1,3 +1,4 @@
+import { useUserStore } from "../store/useUserStore";
 import { CursoAvance } from "../types/curso";
 
 export function getCursoStatus(
