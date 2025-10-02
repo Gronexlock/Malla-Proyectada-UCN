@@ -3,14 +3,14 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { useState, useEffect } from "react";
 import { CursoAvanceCard } from "./curso-avance-card";
-import { ProyeccionContainer } from "./proyeccion-container";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
-import { CursoProyeccion } from "@/src/types/curso";
 import { useUserStore } from "@/src/store/useUserStore";
 import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
 import { getCursoStatus } from "@/src/utils/proyeccion";
+import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
+import { Button } from "./ui/button";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -29,6 +29,12 @@ export function CrearProyeccionView({
   const [altura, setAltura] = useState(0);
   const cursosPorNivel = getCursosPorNivel(cursos);
   const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
+
+  const [semestres, setSemestres] = useState([
+    getSemestreSiguiente(getSemestreActual()),
+  ]);
+  const [semestreIndex, setSemestreIndex] = useState(0);
+  const semestreActual = semestres[semestreIndex];
 
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
@@ -77,7 +83,22 @@ export function CrearProyeccionView({
     }
   }
 
-  function guardarProyeccion(semestre: string) {}
+  function irSiguienteSemestre() {
+    if (semestreIndex < semestres.length - 1) {
+      setSemestreIndex(semestreIndex + 1);
+    } else {
+      const ultimoSemestre = semestres[semestres.length - 1];
+      const siguienteSemestre = getSemestreSiguiente(ultimoSemestre);
+      setSemestres((prev) => [...prev, siguienteSemestre]);
+      setSemestreIndex(semestreIndex + 1);
+    }
+  }
+
+  function irSemestreAnterior() {
+    if (semestreIndex > 0) {
+      setSemestreIndex(semestreIndex - 1);
+    }
+  }
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
@@ -131,14 +152,53 @@ export function CrearProyeccionView({
               </div>
             </div>
           ))}
-        <ProyeccionContainer
-          altura={altura}
-          proyeccion={proyeccion}
-          semestre="2026-1"
-          onGuardar={guardarProyeccion}
-          avance={avance}
-          getCursoStatus={getCursoStatus}
-        />
+        <div
+          className={`sticky right-0 w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
+        >
+          <h2 className="font-bold text-lg mb-4">
+            Proyección {semestreActual}
+          </h2>
+          {proyeccion.length === 0 ? (
+            <div className="text-gray-400 text-sm">
+              Selecciona cursos pendientes o reprobados para agregarlos aquí.
+            </div>
+          ) : (
+            <div className="flex flex-col h-full justify-between">
+              <ul className="space-y-4">
+                {proyeccion.map((curso) => (
+                  <li
+                    key={curso.codigo}
+                    className="relative group flex justify-center"
+                  >
+                    <CursoAvanceCard
+                      asignatura={curso.asignatura}
+                      codigo={curso.codigo}
+                      creditos={curso.creditos}
+                      status={getCursoStatus(curso.codigo, avance)}
+                      onClick={() => toggleCursoProyeccion(curso)}
+                    />
+                  </li>
+                ))}
+              </ul>
+              <div className="flex justify-between gap-4">
+                {/* Implementar funcinalidad */}
+                <Button
+                  className="cursor-pointer mt-4"
+                  onClick={irSemestreAnterior}
+                  disabled={semestreIndex === 0}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  className="cursor-pointer mt-4"
+                  onClick={irSiguienteSemestre}
+                >
+                  Siguiente
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <ScrollBar orientation="horizontal" />
     </ScrollArea>

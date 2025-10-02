@@ -5,6 +5,7 @@ type CursoAvanceCardProps = {
   asignatura: string;
   creditos: number;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
+  onClick?: () => void;
 };
 
 const statusColors: Record<string, string> = {
@@ -19,9 +20,13 @@ export function CursoAvanceCard({
   asignatura,
   creditos,
   status,
+  onClick,
 }: CursoAvanceCardProps) {
   return (
-    <Card className="rounded-md p-0 w-36 h-20 shadow-sm overflow-hidden">
+    <Card
+      className="rounded-md p-0 w-36 h-20 shadow-sm overflow-hidden"
+      onClick={onClick}
+    >
       <CardContent className="p-0 flex flex-col justify-start h-full">
         <div
           className={`h-8 flex ${statusColors[status]} justify-between p-1 items-center`}
