@@ -8,6 +8,8 @@ import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
 import { get } from "http";
+import { ContadorCreditos } from "./contador-creditos";
+
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -151,12 +153,14 @@ export function CrearProyeccionView({
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
-
+          
       <ProyeccionContainer
         proyeccion={proyeccion}
         onQuitar={toggleCursoProyeccion}
         getCursoStatus={getCursoStatus}
       />
+
+      <ContadorCreditos proyeccion={proyeccion} />  
     </div>
   );
 }
