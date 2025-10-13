@@ -1,8 +1,6 @@
 import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { useState, useEffect } from "react";
-import { CursoAvanceCard } from "./curso-avance-card";
 import { Carrera } from "@/src/types/carrera";
 import { AvanceCronoSkeleton } from "./skeletons/avance-crono-skeleton";
 import { formatPeriod } from "@/src/utils/formatPeriod";

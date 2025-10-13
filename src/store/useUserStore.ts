@@ -12,6 +12,7 @@ interface UserState {
   setCarreras: (carreras: Carrera[]) => void;
   setSelectedCarrera: (selectedCarrera: Carrera) => void;
   setProyecciones: (proyecciones: Proyeccion[]) => void;
+  clearProyecciones: () => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -25,6 +26,7 @@ export const useUserStore = create<UserState>()(
       setCarreras: (carreras) => set({ carreras }),
       setSelectedCarrera: (selectedCarrera) => set({ selectedCarrera }),
       setProyecciones: (proyecciones) => set({ proyecciones }),
+      clearProyecciones: () => set({ proyecciones: [] }),
     }),
     { name: "user-storage" }
   )

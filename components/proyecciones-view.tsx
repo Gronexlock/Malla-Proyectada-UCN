@@ -1,12 +1,9 @@
 "use client";
 
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { useUserStore } from "@/src/store/useUserStore";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { CursoCronoCard } from "./curso-crono-card";
 import { formatPeriod } from "@/src/utils/formatPeriod";
-import { Proyeccion } from "@/src/types/proyeccion";
-import { CursoAvanceCard } from "./curso-avance-card";
 
 export function ProyeccionesView() {
   const { proyecciones, selectedCarrera } = useUserStore();
@@ -27,7 +24,6 @@ export function ProyeccionesView() {
     );
   }
 
- 
   const proyeccionesPlanas = proyecciones.flatMap((p) => p.proyecciones);
 
   return (

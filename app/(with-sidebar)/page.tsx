@@ -2,11 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import CarreraSelect from "@/components/carrera-select";
 import { useUserStore } from "@/src/store/useUserStore";
 
 export default function HomePage() {
-  const { selectedCarrera } = useUserStore();
+  const { clearProyecciones } = useUserStore();
 
   return (
     <div>
@@ -17,6 +16,9 @@ export default function HomePage() {
         <Link href="/test">
           <Button>Ver información del usuario</Button>
         </Link>
+        <Button onClick={clearProyecciones} variant="destructive">
+          Borrar todas las proyecciones
+        </Button>
       </div>
     </div>
   );
