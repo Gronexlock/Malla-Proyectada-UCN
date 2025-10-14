@@ -1,6 +1,6 @@
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { CursoCronoCard } from "./curso-crono-card";
 import { Proyeccion } from "@/src/types/proyeccion";
+import { CursoMallaCard } from "./curso-malla-card";
 
 type ProyeccionViewProps = {
   proyeccion: Proyeccion;
@@ -20,12 +20,13 @@ export function ProyeccionView({ proyeccion }: ProyeccionViewProps) {
 
             <div className="flex flex-col gap-2">
               {semestre.cursos.map((curso) => (
-                <CursoCronoCard
+                <CursoMallaCard
                   key={curso.codigo}
-                  nrc={""}
                   codigo={curso.codigo}
                   asignatura={curso.asignatura}
-                  status={"PENDIENTE"}
+                  creditos={curso.creditos}
+                  prereq=""
+                  nivel={0}
                 />
               ))}
             </div>

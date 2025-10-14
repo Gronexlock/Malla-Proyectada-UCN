@@ -18,6 +18,7 @@ export interface CursoAvance {
 
 export interface CursoProyeccion {
   asignatura: string;
+  creditos: number;
   codigo: string;
   semestre: string;
 }

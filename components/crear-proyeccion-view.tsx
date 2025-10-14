@@ -89,6 +89,7 @@ export function CrearProyeccionView({
         cursos: proyeccionesPorSemestre[semestre].map((curso) => ({
           codigo: curso.codigo,
           asignatura: curso.asignatura,
+          creditos: curso.creditos,
           semestre,
         })),
       });
