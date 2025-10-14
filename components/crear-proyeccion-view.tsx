@@ -77,7 +77,12 @@ export function CrearProyeccionView({
   }
 
   function guardarProyecciones() {
-    const proyeccionesNueva: Proyeccion = { proyecciones: [] };
+    const maxId = proyecciones.reduce((max, p) => (p.id > max ? p.id : max), 0);
+    const proyeccionesNueva: Proyeccion = {
+      id: maxId + 1,
+      proyecciones: [],
+    };
+
     Object.keys(proyeccionesPorSemestre).forEach((semestre) => {
       proyeccionesNueva.proyecciones.push({
         semestre,

@@ -22,6 +22,7 @@ export const useUserStore = create<UserState>()(
       carreras: [],
       selectedCarrera: {} as Carrera,
       proyecciones: [],
+      proyeccionId: 1,
       setRut: (rut) => set({ rut }),
       setCarreras: (carreras) => set({ carreras }),
       setSelectedCarrera: (selectedCarrera) => set({ selectedCarrera }),

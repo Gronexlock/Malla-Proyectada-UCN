@@ -6,5 +6,6 @@ export interface ProyeccionSemestre {
 }
 
 export interface Proyeccion {
+  id: number;
   proyecciones: ProyeccionSemestre[];
 }

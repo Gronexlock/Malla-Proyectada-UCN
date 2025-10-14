@@ -13,19 +13,7 @@ export default function Page() {
           .map((c) => `${c.nombre}-${c.codigo}-${c.catalogo}`)
           .join(", ")}
       </p>
-      <p>
-        Cursos Proyección:{" "}
-        {proyecciones.map((p) =>
-          p.proyecciones
-            .map(
-              (ps) =>
-                `${ps.semestre}: [${ps.cursos
-                  .map((c) => c.codigo)
-                  .join(", ")}] `
-            )
-            .join("; ")
-        )}
-      </p>
+      <p>Cursos Proyección:{JSON.stringify(proyecciones)}</p>
     </div>
   );
 }
