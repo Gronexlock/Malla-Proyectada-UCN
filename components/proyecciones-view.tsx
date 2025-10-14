@@ -3,7 +3,6 @@
 import { useUserStore } from "@/src/store/useUserStore";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { CursoCronoCard } from "./curso-crono-card";
-import { formatPeriod } from "@/src/utils/formatPeriod";
 
 export function ProyeccionesView() {
   const { proyecciones, selectedCarrera } = useUserStore();
@@ -33,7 +32,7 @@ export function ProyeccionesView() {
           <div key={semestre.semestre} className="flex flex-col gap-2">
             <div className="bg-blue-800 rounded-sm flex justify-center items-center mb-2">
               <h2 className="text-center text-white font-semibold">
-                {formatPeriod(semestre.semestre)}
+                {semestre.semestre}
               </h2>
             </div>
 
@@ -41,7 +40,7 @@ export function ProyeccionesView() {
               {semestre.cursos.map((curso) => (
                 <CursoCronoCard
                   key={curso.codigo}
-                  nrc={curso.codigo} // nrc no disponible en proyecciones
+                  nrc={""}
                   codigo={curso.codigo}
                   asignatura={curso.asignatura}
                   status={"PENDIENTE"}
