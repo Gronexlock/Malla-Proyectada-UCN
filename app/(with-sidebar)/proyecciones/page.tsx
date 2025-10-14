@@ -1,9 +1,14 @@
-import { ProyeccionesView } from "@/components/proyecciones-view";
+"use client";
+
+import { ProyeccionView } from "@/components/proyecciones-view";
+import { useUserStore } from "@/src/store/useUserStore";
 
 export default function Page() {
+  const { proyecciones } = useUserStore();
+
   return (
     <main className="p-4">
-      <ProyeccionesView />
+      <ProyeccionView proyeccion={proyecciones[0]} />
     </main>
   );
 }
