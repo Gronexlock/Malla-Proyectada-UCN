@@ -59,7 +59,7 @@ export function AppSidebar() {
             >
               <Link href="/">
                 <span className="text-base font-semibold">
-                  Proyección de Avance
+                  Proyección Curricular
                 </span>
               </Link>
             </SidebarMenuButton>

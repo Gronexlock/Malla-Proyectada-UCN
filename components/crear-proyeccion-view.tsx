@@ -143,7 +143,7 @@ export function CrearProyeccionView({
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
-      <div className="flex justify-center min-w-max gap-4">
+      <div className="flex justify-center min-w-max gap-4 pb-6 pr-6">
         {Object.keys(cursosPorAnio)
           .sort((a, b) => Number(a) - Number(b))
           .map((anio) => (
@@ -197,9 +197,7 @@ export function CrearProyeccionView({
         <div
           className={`sticky right-0 w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
         >
-          <h2 className="font-bold text-lg mb-4">
-            Proyección {semestreActual}
-          </h2>
+          <h2 className="font-bold text-lg mb-4">{semestreActual}</h2>
           {proyeccionActual.length === 0 ? (
             <div className="text-gray-400 text-sm">
               Selecciona cursos pendientes o reprobados para agregarlos aquí.
