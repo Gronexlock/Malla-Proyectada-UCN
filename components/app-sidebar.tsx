@@ -1,4 +1,4 @@
-import { Calendar, NotebookPen, User } from "lucide-react";
+import { Calendar, ChevronRight, NotebookPen, User } from "lucide-react";
 
 import {
   Sidebar,
@@ -15,14 +15,20 @@ import {
 import LogoutButton from "./logout-button";
 import Link from "next/link";
 import CarreraSelect from "./carrera-select";
+import { Proyeccion } from "@/src/types/proyeccion";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
 
 const items = [
   {
     title: "Mallas",
     icon: Calendar,
     subitems: [
-      { title: "ICI", url: "/mallas/ici" },
       { title: "ICCI", url: "/mallas/icci" },
+      { title: "ICI", url: "/mallas/ici" },
       { title: "ITI", url: "/mallas/iti" },
     ],
   },
@@ -34,7 +40,10 @@ const items = [
         title: "Crear proyección",
         url: "/proyecciones/nueva",
       },
-      { title: "Mis proyecciones", url: "/proyecciones" },
+      {
+        title: "Mis proyecciones",
+        url: "/proyecciones",
+      },
     ],
   },
   {
@@ -47,7 +56,11 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  proyecciones: Proyeccion[];
+};
+
+export function AppSidebar({ proyecciones }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -74,23 +87,30 @@ export function AppSidebar() {
                 <CarreraSelect />
               </SidebarMenuItem>
               {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <span>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </span>
-                  </SidebarMenuButton>
-                  <SidebarMenuSub>
-                    {item.subitems.map((subitem) => (
-                      <SidebarMenuItem key={subitem.title}>
-                        <SidebarMenuButton asChild>
-                          <Link href={subitem.url}>{subitem.title}</Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
+                <Collapsible defaultOpen className="group/collapsible">
+                  <SidebarMenuItem key={item.title}>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <span>
+                          <item.icon />
+                          {item.title}
+                          <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        </span>
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.subitems.map((subitem) => (
+                          <SidebarMenuItem key={subitem.title}>
+                            <SidebarMenuButton asChild>
+                              <Link href={subitem.url}>{subitem.title}</Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
