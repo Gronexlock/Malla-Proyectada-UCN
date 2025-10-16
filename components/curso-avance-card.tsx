@@ -6,6 +6,7 @@ type CursoAvanceCardProps = {
   creditos: number;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
   onClick?: () => void;
+  clickable?: boolean;
 };
 
 const statusColors: Record<string, string> = {
@@ -21,10 +22,15 @@ export function CursoAvanceCard({
   creditos,
   status,
   onClick,
+  clickable,
 }: CursoAvanceCardProps) {
   return (
     <Card
-      className="rounded-md p-0 w-36 h-20 shadow-sm overflow-hidden"
+      className={`rounded-md p-0 w-36 h-20 shadow-sm overflow-hidden ${
+        clickable
+          ? "cursor-pointer hover:bg-zinc-50 hover:scale-105 transition-all"
+          : ""
+      }`}
       onClick={onClick}
     >
       <CardContent className="p-0 flex flex-col justify-start h-full">

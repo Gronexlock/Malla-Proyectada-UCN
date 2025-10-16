@@ -173,9 +173,7 @@ export function CrearProyeccionView({
                             key={course.codigo}
                             className={cn(
                               "rounded-md border border-transparent",
-                              alreadySelected && "opacity-50 transition-all",
-                              canBeSelected &&
-                                "cursor-pointer hover:shadow hover:bg-blue-50 hover:scale-105 transition-all "
+                              alreadySelected && "opacity-50 transition-all"
                             )}
                             onClick={
                               canBeSelected
@@ -188,6 +186,7 @@ export function CrearProyeccionView({
                               codigo={course.codigo}
                               creditos={course.creditos}
                               status={alreadySelected ? "APROBADO" : status}
+                              clickable={canBeSelected}
                             />
                           </div>
                         );
@@ -220,6 +219,7 @@ export function CrearProyeccionView({
                       creditos={curso.creditos}
                       status={getCursoStatus(curso.codigo, avance)}
                       onClick={() => toggleCursoProyeccion(curso)}
+                      clickable
                     />
                   </li>
                 ))}
