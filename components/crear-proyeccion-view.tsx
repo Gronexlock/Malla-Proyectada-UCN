@@ -141,6 +141,8 @@ export function CrearProyeccionView({
     }
   }
 
+  console.log(Object.keys(proyeccionesPorSemestre).length);
+
   return (
     <ScrollArea className="whitespace-nowrap">
       <div className="flex justify-center">
@@ -201,56 +203,56 @@ export function CrearProyeccionView({
           className={`sticky right-0 w-64 h-[${altura}px] bg-white border border-l-0 rounded-r-lg shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
         >
           <h2 className="font-bold text-lg mb-4">{semestreActual}</h2>
-          {proyeccionActual.length === 0 ? (
-            <div className="text-gray-400 text-sm">
-              Selecciona cursos pendientes o reprobados para agregarlos aquí.
-            </div>
-          ) : (
-            <div className="flex flex-col h-full justify-between">
-              <ul className="space-y-4">
-                {proyeccionActual.map((curso) => (
-                  <li
-                    key={curso.codigo}
-                    className="relative group flex justify-center"
-                  >
-                    <CursoAvanceCard
-                      asignatura={curso.asignatura}
-                      codigo={curso.codigo}
-                      creditos={curso.creditos}
-                      status={getCursoStatus(curso.codigo, avance)}
-                      onClick={() => toggleCursoProyeccion(curso)}
-                      clickable
-                    />
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-col gap-4">
-                <div className="flex justify-between gap-4">
-                  <Button
-                    className="cursor-pointer mt-4"
-                    onClick={irSemestreAnterior}
-                    disabled={semestreIndex === 0}
-                  >
-                    Anterior
-                  </Button>
-                  <Button
-                    className="cursor-pointer mt-4"
-                    onClick={irSiguienteSemestre}
-                  >
-                    Siguiente
-                  </Button>
-                </div>
-                <Button
-                  onClick={guardarProyecciones}
-                  className="w-full cursor-pointer"
-                  variant="default"
-                  disabled={Object.keys(proyeccionesPorSemestre).length === 0}
+          <div className="flex flex-col h-full justify-between w-48">
+            {proyeccionActual.length === 0 && (
+              <div className="text-gray-400 text-sm">
+                Selecciona cursos pendientes o reprobados para agregarlos aquí.
+              </div>
+            )}
+            <ul className="space-y-4">
+              {proyeccionActual.map((curso) => (
+                <li
+                  key={curso.codigo}
+                  className="relative group flex justify-center"
                 >
-                  Guardar Proyección
+                  <CursoAvanceCard
+                    asignatura={curso.asignatura}
+                    codigo={curso.codigo}
+                    creditos={curso.creditos}
+                    status={getCursoStatus(curso.codigo, avance)}
+                    onClick={() => toggleCursoProyeccion(curso)}
+                    clickable
+                  />
+                </li>
+              ))}
+            </ul>
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between gap-4">
+                <Button
+                  className="cursor-pointer mt-4"
+                  onClick={irSemestreAnterior}
+                  disabled={semestreIndex === 0}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  className="cursor-pointer mt-4"
+                  onClick={irSiguienteSemestre}
+                  disabled={proyeccionActual.length === 0}
+                >
+                  Siguiente
                 </Button>
               </div>
+              <Button
+                onClick={guardarProyecciones}
+                className="w-full cursor-pointer"
+                variant="default"
+                disabled={proyeccionActual.length === 0}
+              >
+                Guardar Proyección
+              </Button>
             </div>
-          )}
+          </div>
         </div>
       </div>
       <ScrollBar orientation="horizontal" />
