@@ -171,8 +171,7 @@ export function CrearProyeccionView({
                           className={cn(
                             "rounded-md border border-transparent",
                             alreadySelected && "opacity-50 transition-opacity",
-                            canBeSelected &&
-                              "cursor-pointer hover:border-blue-300 transition"
+                            canBeSelected && "cursor-pointer"
                           )}
                           onClick={
                             canBeSelected
