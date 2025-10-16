@@ -142,59 +142,64 @@ export function CrearProyeccionView({
   }
 
   return (
-    <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
-      <div className="flex justify-center min-w-max gap-4 pb-6 pr-6">
-        {Object.keys(cursosPorAnio)
-          .sort((a, b) => Number(a) - Number(b))
-          .map((anio) => (
-            <div ref={callbackRef} key={anio} className="flex flex-col gap-2">
-              <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
-                Año {anio}
-              </div>
-              <div className="flex gap-4">
-                {cursosPorAnio[Number(anio)].map((level) => (
-                  <div key={level} className="flex flex-col gap-2">
-                    <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
-                      <h2 className="text-center font-semibold">
-                        {romanNumerals[level]}
-                      </h2>
-                    </div>
-                    {cursosPorNivel[level].map((course) => {
-                      const status = getCursoStatus(course.codigo, avance);
-                      const alreadySelected = isAlreadySelected(course.codigo);
-                      const canBeSelected =
-                        status !== "APROBADO" && !alreadySelected;
+    <ScrollArea className="whitespace-nowrap">
+      <div className="flex justify-center">
+        <div className="inline-flex min-w-max gap-4 p-6 border border-r-0 rounded-l-lg shadow bg-zinc-100">
+          {Object.keys(cursosPorAnio)
+            .sort((a, b) => Number(a) - Number(b))
+            .map((anio) => (
+              <div ref={callbackRef} key={anio} className="flex flex-col gap-2">
+                <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
+                  Año {anio}
+                </div>
+                <div className="flex gap-4">
+                  {cursosPorAnio[Number(anio)].map((level) => (
+                    <div key={level} className="flex flex-col gap-2">
+                      <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
+                        <h2 className="text-center font-semibold">
+                          {romanNumerals[level]}
+                        </h2>
+                      </div>
+                      {cursosPorNivel[level].map((course) => {
+                        const status = getCursoStatus(course.codigo, avance);
+                        const alreadySelected = isAlreadySelected(
+                          course.codigo
+                        );
+                        const canBeSelected =
+                          status !== "APROBADO" && !alreadySelected;
 
-                      return (
-                        <div
-                          key={course.codigo}
-                          className={cn(
-                            "rounded-md border border-transparent",
-                            alreadySelected && "opacity-50 transition-opacity",
-                            canBeSelected && "cursor-pointer"
-                          )}
-                          onClick={
-                            canBeSelected
-                              ? () => toggleCursoProyeccion(course)
-                              : undefined
-                          }
-                        >
-                          <CursoAvanceCard
-                            asignatura={course.asignatura}
-                            codigo={course.codigo}
-                            creditos={course.creditos}
-                            status={alreadySelected ? "APROBADO" : status}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
+                        return (
+                          <div
+                            key={course.codigo}
+                            className={cn(
+                              "rounded-md border border-transparent",
+                              alreadySelected && "opacity-50 transition-all",
+                              canBeSelected &&
+                                "cursor-pointer hover:shadow hover:bg-blue-50 hover:scale-105 transition-all "
+                            )}
+                            onClick={
+                              canBeSelected
+                                ? () => toggleCursoProyeccion(course)
+                                : undefined
+                            }
+                          >
+                            <CursoAvanceCard
+                              asignatura={course.asignatura}
+                              codigo={course.codigo}
+                              creditos={course.creditos}
+                              status={alreadySelected ? "APROBADO" : status}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
         <div
-          className={`sticky right-0 w-64 h-[${altura}px] bg-white border rounded-md shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
+          className={`sticky right-0 w-64 h-[${altura}px] bg-white border border-l-0 rounded-r-lg shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
         >
           <h2 className="font-bold text-lg mb-4">{semestreActual}</h2>
           {proyeccionActual.length === 0 ? (
