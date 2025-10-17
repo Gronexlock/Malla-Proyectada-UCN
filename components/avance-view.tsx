@@ -100,6 +100,7 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
                         codigo={course.codigo}
                         creditos={course.creditos}
                         status={getCursoStatus(course.codigo)}
+                        prereq={course.prereq}
                       />
                     ))}
                   </div>

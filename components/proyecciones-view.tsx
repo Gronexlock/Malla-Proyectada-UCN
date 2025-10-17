@@ -31,8 +31,7 @@ export function ProyeccionView({ proyeccion }: ProyeccionViewProps) {
                     codigo={curso.codigo}
                     asignatura={curso.asignatura}
                     creditos={curso.creditos}
-                    prereq=""
-                    nivel={0}
+                    prereq={[]}
                   />
                 ))}
               </div>
