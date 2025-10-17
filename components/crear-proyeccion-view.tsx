@@ -191,6 +191,7 @@ export function CrearProyeccionView({
                               codigo={course.codigo}
                               creditos={course.creditos}
                               status={alreadySelected ? "APROBADO" : status}
+                              prereq={course.prereq}
                               clickable={canBeSelected}
                             />
                           </div>
