@@ -141,7 +141,9 @@ export function CrearProyeccionView({
     }
   }
 
-  console.log(Object.keys(proyeccionesPorSemestre).length);
+  function getCreditosSemestreActual(): number {
+    return proyeccionActual.reduce((total, curso) => total + curso.creditos, 0);
+  }
 
   return (
     <ScrollArea className="whitespace-nowrap">
@@ -202,8 +204,22 @@ export function CrearProyeccionView({
         <div
           className={`sticky right-0 w-64 h-[${altura}px] bg-white border border-l-0 rounded-r-lg shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
         >
-          <h2 className="font-bold text-lg mb-4">{semestreActual}</h2>
-          <div className="flex flex-col h-full justify-between w-48">
+          <div className="mb-4">
+            <h2 className="font-bold text-lg">{semestreActual}</h2>
+            <div
+              className={cn(
+                "px-2 rounded-full text-white text-sm font-semibold transition-colors",
+                {
+                  "bg-zinc-900": getCreditosSemestreActual() < 30,
+                  "bg-amber-500": getCreditosSemestreActual() === 30,
+                  "bg-red-600": getCreditosSemestreActual() > 30,
+                }
+              )}
+            >
+              Créditos: {getCreditosSemestreActual()}
+            </div>
+          </div>
+          <div className="flex flex-col h-full justify-between items-center">
             {proyeccionActual.length === 0 && (
               <div className="text-gray-400 text-sm">
                 Selecciona cursos pendientes o reprobados para agregarlos aquí.
@@ -226,7 +242,7 @@ export function CrearProyeccionView({
                 </li>
               ))}
             </ul>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-48">
               <div className="flex justify-between gap-4">
                 <Button
                   className="cursor-pointer mt-4"
