@@ -48,7 +48,6 @@ export function MallaView({ cursos }: MallaViewProps) {
                         asignatura={course.asignatura}
                         codigo={course.codigo}
                         creditos={course.creditos}
-                        nivel={course.nivel}
                         prereq={course.prereq}
                       />
                     ))}

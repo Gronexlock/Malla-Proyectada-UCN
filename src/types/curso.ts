@@ -3,7 +3,7 @@ export interface CursoMalla {
   asignatura: string;
   creditos: number;
   nivel: number;
-  prereq: string;
+  prereq: string[];
 }
 
 export interface CursoAvance {

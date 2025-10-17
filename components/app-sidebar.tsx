@@ -87,7 +87,11 @@ export function AppSidebar({ proyecciones }: AppSidebarProps) {
                 <CarreraSelect />
               </SidebarMenuItem>
               {items.map((item) => (
-                <Collapsible defaultOpen className="group/collapsible">
+                <Collapsible
+                  key={item.title}
+                  defaultOpen
+                  className="group/collapsible"
+                >
                   <SidebarMenuItem key={item.title}>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton asChild>
