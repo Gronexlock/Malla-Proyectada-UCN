@@ -238,6 +238,7 @@ export function CrearProyeccionView({
                     codigo={curso.codigo}
                     creditos={curso.creditos}
                     status={getCursoStatus(curso.codigo, avance)}
+                    prereq={curso.prereq}
                     onClick={() => toggleCursoProyeccion(curso)}
                     clickable
                   />

@@ -32,7 +32,7 @@ export function CursoAvanceCard({
     <Card
       className={`rounded-md p-0 w-36 h-20 shadow-sm overflow-hidden ${
         clickable
-          ? "cursor-pointer hover:bg-zinc-50 hover:scale-105 transition-all"
+          ? "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all"
           : ""
       }`}
       onClick={onClick}
