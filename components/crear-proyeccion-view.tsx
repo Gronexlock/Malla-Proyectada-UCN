@@ -12,6 +12,7 @@ import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 import { Button } from "./ui/button";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Proyeccion } from "@/src/types/proyeccion";
+import { MoveLeft, MoveRight } from "lucide-react";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -208,7 +209,7 @@ export function CrearProyeccionView({
             <h2 className="font-bold text-lg">{semestreActual}</h2>
             <div
               className={cn(
-                "px-2 rounded-full text-white text-sm font-semibold transition-colors",
+                "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1",
                 {
                   "bg-zinc-900": getCreditosSemestreActual() < 30,
                   "bg-amber-500": getCreditosSemestreActual() === 30,
@@ -242,13 +243,14 @@ export function CrearProyeccionView({
                 </li>
               ))}
             </ul>
-            <div className="flex flex-col gap-4 w-48">
+            <div className="flex flex-col gap-4">
               <div className="flex justify-between gap-4">
                 <Button
                   className="cursor-pointer mt-4"
                   onClick={irSemestreAnterior}
                   disabled={semestreIndex === 0}
                 >
+                  <MoveLeft />
                   Anterior
                 </Button>
                 <Button
@@ -257,6 +259,7 @@ export function CrearProyeccionView({
                   disabled={proyeccionActual.length === 0}
                 >
                   Siguiente
+                  <MoveRight />
                 </Button>
               </div>
               <Button
