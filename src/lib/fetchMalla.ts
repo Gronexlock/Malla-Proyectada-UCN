@@ -1,13 +1,19 @@
 import { CursoMalla } from "@/src/types/curso";
 
-function formatPrereq(prereq: string, cursos: CursoMalla[]) {
+export function formatPrereq(
+  prereq: string,
+  cursos: CursoMalla[]
+): { codigo: string; asignatura: string }[] {
   const prereqList = prereq
     .split(",")
     .map((p) => p.trim())
     .filter((p) => p !== "");
   const formatted = prereqList.map((p) => {
     const curso = cursos.find((c) => c.codigo === p);
-    return curso ? `${curso.asignatura}` : p;
+    return {
+      codigo: p,
+      asignatura: curso ? curso.asignatura : p,
+    };
   });
   return formatted;
 }

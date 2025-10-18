@@ -1,17 +1,6 @@
 import { CursoMalla } from "@/src/types/curso";
 import { NextResponse } from "next/server";
-
-function formatPrereq(prereq: string, cursos: CursoMalla[]) {
-  const prereqList = prereq
-    .split(",")
-    .map((p) => p.trim())
-    .filter((p) => p !== "");
-  const formatted = prereqList.map((p) => {
-    const curso = cursos.find((c) => c.codigo === p);
-    return curso ? `${curso.asignatura}` : p;
-  });
-  return formatted;
-}
+import { formatPrereq } from "@/src/lib/fetchMalla";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

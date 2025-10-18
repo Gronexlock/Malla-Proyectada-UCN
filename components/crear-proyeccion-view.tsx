@@ -144,6 +144,18 @@ export function CrearProyeccionView({
     return proyeccionActual.reduce((total, curso) => total + curso.creditos, 0);
   }
 
+  function cumplePrerrequisitos(curso: CursoMalla): boolean {
+    if (!curso.prereq || curso.prereq.length === 0) return true;
+    return curso.prereq.every((pre) =>
+      avance.some((a) => a.course === pre.codigo && a.status === "APROBADO")
+    );
+  }
+
+  console.log(
+    cursos.find((c) => c.codigo === "DCCB-00246"),
+    avance.find((a) => a.course === "DCCB-00142")
+  );
+
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
@@ -172,13 +184,18 @@ export function CrearProyeccionView({
                           course.codigo
                         );
                         const canBeSelected =
-                          status !== "APROBADO" && !alreadySelected;
+                          status !== "APROBADO" &&
+                          !alreadySelected &&
+                          cumplePrerrequisitos(course);
                         return (
                           <div
                             key={course.codigo}
                             className={cn(
                               "rounded-md border border-transparent",
-                              alreadySelected && "opacity-50 transition-all"
+                              alreadySelected && "opacity-50",
+                              status !== "APROBADO" &&
+                                !cumplePrerrequisitos(course) &&
+                                "opacity-50"
                             )}
                             onClick={
                               canBeSelected

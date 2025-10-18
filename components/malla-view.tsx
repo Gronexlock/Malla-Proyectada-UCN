@@ -43,13 +43,7 @@ export function MallaView({ cursos }: MallaViewProps) {
                     </div>
 
                     {cursosPorNivel[level].map((course) => (
-                      <CursoMallaCard
-                        key={course.codigo}
-                        asignatura={course.asignatura}
-                        codigo={course.codigo}
-                        creditos={course.creditos}
-                        prereq={course.prereq}
-                      />
+                      <CursoMallaCard key={course.codigo} curso={course} />
                     ))}
                   </div>
                 ))}

@@ -8,7 +8,10 @@ type CursoAvanceCardProps = {
   asignatura: string;
   creditos: number;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
-  prereq: string[];
+  prereq: {
+    codigo: string;
+    asignatura: string;
+  }[];
   onClick?: () => void;
   clickable?: boolean;
 };
@@ -56,8 +59,8 @@ export function CursoAvanceCard({
                     </h2>
                     <hr />
                     {prereq.map((pre) => (
-                      <p key={pre} className="text-xs">
-                        • {pre}
+                      <p key={pre.codigo} className="text-xs">
+                        • {pre.asignatura}
                       </p>
                     ))}
                   </div>
