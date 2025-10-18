@@ -147,11 +147,14 @@ export function CrearProyeccionView({
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
-        <div className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100">
+        <div
+          ref={callbackRef}
+          className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100"
+        >
           {Object.keys(cursosPorAnio)
             .sort((a, b) => Number(a) - Number(b))
             .map((anio) => (
-              <div ref={callbackRef} key={anio} className="flex flex-col gap-2">
+              <div key={anio} className="flex flex-col gap-2">
                 <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
                   Año {anio}
                 </div>
@@ -203,13 +206,14 @@ export function CrearProyeccionView({
         <ScrollBar orientation="horizontal" className="" />
       </ScrollArea>
       <div
-        className={`w-64 shrink-0 h-[${altura}px] bg-white border border-l-0 rounded-r-lg flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
+        className={`w-64 shrink-0 flex flex-col bg-white border border-l-0 rounded-r-lg items-center p-4 text-wrap text-center`}
+        style={{ maxHeight: `${altura}px`, height: `${altura}px` }}
       >
-        <div className="mb-4">
+        <div>
           <h2 className="font-bold text-lg">{semestreActual}</h2>
           <div
             className={cn(
-              "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1",
+              "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit",
               {
                 "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
                 "bg-amber-500": getCreditosSemestreActual() === LIMITE_CREDITOS,
@@ -220,30 +224,34 @@ export function CrearProyeccionView({
             Créditos: {getCreditosSemestreActual()}
           </div>
         </div>
-        <div className="flex flex-col h-full justify-between items-center">
+        <div className="mb-4 flex flex-col items-center flex-1 w-full h-full overflow-y-auto">
           {proyeccionActual.length === 0 && (
-            <div className="text-gray-400 text-sm">
+            <div className="text-gray-400 text-sm ">
               Selecciona cursos pendientes o reprobados para agregarlos aquí.
             </div>
           )}
-          <ul className="space-y-4">
-            {proyeccionActual.map((curso) => (
-              <li
-                key={curso.codigo}
-                className="relative group flex justify-center"
-              >
-                <CursoAvanceCard
-                  asignatura={curso.asignatura}
-                  codigo={curso.codigo}
-                  creditos={curso.creditos}
-                  status={getCursoStatus(curso.codigo, avance)}
-                  prereq={curso.prereq}
-                  onClick={() => toggleCursoProyeccion(curso)}
-                  clickable
-                />
-              </li>
-            ))}
-          </ul>
+          <div className="w-full">
+            <ul className="space-y-4">
+              {proyeccionActual.map((curso) => (
+                <li
+                  key={curso.codigo}
+                  className="relative group flex justify-center"
+                >
+                  <CursoAvanceCard
+                    asignatura={curso.asignatura}
+                    codigo={curso.codigo}
+                    creditos={curso.creditos}
+                    status={getCursoStatus(curso.codigo, avance)}
+                    prereq={curso.prereq}
+                    onClick={() => toggleCursoProyeccion(curso)}
+                    clickable
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="flex flex-col justify-end items-center">
           <div className="flex flex-col gap-4">
             <div className="flex justify-between gap-4">
               <Button
