@@ -51,7 +51,9 @@ export function CursoAvanceCard({
                 </HoverCardTrigger>
                 <HoverCardContent className="flex justify-center w-40">
                   <div className="flex flex-col gap-1">
-                    <h2 className="font-semibold text-sm">Prerrequisitos</h2>
+                    <h2 className="font-bold text-sm text-center">
+                      PRERREQUISITOS
+                    </h2>
                     <hr />
                     {prereq.map((pre) => (
                       <p key={pre} className="text-xs">
