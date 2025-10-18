@@ -145,9 +145,9 @@ export function CrearProyeccionView({
   }
 
   return (
-    <ScrollArea className="whitespace-nowrap">
-      <div className="flex justify-center">
-        <div className="inline-flex min-w-max gap-4 p-6 pb-9 border border-r-0 rounded-l-lg shadow bg-zinc-100">
+    <div className="flex justify-center w-full">
+      <ScrollArea className="min-w-0">
+        <div className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100">
           {Object.keys(cursosPorAnio)
             .sort((a, b) => Number(a) - Number(b))
             .map((anio) => (
@@ -170,7 +170,6 @@ export function CrearProyeccionView({
                         );
                         const canBeSelected =
                           status !== "APROBADO" && !alreadySelected;
-
                         return (
                           <div
                             key={course.codigo}
@@ -201,84 +200,83 @@ export function CrearProyeccionView({
               </div>
             ))}
         </div>
-        <div
-          className={`sticky right-0 w-64 h-[${altura}px] bg-white border border-l-0 rounded-r-lg shadow flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
-        >
-          <div className="mb-4">
-            <h2 className="font-bold text-lg">{semestreActual}</h2>
-            <div
-              className={cn(
-                "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1",
-                {
-                  "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
-                  "bg-amber-500":
-                    getCreditosSemestreActual() === LIMITE_CREDITOS,
-                  "bg-red-600": getCreditosSemestreActual() > LIMITE_CREDITOS,
-                }
-              )}
-            >
-              Créditos: {getCreditosSemestreActual()}
-            </div>
-          </div>
-          <div className="flex flex-col h-full justify-between items-center">
-            {proyeccionActual.length === 0 && (
-              <div className="text-gray-400 text-sm">
-                Selecciona cursos pendientes o reprobados para agregarlos aquí.
-              </div>
+        <ScrollBar orientation="horizontal" className="" />
+      </ScrollArea>
+      <div
+        className={`w-64 shrink-0 h-[${altura}px] bg-white border border-l-0 rounded-r-lg flex items-center overflow-y-auto flex-col p-4 text-wrap text-center`}
+      >
+        <div className="mb-4">
+          <h2 className="font-bold text-lg">{semestreActual}</h2>
+          <div
+            className={cn(
+              "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1",
+              {
+                "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
+                "bg-amber-500": getCreditosSemestreActual() === LIMITE_CREDITOS,
+                "bg-red-600": getCreditosSemestreActual() > LIMITE_CREDITOS,
+              }
             )}
-            <ul className="space-y-4">
-              {proyeccionActual.map((curso) => (
-                <li
-                  key={curso.codigo}
-                  className="relative group flex justify-center"
-                >
-                  <CursoAvanceCard
-                    asignatura={curso.asignatura}
-                    codigo={curso.codigo}
-                    creditos={curso.creditos}
-                    status={getCursoStatus(curso.codigo, avance)}
-                    prereq={curso.prereq}
-                    onClick={() => toggleCursoProyeccion(curso)}
-                    clickable
-                  />
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-col gap-4">
-              <div className="flex justify-between gap-4">
-                <Button
-                  className="cursor-pointer mt-4"
-                  onClick={irSemestreAnterior}
-                  disabled={semestreIndex === 0}
-                >
-                  <MoveLeft />
-                  Anterior
-                </Button>
-                <Button
-                  className="cursor-pointer mt-4"
-                  onClick={irSiguienteSemestre}
-                  disabled={proyeccionActual.length === 0}
-                >
-                  Siguiente
-                  <MoveRight />
-                </Button>
-              </div>
-              <Button
-                onClick={guardarProyecciones}
-                className="w-full cursor-pointer"
-                variant="default"
-                disabled={
-                  proyeccionActual.length === 0 ||
-                  getCreditosSemestreActual() > LIMITE_CREDITOS
-                }
+          >
+            Créditos: {getCreditosSemestreActual()}
+          </div>
+        </div>
+        <div className="flex flex-col h-full justify-between items-center">
+          {proyeccionActual.length === 0 && (
+            <div className="text-gray-400 text-sm">
+              Selecciona cursos pendientes o reprobados para agregarlos aquí.
+            </div>
+          )}
+          <ul className="space-y-4">
+            {proyeccionActual.map((curso) => (
+              <li
+                key={curso.codigo}
+                className="relative group flex justify-center"
               >
-                Guardar Proyección
+                <CursoAvanceCard
+                  asignatura={curso.asignatura}
+                  codigo={curso.codigo}
+                  creditos={curso.creditos}
+                  status={getCursoStatus(curso.codigo, avance)}
+                  prereq={curso.prereq}
+                  onClick={() => toggleCursoProyeccion(curso)}
+                  clickable
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between gap-4">
+              <Button
+                className="cursor-pointer mt-4"
+                onClick={irSemestreAnterior}
+                disabled={semestreIndex === 0}
+              >
+                <MoveLeft />
+                Anterior
+              </Button>
+              <Button
+                className="cursor-pointer mt-4"
+                onClick={irSiguienteSemestre}
+                disabled={proyeccionActual.length === 0}
+              >
+                Siguiente
+                <MoveRight />
               </Button>
             </div>
+            <Button
+              onClick={guardarProyecciones}
+              className="w-full cursor-pointer"
+              variant="default"
+              disabled={
+                proyeccionActual.length === 0 ||
+                getCreditosSemestreActual() > LIMITE_CREDITOS
+              }
+            >
+              Guardar Proyección
+            </Button>
           </div>
         </div>
       </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    </div>
   );
 }
