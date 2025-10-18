@@ -30,18 +30,16 @@ export function CrearProyeccionView({
   const cursosPorNivel = getCursosPorNivel(cursos);
   const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
   const { proyecciones, setProyecciones } = useUserStore();
-
   const [semestres, setSemestres] = useState([
     getSemestreSiguiente(getSemestreActual()),
   ]);
   const [semestreIndex, setSemestreIndex] = useState(0);
   const semestreActual = semestres[semestreIndex];
-
   const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
     Record<string, CursoMalla[]>
   >({});
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
-
+  const LIMITE_CREDITOS = 30;
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
   };
@@ -149,7 +147,7 @@ export function CrearProyeccionView({
   return (
     <ScrollArea className="whitespace-nowrap">
       <div className="flex justify-center">
-        <div className="inline-flex min-w-max gap-4 p-6 border border-r-0 rounded-l-lg shadow bg-zinc-100">
+        <div className="inline-flex min-w-max gap-4 p-6 pb-9 border border-r-0 rounded-l-lg shadow bg-zinc-100">
           {Object.keys(cursosPorAnio)
             .sort((a, b) => Number(a) - Number(b))
             .map((anio) => (
@@ -212,9 +210,10 @@ export function CrearProyeccionView({
               className={cn(
                 "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1",
                 {
-                  "bg-zinc-900": getCreditosSemestreActual() < 30,
-                  "bg-amber-500": getCreditosSemestreActual() === 30,
-                  "bg-red-600": getCreditosSemestreActual() > 30,
+                  "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
+                  "bg-amber-500":
+                    getCreditosSemestreActual() === LIMITE_CREDITOS,
+                  "bg-red-600": getCreditosSemestreActual() > LIMITE_CREDITOS,
                 }
               )}
             >
@@ -268,7 +267,10 @@ export function CrearProyeccionView({
                 onClick={guardarProyecciones}
                 className="w-full cursor-pointer"
                 variant="default"
-                disabled={proyeccionActual.length === 0}
+                disabled={
+                  proyeccionActual.length === 0 ||
+                  getCreditosSemestreActual() > LIMITE_CREDITOS
+                }
               >
                 Guardar Proyección
               </Button>
