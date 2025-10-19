@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Proyeccion } from "@/src/types/proyeccion";
 import { MoveLeft, MoveRight } from "lucide-react";
+import { get } from "http";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -151,10 +152,15 @@ export function CrearProyeccionView({
     );
   }
 
-  console.log(
-    cursos.find((c) => c.codigo === "DCCB-00246"),
-    avance.find((a) => a.course === "DCCB-00142")
-  );
+  function getCursosBloqueantes(curso: CursoMalla) {
+    return curso.prereq.filter((pre) =>
+      cursos.some(
+        (c) =>
+          c.codigo === pre.codigo &&
+          getCursoStatus(c.codigo, avance) !== "APROBADO"
+      )
+    );
+  }
 
   return (
     <div className="flex justify-center w-full">
@@ -187,30 +193,36 @@ export function CrearProyeccionView({
                           status !== "APROBADO" &&
                           !alreadySelected &&
                           cumplePrerrequisitos(course);
+                        const lockVisible =
+                          !cumplePrerrequisitos(course) &&
+                          status !== "APROBADO";
                         return (
-                          <div
-                            key={course.codigo}
-                            className={cn(
-                              "rounded-md border border-transparent",
-                              alreadySelected && "opacity-50",
-                              status !== "APROBADO" &&
-                                !cumplePrerrequisitos(course) &&
-                                "opacity-50"
-                            )}
-                            onClick={
-                              canBeSelected
-                                ? () => toggleCursoProyeccion(course)
-                                : undefined
-                            }
-                          >
-                            <CursoAvanceCard
-                              asignatura={course.asignatura}
-                              codigo={course.codigo}
-                              creditos={course.creditos}
-                              status={alreadySelected ? "APROBADO" : status}
-                              prereq={course.prereq}
-                              clickable={canBeSelected}
-                            />
+                          <div className="relative">
+                            <div
+                              key={course.codigo}
+                              className={cn(
+                                "rounded-md border border-transparent",
+                                alreadySelected && "opacity-50",
+                                status !== "APROBADO" &&
+                                  !cumplePrerrequisitos(course) &&
+                                  "opacity-50"
+                              )}
+                              onClick={
+                                canBeSelected
+                                  ? () => toggleCursoProyeccion(course)
+                                  : undefined
+                              }
+                            >
+                              <CursoAvanceCard
+                                asignatura={course.asignatura}
+                                codigo={course.codigo}
+                                creditos={course.creditos}
+                                status={alreadySelected ? "APROBADO" : status}
+                                prereq={course.prereq}
+                                bloqueantes={getCursosBloqueantes(course)}
+                                clickable={canBeSelected}
+                              />
+                            </div>
                           </div>
                         );
                       })}
@@ -260,6 +272,7 @@ export function CrearProyeccionView({
                     creditos={curso.creditos}
                     status={getCursoStatus(curso.codigo, avance)}
                     prereq={curso.prereq}
+                    bloqueantes={getCursosBloqueantes(curso)}
                     onClick={() => toggleCursoProyeccion(curso)}
                     clickable
                   />
