@@ -67,7 +67,7 @@ export function CrearProyeccionView({
                                   <Lock
                                     size={16}
                                     strokeWidth={2.3}
-                                    className="text-red-500 absolute top-20 left-18 z-20"
+                                    className="text-amber-600 absolute top-20 left-18 z-20"
                                   />
                                 </HoverCardTrigger>
                                 <HoverCardContent className="flex justify-center w-40">
@@ -89,10 +89,9 @@ export function CrearProyeccionView({
                               key={course.codigo}
                               className={cn(
                                 "rounded-md border border-transparent",
-                                status === "APROBADO" && "opacity-30",
-                                status !== "APROBADO" &&
-                                  !proyeccion.cumplePrerrequisitos(course) &&
-                                  "cursor-not-allowed opacity-30"
+                                (status === "APROBADO" ||
+                                  !proyeccion.cumplePrerrequisitos(course)) &&
+                                  "opacity-30"
                               )}
                               onClick={
                                 canBeSelected
