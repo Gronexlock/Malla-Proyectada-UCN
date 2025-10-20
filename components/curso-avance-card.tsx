@@ -22,7 +22,7 @@ type CursoAvanceCardProps = {
 
 const statusColors: Record<string, string> = {
   APROBADO: "bg-green-500",
-  REPROBADO: "bg-red-400",
+  REPROBADO: "bg-red-500",
   INSCRITO: "bg-yellow-400",
   PENDIENTE: "",
 };
@@ -54,27 +54,7 @@ export function CursoAvanceCard({
           <div className="px-2 flex h-12 flex-col justify-center items-center">
             <p className="text-sm text-center text-wrap">{asignatura}</p>
           </div>
-          <div className="flex justify-end items-center p-1 gap-1.5 ">
-            {bloqueantes && bloqueantes.length > 0 && (
-              <HoverCard openDelay={200} closeDelay={200}>
-                <HoverCardTrigger>
-                  <Lock size={16} className="text-amber-700" />
-                </HoverCardTrigger>
-                <HoverCardContent className="flex justify-center w-40">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="font-bold text-sm text-center">
-                      BLOQUEADO POR
-                    </h2>
-                    <hr />
-                    {bloqueantes.map((bloq) => (
-                      <p key={bloq.codigo} className="text-xs">
-                        • {bloq.asignatura} {bloq.codigo}
-                      </p>
-                    ))}
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            )}
+          <div className="flex justify-end items-center p-1 gap-1.5">
             {prereq.length > 0 && (
               <HoverCard openDelay={200} closeDelay={200}>
                 <HoverCardTrigger>
@@ -88,7 +68,7 @@ export function CursoAvanceCard({
                     <hr />
                     {prereq.map((pre) => (
                       <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura} {pre.codigo}
+                        • {pre.asignatura}
                       </p>
                     ))}
                   </div>

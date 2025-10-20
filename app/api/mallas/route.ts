@@ -30,7 +30,6 @@ export async function GET(req: Request) {
     const data = await response.json();
     data.forEach((curso: any) => {
       curso.prereq = formatPrereq(curso.prereq, data);
-      console.log(curso.prereq);
     });
 
     return NextResponse.json(data);

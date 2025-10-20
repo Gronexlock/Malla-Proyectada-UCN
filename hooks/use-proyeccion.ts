@@ -2,7 +2,6 @@ import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
 import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
-import { getCursoStatus } from "@/src/utils/proyeccion";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Proyeccion } from "@/src/types/proyeccion";
@@ -25,6 +24,7 @@ export function useCrearProyeccion(carrera: Carrera, rut: string) {
   >({});
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
   const LIMITE_CREDITOS = 30;
+
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
   };
@@ -45,6 +45,7 @@ export function useCrearProyeccion(carrera: Carrera, rut: string) {
         ]);
         setCursos(cursosData);
         setAvance(avanceData);
+        actualizarAvance();
       } catch (error) {
         console.error("Error fetching data:", error);
         setCursos([]);
@@ -55,6 +56,14 @@ export function useCrearProyeccion(carrera: Carrera, rut: string) {
     };
     fetchData();
   }, [carrera, rut]);
+
+  function actualizarAvance() {
+    setAvance((prev) =>
+      prev.map((curso) =>
+        curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
+      )
+    );
+  }
 
   function guardarProyecciones() {
     const maxId = proyecciones.reduce((max, p) => (p.id > max ? p.id : max), 0);
@@ -133,13 +142,26 @@ export function useCrearProyeccion(carrera: Carrera, rut: string) {
   }
 
   function getCursosBloqueantes(curso: CursoMalla) {
-    return curso.prereq.filter((pre) =>
-      cursos.some(
-        (c) =>
-          c.codigo === pre.codigo &&
-          getCursoStatus(c.codigo, avance) !== "APROBADO"
-      )
-    );
+    if (getCursoStatus(curso.codigo) === "APROBADO") return [];
+    const aprobados = avance
+      .filter((a) => a.status === "APROBADO")
+      .map((a) => a.course);
+    return curso.prereq.filter((pre) => !aprobados.includes(pre.codigo));
+  }
+
+  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
+    const cursoAvance = avance.filter((curso) => curso.course === codigo);
+    if (cursoAvance.length === 0) {
+      return "PENDIENTE";
+    }
+    const statuses = cursoAvance.map((curso) => curso.status);
+    if (statuses.includes("APROBADO")) {
+      return "APROBADO";
+    }
+    if (statuses.includes("INSCRITO")) {
+      return "INSCRITO";
+    }
+    return "REPROBADO";
   }
 
   return {
@@ -168,5 +190,6 @@ export function useCrearProyeccion(carrera: Carrera, rut: string) {
     getCreditosSemestreActual,
     cumplePrerrequisitos,
     getCursosBloqueantes,
+    getCursoStatus,
   };
 }

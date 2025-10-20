@@ -33,7 +33,6 @@ export async function fetchMalla(codigo: string, catalogo: string) {
     const data = await response.json();
     data.forEach((curso: any) => {
       curso.prereq = formatPrereq(curso.prereq, data);
-      console.log(curso.prereq);
     });
 
     return data as CursoMalla[];

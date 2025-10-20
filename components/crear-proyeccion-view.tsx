@@ -4,10 +4,11 @@ import { CursoAvanceCard } from "./curso-avance-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
-import { getCursoStatus } from "@/src/utils/proyeccion";
 import { Button } from "./ui/button";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useCrearProyeccion } from "@/hooks/use-proyeccion";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { Lock } from "lucide-react";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -47,10 +48,7 @@ export function CrearProyeccionView({
                         </h2>
                       </div>
                       {proyeccion.cursosPorNivel[level].map((course) => {
-                        const status = getCursoStatus(
-                          course.codigo,
-                          proyeccion.avance
-                        );
+                        const status = proyeccion.getCursoStatus(course.codigo);
                         const alreadySelected = proyeccion.isAlreadySelected(
                           course.codigo
                         );
@@ -59,16 +57,42 @@ export function CrearProyeccionView({
                           !alreadySelected &&
                           proyeccion.cumplePrerrequisitos(course);
                         status !== "APROBADO";
+                        const bloqueantes =
+                          proyeccion.getCursosBloqueantes(course);
                         return (
                           <div className="relative">
+                            {bloqueantes.length > 0 && (
+                              <HoverCard openDelay={200} closeDelay={200}>
+                                <HoverCardTrigger>
+                                  <Lock
+                                    size={16}
+                                    strokeWidth={2.3}
+                                    className="text-red-500 absolute top-20 left-18 z-20"
+                                  />
+                                </HoverCardTrigger>
+                                <HoverCardContent className="flex justify-center w-40">
+                                  <div className="flex flex-col gap-1">
+                                    <h2 className="font-bold text-sm text-center">
+                                      BLOQUEADO POR
+                                    </h2>
+                                    <hr />
+                                    {bloqueantes.map((bloq) => (
+                                      <p key={bloq.codigo} className="text-xs">
+                                        • {bloq.asignatura}
+                                      </p>
+                                    ))}
+                                  </div>
+                                </HoverCardContent>
+                              </HoverCard>
+                            )}
                             <div
                               key={course.codigo}
                               className={cn(
                                 "rounded-md border border-transparent",
-                                status === "APROBADO" && "opacity-50",
+                                status === "APROBADO" && "opacity-30",
                                 status !== "APROBADO" &&
                                   !proyeccion.cumplePrerrequisitos(course) &&
-                                  "opacity-50"
+                                  "cursor-not-allowed opacity-30"
                               )}
                               onClick={
                                 canBeSelected
@@ -145,7 +169,7 @@ export function CrearProyeccionView({
                     asignatura={curso.asignatura}
                     codigo={curso.codigo}
                     creditos={curso.creditos}
-                    status={getCursoStatus(curso.codigo, proyeccion.avance)}
+                    status={proyeccion.getCursoStatus(curso.codigo)}
                     prereq={curso.prereq}
                     bloqueantes={proyeccion.getCursosBloqueantes(curso)}
                     onClick={() => proyeccion.toggleCursoProyeccion(curso)}
