@@ -13,7 +13,6 @@ import { Button } from "./ui/button";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Proyeccion } from "@/src/types/proyeccion";
 import { MoveLeft, MoveRight } from "lucide-react";
-import { get } from "http";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -193,16 +192,14 @@ export function CrearProyeccionView({
                           status !== "APROBADO" &&
                           !alreadySelected &&
                           cumplePrerrequisitos(course);
-                        const lockVisible =
-                          !cumplePrerrequisitos(course) &&
-                          status !== "APROBADO";
+                        status !== "APROBADO";
                         return (
                           <div className="relative">
                             <div
                               key={course.codigo}
                               className={cn(
                                 "rounded-md border border-transparent",
-                                alreadySelected && "opacity-50",
+                                status === "APROBADO" && "opacity-50",
                                 status !== "APROBADO" &&
                                   !cumplePrerrequisitos(course) &&
                                   "opacity-50"
@@ -217,7 +214,7 @@ export function CrearProyeccionView({
                                 asignatura={course.asignatura}
                                 codigo={course.codigo}
                                 creditos={course.creditos}
-                                status={alreadySelected ? "APROBADO" : status}
+                                status={alreadySelected ? "PENDIENTE" : status}
                                 prereq={course.prereq}
                                 bloqueantes={getCursosBloqueantes(course)}
                                 clickable={canBeSelected}

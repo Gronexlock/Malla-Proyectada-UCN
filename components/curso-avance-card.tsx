@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ListChecks, Lock } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { CursoAvance } from "@/src/types/curso";
 
 type CursoAvanceCardProps = {
   codigo: string;
@@ -13,7 +12,7 @@ type CursoAvanceCardProps = {
     codigo: string;
     asignatura: string;
   }[];
-  bloqueantes: {
+  bloqueantes?: {
     codigo: string;
     asignatura: string;
   }[];
@@ -56,10 +55,10 @@ export function CursoAvanceCard({
             <p className="text-sm text-center text-wrap">{asignatura}</p>
           </div>
           <div className="flex justify-end items-center p-1 gap-1.5 ">
-            {bloqueantes.length > 0 && (
+            {bloqueantes && bloqueantes.length > 0 && (
               <HoverCard openDelay={200} closeDelay={200}>
                 <HoverCardTrigger>
-                  <Lock size={16} className="text-zinc-900" />
+                  <Lock size={16} className="text-amber-700" />
                 </HoverCardTrigger>
                 <HoverCardContent className="flex justify-center w-40">
                   <div className="flex flex-col gap-1">
@@ -69,7 +68,7 @@ export function CursoAvanceCard({
                     <hr />
                     {bloqueantes.map((bloq) => (
                       <p key={bloq.codigo} className="text-xs">
-                        • {bloq.asignatura}
+                        • {bloq.asignatura} {bloq.codigo}
                       </p>
                     ))}
                   </div>
@@ -89,14 +88,16 @@ export function CursoAvanceCard({
                     <hr />
                     {prereq.map((pre) => (
                       <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura}
+                        • {pre.asignatura} {pre.codigo}
                       </p>
                     ))}
                   </div>
                 </HoverCardContent>
               </HoverCard>
             )}
-            <Badge className="rounded-full h-5 w-5">{creditos}</Badge>
+            <Badge className="rounded-full h-5 w-5 font-semibold">
+              {creditos}
+            </Badge>
           </div>
         </div>
       </CardContent>
