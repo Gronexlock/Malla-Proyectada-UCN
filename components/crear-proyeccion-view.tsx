@@ -9,6 +9,8 @@ import { MoveLeft, MoveRight } from "lucide-react";
 import { useCrearProyeccion } from "@/hooks/use-proyeccion";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Lock } from "lucide-react";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -124,31 +126,39 @@ export function CrearProyeccionView({
         <ScrollBar orientation="horizontal" className="" />
       </ScrollArea>
       <div
-        className={`w-64 shrink-0 flex flex-col bg-white border border-l-0 rounded-r-lg items-center p-4 text-wrap text-center`}
+        className={`w-64 bg-white shrink-0 flex flex-col border border-l-0 rounded-r-lg items-center text-wrap text-center`}
         style={{
           maxHeight: `${proyeccion.altura}px`,
           height: `${proyeccion.altura}px`,
         }}
       >
-        <div>
-          <h2 className="font-bold text-lg">{proyeccion.semestreActual}</h2>
-          <div
-            className={cn(
-              "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit",
-              {
-                "bg-zinc-900":
-                  proyeccion.getCreditosSemestreActual() <
-                  proyeccion.LIMITE_CREDITOS,
-                "bg-amber-500":
-                  proyeccion.getCreditosSemestreActual() ===
-                  proyeccion.LIMITE_CREDITOS,
-                "bg-red-600":
-                  proyeccion.getCreditosSemestreActual() >
-                  proyeccion.LIMITE_CREDITOS,
-              }
-            )}
-          >
-            Créditos: {proyeccion.getCreditosSemestreActual()}
+        <div className="w-full">
+          <div className="flex flex-col items-center">
+            <div className="flex space-x-2 items-center w-full border-b justify-center py-4 mb-2">
+              <Switch id="ignorar-reestricciones"></Switch>
+              <Label htmlFor="ignorar-reestricciones" className="text-md">
+                Ignorar restricciones
+              </Label>
+            </div>
+            <h2 className="font-bold text-lg">{proyeccion.semestreActual}</h2>
+            <div
+              className={cn(
+                "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit",
+                {
+                  "bg-zinc-900":
+                    proyeccion.getCreditosSemestreActual() <
+                    proyeccion.LIMITE_CREDITOS,
+                  "bg-amber-500":
+                    proyeccion.getCreditosSemestreActual() ===
+                    proyeccion.LIMITE_CREDITOS,
+                  "bg-red-600":
+                    proyeccion.getCreditosSemestreActual() >
+                    proyeccion.LIMITE_CREDITOS,
+                }
+              )}
+            >
+              Créditos: {proyeccion.getCreditosSemestreActual()}
+            </div>
           </div>
         </div>
         <div className="mb-4 flex flex-col items-center flex-1 w-full h-full overflow-y-auto">
