@@ -6,7 +6,11 @@ import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 import { useUserStore } from "@/src/store/useUserStore";
 import { Proyeccion } from "@/src/types/proyeccion";
 
-export function useCrearProyeccion(carrera: Carrera, rut: string) {
+export function useCrearProyeccion(
+  carrera: Carrera,
+  rut: string,
+  ignorarRestricciones: boolean
+) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);

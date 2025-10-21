@@ -11,6 +11,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Lock } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
+import { useState } from "react";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -21,7 +22,8 @@ export function CrearProyeccionView({
   carrera,
   rut,
 }: CrearProyeccionViewProps) {
-  const proyeccion = useCrearProyeccion(carrera, rut);
+  const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
+  const proyeccion = useCrearProyeccion(carrera, rut, ignorarRestricciones);
 
   if (proyeccion.loading) {
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
@@ -135,12 +137,18 @@ export function CrearProyeccionView({
         <div className="w-full">
           <div className="flex flex-col items-center">
             <div className="flex space-x-2 items-center w-full border-b justify-center py-4 mb-2">
-              <Switch id="ignorar-reestricciones"></Switch>
+              <Switch
+                id="ignorar-reestricciones"
+                checked={ignorarRestricciones}
+                onCheckedChange={setIgnorarRestricciones}
+              />
               <Label htmlFor="ignorar-reestricciones" className="text-md">
                 Ignorar restricciones
               </Label>
             </div>
-            <h2 className="font-bold text-lg">{proyeccion.semestreActual}</h2>
+            <h2 className="font-bold text-lg mb-1">
+              {proyeccion.semestreActual}
+            </h2>
             <div
               className={cn(
                 "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit",
