@@ -1,6 +1,7 @@
 "use client";
 
 import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -57,5 +58,24 @@ export default function Page() {
 
   console.log("Cursos sin nombre:", cursosSinNombre);
 
-  return <h1>Test page</h1>;
+  const proyecciones = [1, 2, 3, 4, 5, 6];
+
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="bg-zinc-100 shadow border rounded-md w-64 ">
+        <ul>
+          {proyecciones.map((p) => (
+            <div className="flex first:rounded-t-md justify-between items-center border-b border-zinc-300 last:border-0 last:rounded-b-md p-4 cursor-pointer transition-colors hover:bg-zinc-200">
+              <li key={p} className="text-lg">
+                Proyección {p}
+              </li>
+              <div className="flex rounded-full items-center justify-center hover:shadow p-2 hover:bg-red-200 transition-colors">
+                <Trash2 size={16} className="text-red-600" />
+              </div>
+            </div>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
 }
