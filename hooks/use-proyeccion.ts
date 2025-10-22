@@ -139,7 +139,8 @@ export function useCrearProyeccion(
   }
 
   function cumplePrerrequisitos(curso: CursoMalla): boolean {
-    if (!curso.prereq || curso.prereq.length === 0) return true;
+    if (!curso.prereq || curso.prereq.length === 0 || ignorarRestricciones)
+      return true;
     return curso.prereq.every((pre) =>
       avance.some((a) => a.course === pre.codigo && a.status === "APROBADO")
     );

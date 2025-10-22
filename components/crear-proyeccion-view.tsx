@@ -65,34 +65,38 @@ export function CrearProyeccionView({
                           proyeccion.getCursosBloqueantes(course);
                         return (
                           <div className="relative">
-                            {bloqueantes.length > 0 && (
-                              <HoverCard openDelay={200} closeDelay={200}>
-                                <HoverCardTrigger>
-                                  <Lock
-                                    size={16}
-                                    strokeWidth={2.3}
-                                    className="text-amber-600 absolute top-20 left-18 z-20"
-                                  />
-                                </HoverCardTrigger>
-                                <HoverCardContent className="flex justify-center w-40">
-                                  <div className="flex flex-col gap-1">
-                                    <h2 className="font-bold text-sm text-center">
-                                      BLOQUEADO POR
-                                    </h2>
-                                    <hr />
-                                    {bloqueantes.map((bloq) => (
-                                      <p key={bloq.codigo} className="text-xs">
-                                        • {bloq.asignatura}
-                                      </p>
-                                    ))}
-                                  </div>
-                                </HoverCardContent>
-                              </HoverCard>
-                            )}
+                            {bloqueantes.length > 0 &&
+                              !ignorarRestricciones && (
+                                <HoverCard openDelay={200} closeDelay={200}>
+                                  <HoverCardTrigger>
+                                    <Lock
+                                      size={16}
+                                      strokeWidth={2.3}
+                                      className="text-amber-600 absolute top-20 left-18 z-20"
+                                    />
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="flex justify-center w-40">
+                                    <div className="flex flex-col gap-1">
+                                      <h2 className="font-bold text-sm text-center">
+                                        BLOQUEADO POR
+                                      </h2>
+                                      <hr />
+                                      {bloqueantes.map((bloq) => (
+                                        <p
+                                          key={bloq.codigo}
+                                          className="text-xs"
+                                        >
+                                          • {bloq.asignatura}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  </HoverCardContent>
+                                </HoverCard>
+                              )}
                             <div
                               key={course.codigo}
                               className={cn(
-                                "rounded-md border border-transparent",
+                                "rounded-md border border-transparent transition-opacity",
                                 (status === "APROBADO" ||
                                   !proyeccion.cumplePrerrequisitos(course)) &&
                                   "opacity-30"
@@ -197,7 +201,7 @@ export function CrearProyeccionView({
             </ul>
           </div>
         </div>
-        <div className="flex flex-col justify-end items-center">
+        <div className="flex flex-col justify-end items-center pb-4">
           <div className="flex flex-col gap-4">
             <div className="flex justify-between gap-4">
               <Button
@@ -223,8 +227,9 @@ export function CrearProyeccionView({
               variant="default"
               disabled={
                 proyeccion.proyeccionActual.length === 0 ||
-                proyeccion.getCreditosSemestreActual() >
-                  proyeccion.LIMITE_CREDITOS
+                (!ignorarRestricciones &&
+                  proyeccion.getCreditosSemestreActual() >
+                    proyeccion.LIMITE_CREDITOS)
               }
             >
               Guardar Proyección
