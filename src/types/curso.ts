@@ -16,7 +16,7 @@ export interface CursoAvance {
   course: string;
   excluded: boolean;
   inscriptionType: string;
-  status: "APROBADO" | "REPROBADO" | "INSCRITO";
+  status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
 }
 
 export interface CursoProyeccion {

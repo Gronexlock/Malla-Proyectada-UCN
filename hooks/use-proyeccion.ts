@@ -69,6 +69,17 @@ export function useCrearProyeccion(
     );
   }
 
+  function cambiarEstadoCurso(
+    codigo: string,
+    nuevoEstado: CursoAvance["status"]
+  ) {
+    setAvance((prev) =>
+      prev.map((curso) =>
+        curso.course === codigo ? { ...curso, status: nuevoEstado } : curso
+      )
+    );
+  }
+
   function guardarProyecciones() {
     const maxId = proyecciones.reduce((max, p) => (p.id > max ? p.id : max), 0);
     const proyeccionesNueva: Proyeccion = {
@@ -95,6 +106,11 @@ export function useCrearProyeccion(
       const proyeccionActual = prev[semestreActual] || [];
       const isCursoSelected = proyeccionActual.some(
         (c) => c.codigo === curso.codigo
+      );
+
+      cambiarEstadoCurso(
+        curso.codigo,
+        isCursoSelected ? "PENDIENTE" : "INSCRITO"
       );
 
       return {

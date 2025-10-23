@@ -29,6 +29,9 @@ export function CrearProyeccionView({
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
 
+  // !
+  console.log(proyeccion.avance);
+
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
@@ -112,7 +115,7 @@ export function CrearProyeccionView({
                                 asignatura={course.asignatura}
                                 codigo={course.codigo}
                                 creditos={course.creditos}
-                                status={alreadySelected ? "PENDIENTE" : status}
+                                status={status}
                                 prereq={course.prereq}
                                 bloqueantes={proyeccion.getCursosBloqueantes(
                                   course
@@ -173,7 +176,7 @@ export function CrearProyeccionView({
             </div>
           </div>
         </div>
-        <div className="mb-4 flex flex-col items-center flex-1 w-full h-full overflow-y-auto">
+        <div className="mb-4 pt-2 flex flex-col items-center flex-1 w-full h-full overflow-y-auto">
           {proyeccion.proyeccionActual.length === 0 && (
             <div className="text-gray-400 text-sm ">
               Selecciona cursos pendientes o reprobados para agregarlos aquí.
