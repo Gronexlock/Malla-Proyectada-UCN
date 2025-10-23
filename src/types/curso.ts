@@ -10,12 +10,12 @@ export interface CursoMalla {
 }
 
 export interface CursoAvance {
-  nrc: string;
-  period: string;
-  student: string;
+  nrc?: string;
+  period?: string;
+  student?: string;
   course: string;
-  excluded: boolean;
-  inscriptionType: string;
+  excluded?: boolean;
+  inscriptionType?: string;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
 }
 

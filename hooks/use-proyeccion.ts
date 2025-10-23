@@ -61,21 +61,23 @@ export function useCrearProyeccion(
     fetchData();
   }, [carrera, rut]);
 
+  function agregarCursoAlAvance(codigo: string) {
+    setAvance((prev) => [...prev, { course: codigo, status: "INSCRITO" }]);
+  }
+
+  function eliminarInscripcion(codigo: string) {
+    const curso = avance.find(
+      (c) => c.course === codigo && c.status === "INSCRITO"
+    );
+    if (curso) {
+      setAvance((prev) => prev.filter((c) => c.course !== codigo));
+    }
+  }
+
   function actualizarAvance() {
     setAvance((prev) =>
       prev.map((curso) =>
         curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
-      )
-    );
-  }
-
-  function cambiarEstadoCurso(
-    codigo: string,
-    nuevoEstado: CursoAvance["status"]
-  ) {
-    setAvance((prev) =>
-      prev.map((curso) =>
-        curso.course === codigo ? { ...curso, status: nuevoEstado } : curso
       )
     );
   }
@@ -108,10 +110,11 @@ export function useCrearProyeccion(
         (c) => c.codigo === curso.codigo
       );
 
-      cambiarEstadoCurso(
-        curso.codigo,
-        isCursoSelected ? "PENDIENTE" : "INSCRITO"
-      );
+      if (isCursoSelected) {
+        eliminarInscripcion(curso.codigo);
+      } else {
+        agregarCursoAlAvance(curso.codigo);
+      }
 
       return {
         ...prev,
