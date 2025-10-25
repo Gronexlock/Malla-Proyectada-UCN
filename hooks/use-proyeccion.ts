@@ -163,6 +163,12 @@ export function useCrearProyeccion(
         [semestreActual]: avance,
       }));
 
+      setProyeccionesPorSemestre((prev) => {
+        const nuevo = { ...prev };
+        delete nuevo[semestreActual];
+        return nuevo;
+      });
+
       const anteriorSemestre = semestres[semestreIndex - 1];
       setAvance(avancePorSemestre[anteriorSemestre] || []);
       setSemestreIndex(semestreIndex - 1);

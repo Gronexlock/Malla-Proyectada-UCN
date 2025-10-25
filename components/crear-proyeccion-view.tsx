@@ -29,9 +29,6 @@ export function CrearProyeccionView({
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
 
-  // !
-  console.log(proyeccion.avance);
-
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
@@ -60,9 +57,10 @@ export function CrearProyeccionView({
                           course.codigo
                         );
                         const canBeSelected =
-                          status !== "APROBADO" &&
-                          !alreadySelected &&
-                          proyeccion.cumplePrerrequisitos(course);
+                          (status === "INSCRITO" && alreadySelected) ||
+                          (status !== "APROBADO" &&
+                            !alreadySelected &&
+                            proyeccion.cumplePrerrequisitos(course));
                         status !== "APROBADO";
                         const bloqueantes =
                           proyeccion.getCursosBloqueantes(course);
