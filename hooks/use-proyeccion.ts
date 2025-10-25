@@ -50,6 +50,13 @@ export function useCrearProyeccion(
           cursosResponse.json(),
           avanceResponse.json(),
         ]);
+
+        const practicas = ["ECIN-08606", "ECIN-08616", "ECIN-08266"];
+        const practicaIdx = cursosData.findIndex((curso: CursoMalla) =>
+          practicas.includes(curso.codigo)
+        );
+        if (practicaIdx !== -1) cursosData.splice(practicaIdx, 1);
+
         setCursos(cursosData);
         setAvance(avanceData);
         actualizarAvance();
