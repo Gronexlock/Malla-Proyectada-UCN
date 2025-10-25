@@ -56,11 +56,7 @@ const items = [
   },
 ];
 
-type AppSidebarProps = {
-  proyecciones: Proyeccion[];
-};
-
-export function AppSidebar({ proyecciones }: AppSidebarProps) {
+export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
