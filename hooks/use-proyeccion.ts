@@ -27,6 +27,9 @@ export function useCrearProyeccion(
     Record<string, CursoMalla[]>
   >({});
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
+  const [avancePorSemestre, setAvancePorSemestre] = useState<
+    Record<string, CursoAvance[]>
+  >({});
   const LIMITE_CREDITOS = 30;
 
   const callbackRef = (node: HTMLDivElement | null) => {
@@ -137,6 +140,11 @@ export function useCrearProyeccion(
   }
 
   function irSiguienteSemestre() {
+    setAvancePorSemestre((prev) => ({
+      ...prev,
+      [semestreActual]: avance,
+    }));
+
     if (semestreIndex < semestres.length - 1) {
       setSemestreIndex(semestreIndex + 1);
     } else {
@@ -145,10 +153,18 @@ export function useCrearProyeccion(
       setSemestres((prev) => [...prev, siguienteSemestre]);
       setSemestreIndex(semestreIndex + 1);
     }
+    actualizarAvance();
   }
 
   function irSemestreAnterior() {
     if (semestreIndex > 0) {
+      setAvancePorSemestre((prev) => ({
+        ...prev,
+        [semestreActual]: avance,
+      }));
+
+      const anteriorSemestre = semestres[semestreIndex - 1];
+      setAvance(avancePorSemestre[anteriorSemestre] || []);
       setSemestreIndex(semestreIndex - 1);
     }
   }
