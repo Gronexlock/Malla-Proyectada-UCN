@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Curso {
+  codigo               String              @id
+  asignatura           String
+  creditos             Int
+  semestre             String
+  ProyeccionSemestre   ProyeccionSemestre? @relation(fields: [proyeccionSemestreId], references: [id])
+  proyeccionSemestreId Int?
+}
+
+model ProyeccionSemestre {
+  id           Int         @id @default(autoincrement())
+  cursos       Curso[]
+  semestre     String
+  Proyeccion   Proyeccion? @relation(fields: [proyeccionId], references: [id])
+  proyeccionId Int?
+}
+
+model Proyeccion {
+  id            Int                  @id @default(autoincrement())
+  proyecciones  ProyeccionSemestre[]
+  estudiante    Estudiante           @relation(fields: [estudianteRut], references: [rut])
+  carrera       Carrera              @relation(fields: [carreraCodigo], references: [codigo])
+  estudianteRut String
+  carreraCodigo String
+}
+
+model Carrera {
+  codigo        String       @id
+  nombre        String
+  catalogo      String
+  Estudiante    Estudiante?  @relation(fields: [estudianteRut], references: [rut])
+  estudianteRut String?
+  Proyeccion    Proyeccion[]
+}
+
+model Estudiante {
+  rut        String       @id
+  carreras   Carrera[]
+  Proyeccion Proyeccion[]
+}
