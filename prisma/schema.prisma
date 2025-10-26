@@ -10,9 +10,6 @@ datasource db {
 
 model Curso {
   codigo       String               @id
-  asignatura   String
-  creditos     Int
-  semestre     String
   proyecciones ProyeccionSemestre[]
 }
 
@@ -27,22 +24,6 @@ model ProyeccionSemestre {
 model Proyeccion {
   id            Int                  @id @default(autoincrement())
   proyecciones  ProyeccionSemestre[]
-  estudiante    Estudiante           @relation(fields: [estudianteRut], references: [rut])
-  carrera       Carrera              @relation(fields: [carreraCodigo], references: [codigo])
   estudianteRut String
   carreraCodigo String
-}
-
-model Carrera {
-  codigo       String       @id
-  nombre       String
-  catalogo     String
-  estudiantes  Estudiante[]
-  proyecciones Proyeccion[]
-}
-
-model Estudiante {
-  rut          String       @id
-  carreras     Carrera[]
-  proyecciones Proyeccion[]
 }
