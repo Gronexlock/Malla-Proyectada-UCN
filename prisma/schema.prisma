@@ -9,20 +9,19 @@ datasource db {
 }
 
 model Curso {
-  codigo               String              @id
-  asignatura           String
-  creditos             Int
-  semestre             String
-  ProyeccionSemestre   ProyeccionSemestre? @relation(fields: [proyeccionSemestreId], references: [id])
-  proyeccionSemestreId Int?
+  codigo       String               @id
+  asignatura   String
+  creditos     Int
+  semestre     String
+  proyecciones ProyeccionSemestre[]
 }
 
 model ProyeccionSemestre {
-  id           Int         @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   cursos       Curso[]
   semestre     String
-  Proyeccion   Proyeccion? @relation(fields: [proyeccionId], references: [id])
-  proyeccionId Int?
+  proyeccion   Proyeccion @relation(fields: [proyeccionId], references: [id])
+  proyeccionId Int
 }
 
 model Proyeccion {
@@ -35,16 +34,15 @@ model Proyeccion {
 }
 
 model Carrera {
-  codigo        String       @id
-  nombre        String
-  catalogo      String
-  Estudiante    Estudiante?  @relation(fields: [estudianteRut], references: [rut])
-  estudianteRut String?
-  Proyeccion    Proyeccion[]
+  codigo       String       @id
+  nombre       String
+  catalogo     String
+  estudiantes  Estudiante[]
+  proyecciones Proyeccion[]
 }
 
 model Estudiante {
-  rut        String       @id
-  carreras   Carrera[]
-  Proyeccion Proyeccion[]
+  rut          String       @id
+  carreras     Carrera[]
+  proyecciones Proyeccion[]
 }
