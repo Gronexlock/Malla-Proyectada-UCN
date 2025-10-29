@@ -14,19 +14,17 @@ export async function POST(req: Request) {
       proyecciones: Record<string, CursoMalla[]>;
     } = await req.json();
 
-    const nuevaProyeccion = await prisma.proyeccionTotal.create({
+    const nuevaProyeccion = await prisma.proyeccion.create({
       data: {
         estudianteRut,
         carreraCodigo,
-        proyeccionesSemestres: {
-          create: Object.entries(proyecciones).map(([semestre, cursos]) => ({
-            semestre,
-            cursos: {
-              connect: cursos.map((curso: { codigo: string }) => ({
-                codigo: curso.codigo,
-              })),
-            },
-          })),
+        cursos: {
+          create: Object.entries(proyecciones).flatMap(([semestre, cursos]) =>
+            cursos.map((curso) => ({
+              cursoCodigo: curso.codigo,
+              semestre,
+            }))
+          ),
         },
       },
     });

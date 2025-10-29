@@ -2,7 +2,6 @@ import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
-import { crearProyeccion } from "@/src/lib/proyeccion";
 
 export function useCrearProyeccion(carrera: Carrera, rut: string) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
