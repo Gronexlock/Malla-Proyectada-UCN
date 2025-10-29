@@ -12,6 +12,7 @@ import { Lock } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { useState } from "react";
+import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -22,8 +23,14 @@ export function CrearProyeccionView({
   carrera,
   rut,
 }: CrearProyeccionViewProps) {
-  const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
-  const proyeccion = useCrearProyeccion(carrera, rut, ignorarRestricciones);
+  const proyeccion = useCrearProyeccion(carrera, rut);
+  const cursosPorNivel = getCursosPorNivel(proyeccion.cursos);
+  const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
+  const [altura, setAltura] = useState(0);
+
+  const callbackRef = (node: HTMLDivElement | null) => {
+    if (node) setAltura(node.offsetHeight);
+  };
 
   if (proyeccion.loading) {
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
@@ -33,10 +40,10 @@ export function CrearProyeccionView({
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
         <div
-          ref={proyeccion.callbackRef}
+          ref={callbackRef}
           className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100"
         >
-          {Object.keys(proyeccion.cursosPorAnio)
+          {Object.keys(cursosPorAnio)
             .sort((a, b) => Number(a) - Number(b))
             .map((anio) => (
               <div key={anio} className="flex flex-col gap-2">
@@ -44,14 +51,14 @@ export function CrearProyeccionView({
                   Año {anio}
                 </div>
                 <div className="flex gap-4">
-                  {proyeccion.cursosPorAnio[Number(anio)].map((level) => (
+                  {cursosPorAnio[Number(anio)].map((level) => (
                     <div key={level} className="flex flex-col gap-2">
                       <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
                         <h2 className="text-center font-semibold">
                           {romanNumerals[level]}
                         </h2>
                       </div>
-                      {proyeccion.cursosPorNivel[level].map((course) => {
+                      {cursosPorNivel[level].map((course) => {
                         const status = proyeccion.getCursoStatus(course.codigo);
                         const alreadySelected = proyeccion.isAlreadySelected(
                           course.codigo
@@ -67,7 +74,7 @@ export function CrearProyeccionView({
                         return (
                           <div className="relative">
                             {bloqueantes.length > 0 &&
-                              !ignorarRestricciones && (
+                              !proyeccion.ignorarRestricciones && (
                                 <HoverCard openDelay={200} closeDelay={200}>
                                   <HoverCardTrigger>
                                     <Lock
@@ -135,8 +142,8 @@ export function CrearProyeccionView({
       <div
         className={`w-64 bg-white shrink-0 flex flex-col border border-l-0 rounded-r-lg items-center text-wrap text-center`}
         style={{
-          maxHeight: `${proyeccion.altura}px`,
-          height: `${proyeccion.altura}px`,
+          maxHeight: `${altura}px`,
+          height: `${altura}px`,
         }}
       >
         <div className="w-full">
@@ -144,8 +151,8 @@ export function CrearProyeccionView({
             <div className="flex space-x-2 items-center w-full border-b justify-center py-4 mb-2">
               <Switch
                 id="ignorar-reestricciones"
-                checked={ignorarRestricciones}
-                onCheckedChange={setIgnorarRestricciones}
+                checked={proyeccion.ignorarRestricciones}
+                onCheckedChange={proyeccion.setIgnorarRestricciones}
               />
               <Label htmlFor="ignorar-reestricciones" className="text-md">
                 Ignorar restricciones
@@ -228,7 +235,7 @@ export function CrearProyeccionView({
               variant="default"
               disabled={
                 proyeccion.proyeccionActual.length === 0 ||
-                (!ignorarRestricciones &&
+                (!proyeccion.ignorarRestricciones &&
                   proyeccion.getCreditosSemestreActual() >
                     proyeccion.LIMITE_CREDITOS)
               }

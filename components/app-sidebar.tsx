@@ -15,7 +15,6 @@ import {
 import LogoutButton from "./logout-button";
 import Link from "next/link";
 import CarreraSelect from "./carrera-select";
-import { Proyeccion } from "@/src/types/proyeccion";
 import {
   Collapsible,
   CollapsibleContent,

@@ -1,6 +1,5 @@
-import { CursoMalla } from "@/src/types/curso";
 import { NextResponse } from "next/server";
-import { formatPrereq } from "@/src/lib/fetchMalla";
+import { formatPrereq } from "@/src/lib/malla";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);

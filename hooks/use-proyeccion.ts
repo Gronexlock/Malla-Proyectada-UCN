@@ -1,23 +1,13 @@
 import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
-import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
-import { useUserStore } from "@/src/store/useUserStore";
-import { Proyeccion } from "@/src/types/proyeccion";
+import { crearProyeccion } from "@/src/lib/proyeccion";
 
-export function useCrearProyeccion(
-  carrera: Carrera,
-  rut: string,
-  ignorarRestricciones: boolean
-) {
+export function useCrearProyeccion(carrera: Carrera, rut: string) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
-  const [altura, setAltura] = useState(0);
-  const cursosPorNivel = getCursosPorNivel(cursos);
-  const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
-  const { proyecciones, setProyecciones } = useUserStore();
   const [semestres, setSemestres] = useState([
     getSemestreSiguiente(getSemestreActual()),
   ]);
@@ -31,10 +21,7 @@ export function useCrearProyeccion(
     Record<string, CursoAvance[]>
   >({});
   const LIMITE_CREDITOS = 30;
-
-  const callbackRef = (node: HTMLDivElement | null) => {
-    if (node) setAltura(node.offsetHeight);
-  };
+  const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,30 +79,30 @@ export function useCrearProyeccion(
     );
   }
 
-  function guardarProyecciones() {
-    const maxId = proyecciones.reduce((max, p) => (p.id > max ? p.id : max), 0);
-    const proyeccionesNueva: Proyeccion = {
-      id: maxId + 1,
-      proyecciones: [],
-    };
-
-    Object.keys(proyeccionesPorSemestre).forEach((semestre) => {
-      proyeccionesNueva.proyecciones.push({
-        semestre,
-        cursos: proyeccionesPorSemestre[semestre].map((curso) => ({
-          codigo: curso.codigo,
-          asignatura: curso.asignatura,
-          creditos: curso.creditos,
-          semestre,
-        })),
+  async function guardarProyecciones() {
+    try {
+      const response = await fetch("/api/proyecciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          estudianteRut: rut,
+          carreraCodigo: carrera.codigo,
+          proyecciones: proyeccionesPorSemestre,
+        }),
       });
-    });
-    setProyecciones([...proyecciones, proyeccionesNueva]);
+
+      if (!response.ok) {
+        throw new Error("Error al guardar las proyecciones");
+      }
+    } catch (error) {
+      console.error("Error guardando proyecciones:", error);
+    }
   }
 
   function toggleCursoProyeccion(curso: CursoMalla) {
     setProyeccionesPorSemestre((prev) => {
-      const proyeccionActual = prev[semestreActual] || [];
       const isCursoSelected = proyeccionActual.some(
         (c) => c.codigo === curso.codigo
       );
@@ -219,22 +206,11 @@ export function useCrearProyeccion(
 
   return {
     cursos,
-    avance,
     loading,
-    altura,
-    setAltura,
-    cursosPorNivel,
-    cursosPorAnio,
-    proyecciones,
-    setProyecciones,
-    semestres,
     semestreIndex,
     semestreActual,
-    proyeccionesPorSemestre,
-    setProyeccionesPorSemestre,
     proyeccionActual,
     LIMITE_CREDITOS,
-    callbackRef,
     guardarProyecciones,
     toggleCursoProyeccion,
     isAlreadySelected,
@@ -244,5 +220,7 @@ export function useCrearProyeccion(
     cumplePrerrequisitos,
     getCursosBloqueantes,
     getCursoStatus,
+    ignorarRestricciones,
+    setIgnorarRestricciones,
   };
 }
