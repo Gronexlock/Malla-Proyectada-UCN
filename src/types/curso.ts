@@ -18,8 +18,3 @@ export interface CursoAvance {
   inscriptionType?: string;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
 }
-
-export interface CursoProyeccion {
-  codigo: string;
-  semestre: string;
-}
