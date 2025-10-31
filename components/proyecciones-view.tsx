@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, Info, Plus, Download } from "lucide-react";
+import { Trash2, Info, Plus } from "lucide-react";
 import { Proyeccion, ProyeccionBySemestre } from "@/src/types/proyeccion";
+import Link from "next/link";
 
 type ProyeccionesViewProps = {
   rut: string;
@@ -37,16 +38,15 @@ export default function ProyeccionesView({
         method: "DELETE",
       });
 
-      if (response.ok) {
-        alert("Proyección eliminada exitosamente");
-        await loadProyeccionesFromDB();
-        if (selectedProyeccion?.id === id) setSelectedProyeccion(undefined);
-      } else {
-        throw new Error("Error al eliminar");
+      if (!response.ok) {
+        alert("Error al eliminar proyección");
+        return;
       }
+
+      alert("Proyección eliminada correctamente");
+      loadProyeccionesFromDB();
     } catch (error) {
-      console.error("Error eliminando proyección:", error);
-      alert("Error al eliminar la proyección");
+      alert("Error al eliminar proyección");
     }
   }
 
@@ -72,21 +72,6 @@ export default function ProyeccionesView({
     } finally {
       setLoading(false);
     }
-  }
-
-  function handleCreateNew() {
-    router.push("/proyecciones/nueva");
-  }
-
-  function handleExport(proyeccion: ProyeccionBySemestre) {
-    const dataStr = JSON.stringify(proyeccion, null, 2);
-    const dataBlob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `proyeccion-${proyeccion.id}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
   }
 
   function groupProyeccionBySemestres(proyeccion: Proyeccion) {
@@ -125,16 +110,19 @@ export default function ProyeccionesView({
             <h3 className="text-lg font-semibold text-blue-800">
               Mis Proyecciones
             </h3>
-            <button
-              onClick={handleCreateNew}
-              className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition-colors"
-              title="Crear nueva proyección"
-            >
-              <Plus size={16} />
-            </button>
+            <Link href="/proyecciones/nueva">
+              <button
+                className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition-colors"
+                title="Crear nueva proyección"
+              >
+                <Plus size={16} />
+              </button>
+            </Link>
           </div>
           <p className="text-sm text-blue-600 mt-1">
-            {proyecciones.length} proyección(es) guardada(s)
+            {proyecciones.length === 1
+              ? "1 proyección guardada"
+              : `${proyecciones.length} proyecciones guardadas`}
           </p>
         </div>
 
@@ -166,17 +154,6 @@ export default function ProyeccionesView({
 
                 <div className="flex items-center gap-1">
                   <button
-                    className="hover:bg-green-100 p-2 rounded-full transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleExport(proyeccion);
-                    }}
-                    title="Exportar proyección"
-                  >
-                    <Download size={14} className="text-green-600" />
-                  </button>
-
-                  <button
                     className="hover:bg-blue-100 p-2 rounded-full transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -205,12 +182,11 @@ export default function ProyeccionesView({
               <p className="text-zinc-500 italic mb-4">
                 No hay proyecciones guardadas.
               </p>
-              <button
-                onClick={handleCreateNew}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors"
-              >
-                Crear primera proyección
-              </button>
+              <Link href="/proyecciones/nueva">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
+                  Crear primera proyección
+                </button>
+              </Link>
             </div>
           )}
         </ul>

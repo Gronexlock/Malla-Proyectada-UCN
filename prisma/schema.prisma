@@ -23,7 +23,7 @@ model Proyeccion {
 model ProyeccionOnCurso {
   curso        Curso      @relation(fields: [cursoCodigo], references: [codigo])
   cursoCodigo  String
-  proyeccion   Proyeccion @relation(fields: [proyeccionId], references: [id])
+  proyeccion   Proyeccion @relation(fields: [proyeccionId], references: [id], onDelete: Cascade)
   proyeccionId Int
   semestre     String
 
