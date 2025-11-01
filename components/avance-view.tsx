@@ -18,7 +18,7 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!carrera || !rut) return;
+      if (!carrera.codigo || !carrera.catalogo || !rut) return;
       setLoading(true);
 
       try {
@@ -93,16 +93,18 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
                       </h2>
                     </div>
 
-                    {cursosPorNivel[level].map((course) => (
-                      <CursoAvanceCard
-                        key={course.codigo}
-                        asignatura={course.asignatura}
-                        codigo={course.codigo}
-                        creditos={course.creditos}
-                        status={getCursoStatus(course.codigo)}
-                        prereq={course.prereq}
-                      />
-                    ))}
+                    {cursosPorNivel[level].map((course) => {
+                      return (
+                        <CursoAvanceCard
+                          key={course.codigo}
+                          asignatura={course.asignatura}
+                          codigo={course.codigo}
+                          creditos={course.creditos}
+                          status={getCursoStatus(course.codigo)}
+                          prereq={course.prereq}
+                        />
+                      );
+                    })}
                   </div>
                 ))}
               </div>

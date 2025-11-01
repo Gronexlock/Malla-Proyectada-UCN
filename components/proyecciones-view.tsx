@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Trash2, Info, Plus } from "lucide-react";
 import { Proyeccion, ProyeccionBySemestre } from "@/src/types/proyeccion";
 import Link from "next/link";
+import { groupProyeccionBySemestres } from "@/src/utils/proyeccion";
 
 type ProyeccionesViewProps = {
   rut: string;
@@ -72,25 +73,6 @@ export default function ProyeccionesView({
     } finally {
       setLoading(false);
     }
-  }
-
-  function groupProyeccionBySemestres(proyeccion: Proyeccion) {
-    const { id, estudianteRut, carreraCodigo, cursos } = proyeccion;
-
-    const semestres = cursos.reduce((acc, curso) => {
-      const { semestre, cursoCodigo } = curso;
-
-      const semestreExistente = acc.find((s) => s.semestre === semestre);
-      if (!semestreExistente) {
-        acc.push({ semestre, cursos: [{ cursoCodigo }] });
-      } else {
-        semestreExistente.cursos.push({ cursoCodigo });
-      }
-
-      return acc;
-    }, [] as { semestre: string; cursos: { cursoCodigo: string }[] }[]);
-
-    return { id, estudianteRut, carreraCodigo, semestres };
   }
 
   // TODO: hacer skeleton

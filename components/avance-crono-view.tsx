@@ -3,7 +3,7 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
 import { AvanceCronoSkeleton } from "./skeletons/avance-crono-skeleton";
-import { formatPeriod } from "@/src/utils/formatPeriod";
+import { formatPeriod } from "@/src/utils/semestre";
 import { CursoCronoCard } from "./curso-crono-card";
 
 type AvanceCronoViewProps = {
@@ -52,10 +52,10 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
   function agruparPorSemestre(cursos: CursoAvance[]) {
     return cursos.reduce<Record<string, CursoAvance[]>>((acc, curso) => {
       const periodo = curso.period;
-      if (!acc[periodo]) {
-        acc[periodo] = [];
+      if (!acc[periodo ?? ""]) {
+        acc[periodo ?? ""] = [];
       }
-      acc[periodo].push(curso);
+      acc[periodo ?? ""].push(curso);
       return acc;
     }, {});
   }
@@ -78,7 +78,7 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
                 {cursosPorSemestre[semestre].map((curso) => (
                   <CursoCronoCard
                     key={curso.nrc}
-                    nrc={curso.nrc}
+                    nrc={curso.nrc ?? ""}
                     codigo={curso.course}
                     asignatura={
                       cursos.find((c) => c.codigo === curso.course)
