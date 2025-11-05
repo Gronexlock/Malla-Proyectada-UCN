@@ -3,6 +3,7 @@
 import prisma from "@/src/lib/prisma";
 
 export async function GET() {
+  return;
   try {
     const [res1, res2, res3] = await Promise.all([
       fetch(`https://losvilos.ucn.cl/hawaii/api/mallas?8606-202320`, {

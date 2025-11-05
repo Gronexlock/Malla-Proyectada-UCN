@@ -9,21 +9,23 @@ datasource db {
 }
 
 model Curso {
-  codigo       String               @id
-  proyecciones ProyeccionSemestre[]
-}
-
-model ProyeccionSemestre {
-  id           Int        @id @default(autoincrement())
-  cursos       Curso[]
-  semestre     String
-  proyeccion   Proyeccion @relation(fields: [proyeccionId], references: [id])
-  proyeccionId Int
+  codigo       String              @id
+  proyecciones ProyeccionOnCurso[]
 }
 
 model Proyeccion {
-  id            Int                  @id @default(autoincrement())
-  proyecciones  ProyeccionSemestre[]
+  id            Int                 @id @default(autoincrement())
   estudianteRut String
   carreraCodigo String
+  cursos        ProyeccionOnCurso[]
+}
+
+model ProyeccionOnCurso {
+  curso        Curso      @relation(fields: [cursoCodigo], references: [codigo])
+  cursoCodigo  String
+  proyeccion   Proyeccion @relation(fields: [proyeccionId], references: [id], onDelete: Cascade)
+  proyeccionId Int
+  semestre     String
+
+  @@id([cursoCodigo, proyeccionId])
 }

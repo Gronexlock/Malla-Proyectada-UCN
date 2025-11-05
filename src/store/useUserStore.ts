@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Carrera } from "../types/carrera";
-import { Proyeccion } from "../types/proyeccion";
 
 interface UserState {
   rut: string;

@@ -1,80 +1,81 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import prisma from "@/src/lib/prisma";
+import { CursoMalla } from "@/src/types/curso";
+import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+// TODO: implementar autenticación
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const estudianteRut = searchParams.get("rut");
+    const carreraCodigo = searchParams.get("carrera");
+
+    if (!estudianteRut || !carreraCodigo) {
+      return NextResponse.json(
+        { error: "Faltan parámetros obligatorios" },
+        { status: 400 }
+      );
+    }
+
     const proyecciones = await prisma.proyeccion.findMany({
-      include: {
-        semestres: {
-          include: {
-            cursos: true
-          }
-        }
+      where: {
+        estudianteRut,
+        carreraCodigo,
       },
-      orderBy: {
-        id: 'desc'
-      }
+      include: {
+        cursos: true,
+      },
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      data: proyecciones,
-      count: proyecciones.length 
-    });
+    if (proyecciones.length === 0) {
+      return NextResponse.json(
+        { error: "No se encontraron proyecciones" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(proyecciones);
   } catch (error) {
-    console.error('Error fetching proyecciones:', error);
+    console.error("Error al obtener las proyecciones:", error);
     return NextResponse.json(
-      { success: false, error: 'Error interno del servidor' },
+      { error: "Error al obtener las proyecciones" },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const { estudianteRut, carreraCodigo, semestres } = body;
+    const {
+      estudianteRut,
+      carreraCodigo,
+      proyecciones,
+    }: {
+      estudianteRut: string;
+      carreraCodigo: string;
+      proyecciones: Record<string, CursoMalla[]>;
+    } = await req.json();
 
-    if (!estudianteRut || !carreraCodigo) {
-      return NextResponse.json(
-        { success: false, error: 'Estudiante RUT y código de carrera son requeridos' },
-        { status: 400 }
-      );
-    }
-
-    const proyeccion = await prisma.proyeccion.create({
+    const nuevaProyeccion = await prisma.proyeccion.create({
       data: {
         estudianteRut,
         carreraCodigo,
-        semestres: {
-          create: semestres.map((semestre: any) => ({
-            semestre: semestre.semestre,
-            cursos: {
-              connect: semestre.cursos.map((codigo: string) => ({ codigo }))
-            }
-          }))
-        }
+        cursos: {
+          create: Object.entries(proyecciones).flatMap(([semestre, cursos]) =>
+            cursos.map((curso) => ({
+              cursoCodigo: curso.codigo,
+              semestre,
+            }))
+          ),
+        },
       },
-      include: {
-        semestres: {
-          include: {
-            cursos: true
-          }
-        }
-      }
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      data: proyeccion,
-      message: 'Proyección creada exitosamente' 
-    }, { status: 201 });
+    return NextResponse.json(nuevaProyeccion);
   } catch (error) {
-    console.error('Error creating proyeccion:', error);
+    console.error("Error al crear la proyección:", error);
     return NextResponse.json(
-      { success: false, error: 'Error interno del servidor' },
+      { error: "Error al crear la proyección" },
       { status: 500 }
     );
   }
