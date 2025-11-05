@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
+import { requireAuth } from "@/lib/apiAuth";
 
 export async function GET(req: Request) {
+  // 🔐 Verificar autenticación basada en sesión
+  const session = await requireAuth(req);
+  if ("error" in session) return session; // si devuelve respuesta de error, la retornamos directamente
+
   const { searchParams } = new URL(req.url);
   const rut = searchParams.get("rut");
   const codCarrera = searchParams.get("codCarrera");

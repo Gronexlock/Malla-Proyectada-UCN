@@ -1,10 +1,13 @@
 import prisma from "@/src/lib/prisma";
 import { CursoMalla } from "@/src/types/curso";
 import { NextResponse } from "next/server";
-
-// TODO: implementar autenticación
+import { requireAuth } from "@/lib/apiAuth"; // 🔐 import del helper
 
 export async function GET(req: Request) {
+  // Verificar autenticación antes de continuar
+  const session = await requireAuth(req);
+  if ("error" in session) return session;
+
   try {
     const { searchParams } = new URL(req.url);
     const estudianteRut = searchParams.get("rut");
@@ -45,6 +48,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // Verificar autenticación antes de crear
+  const session = await requireAuth(req);
+  if ("error" in session) return session;
+
   try {
     const {
       estudianteRut,
