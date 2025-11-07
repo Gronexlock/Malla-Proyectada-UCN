@@ -1,18 +1,19 @@
 import prisma from "@/src/lib/prisma";
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/apiAuth"; // 🔐 Importar helper de autenticación
+import { requireAuth } from "@/lib/apiAuth"; // Helper para verificar JWT y sesión
 
+// GET /api/proyecciones/[id]
+// Obtiene una proyección por su ID
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  // 🔒 Verificar autenticación antes de continuar
+  //  Verificar autenticación
   const session = await requireAuth(req);
   if ("error" in session) return session;
 
   try {
-    const { id } = params;
-    const proyeccionId = parseInt(id, 10);
+    const proyeccionId = parseInt(params.id, 10);
 
     if (isNaN(proyeccionId) || proyeccionId <= 0) {
       return NextResponse.json(
@@ -43,17 +44,18 @@ export async function GET(
   }
 }
 
+// DELETE /api/proyecciones/[id]
+// Elimina una proyección por su ID
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  // 🔒 Verificar autenticación antes de eliminar
+  //  Verificar autenticación
   const session = await requireAuth(req);
   if ("error" in session) return session;
 
   try {
-    const { id } = params;
-    const proyeccionId = parseInt(id, 10);
+    const proyeccionId = parseInt(params.id, 10);
 
     if (isNaN(proyeccionId) || proyeccionId <= 0) {
       return NextResponse.json(
@@ -62,16 +64,22 @@ export async function DELETE(
       );
     }
 
-    const proyeccion = await prisma.proyeccion.delete({
+    //  Verificar que exista antes de eliminar
+    const existe = await prisma.proyeccion.findUnique({
       where: { id: proyeccionId },
     });
 
-    if (!proyeccion) {
+    if (!existe) {
       return NextResponse.json(
         { error: "Proyección no encontrada" },
         { status: 404 }
       );
     }
+
+    //  Eliminar la proyección
+    await prisma.proyeccion.delete({
+      where: { id: proyeccionId },
+    });
 
     return NextResponse.json(
       { message: "Proyección eliminada correctamente" },
@@ -85,3 +93,4 @@ export async function DELETE(
     );
   }
 }
+

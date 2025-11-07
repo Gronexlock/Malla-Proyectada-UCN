@@ -1,7 +1,11 @@
 import * as jose from "jose";
 
 export async function getUserSession(req: Request) {
-  const token = req.headers.get("cookie")?.split("token=")[1]?.split(";")[0];
+  const cookieHeader = req.headers.get("cookie");
+  const token = cookieHeader
+    ?.split("; ")
+    .find((c) => c.startsWith("token="))
+    ?.split("=")[1];
 
   if (!token) return null;
 
@@ -11,9 +15,11 @@ export async function getUserSession(req: Request) {
       new TextEncoder().encode(process.env.JWT_SECRET)
     );
 
-    return payload; // por ejemplo { email: "...", rut: "...", rol: "..."}
-  } catch (err) {
-    console.error("Token inválido:", err);
+    return {
+      email: payload.email as string,
+      rut: payload.rut as string, // 👈 agregado
+    };
+  } catch {
     return null;
   }
 }

@@ -1,12 +1,11 @@
 import prisma from "@/src/lib/prisma";
 import { CursoMalla } from "@/src/types/curso";
 import { NextResponse } from "next/server";
-import { requireAuth } from "@/lib/apiAuth"; // 🔐 import del helper
+import { requireAuth } from "@/lib/apiAuth";
 
 export async function GET(req: Request) {
-  // Verificar autenticación antes de continuar
   const session = await requireAuth(req);
-  if ("error" in session) return session;
+  if (!("rut" in session)) return session;
 
   try {
     const { searchParams } = new URL(req.url);
@@ -17,6 +16,14 @@ export async function GET(req: Request) {
       return NextResponse.json(
         { error: "Faltan parámetros obligatorios" },
         { status: 400 }
+      );
+    }
+
+    // 🔒 Validación de control de acceso
+    if (session.rut !== estudianteRut) {
+      return NextResponse.json(
+        { error: "Acceso denegado: no puedes ver proyecciones de otro usuario" },
+        { status: 403 }
       );
     }
 
@@ -48,9 +55,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  // Verificar autenticación antes de crear
   const session = await requireAuth(req);
-  if ("error" in session) return session;
+  if (!("rut" in session)) return session;
 
   try {
     const {
@@ -62,6 +68,14 @@ export async function POST(req: Request) {
       carreraCodigo: string;
       proyecciones: Record<string, CursoMalla[]>;
     } = await req.json();
+
+    // 🔒 Validación también al crear
+    if (session.rut !== estudianteRut) {
+      return NextResponse.json(
+        { error: "No puedes crear proyecciones para otro usuario" },
+        { status: 403 }
+      );
+    }
 
     const nuevaProyeccion = await prisma.proyeccion.create({
       data: {
