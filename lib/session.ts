@@ -17,9 +17,11 @@ export async function getUserSession(req: Request) {
 
     return {
       email: payload.email as string,
-      rut: payload.rut as string, // 👈 agregado
+      rut: payload.rut as string, 
     };
-  } catch {
+  } catch (err) {
+      console.error("JWT verification failed:", err);
     return null;
-  }
+}
+
 }
