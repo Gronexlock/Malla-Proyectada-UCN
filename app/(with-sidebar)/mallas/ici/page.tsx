@@ -7,7 +7,7 @@ export default async function Page() {
 
   return (
     <div className="p-4">
-      <MallaView cursos={malla} />
+      <MallaView cursos={malla} codigoCarrera="8616" />
     </div>
   );
 }

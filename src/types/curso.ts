@@ -9,12 +9,14 @@ export interface CursoMalla {
   }[];
 }
 
+export type Status = "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
+
 export interface CursoAvance {
-  nrc?: string;
-  period?: string;
-  student?: string;
+  nrc: string;
+  period: string;
+  student: string;
   course: string;
-  excluded?: boolean;
-  inscriptionType?: string;
-  status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
+  excluded: boolean;
+  inscriptionType: string;
+  status: Status;
 }

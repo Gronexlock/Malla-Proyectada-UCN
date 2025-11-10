@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
 import { AvanceCronoSkeleton } from "./skeletons/avance-crono-skeleton";
 import { formatPeriod } from "@/src/utils/semestre";
-import { CursoCronoCard } from "./curso-crono-card";
+import { agruparPorSemestre } from "@/src/utils/curso";
+import { CursoCard } from "./curso-card";
 
 type AvanceCronoViewProps = {
   carrera: Carrera;
@@ -15,6 +16,7 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
+  const cursosPorSemestre = agruparPorSemestre(avance);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,19 +51,6 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
     );
   }
 
-  function agruparPorSemestre(cursos: CursoAvance[]) {
-    return cursos.reduce<Record<string, CursoAvance[]>>((acc, curso) => {
-      const periodo = curso.period;
-      if (!acc[periodo ?? ""]) {
-        acc[periodo ?? ""] = [];
-      }
-      acc[periodo ?? ""].push(curso);
-      return acc;
-    }, {});
-  }
-
-  const cursosPorSemestre = agruparPorSemestre(avance);
-
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4 pb-6 pr-6">
@@ -76,15 +65,15 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
               </div>
               <div className="flex flex-col gap-2">
                 {cursosPorSemestre[semestre].map((curso) => (
-                  <CursoCronoCard
+                  <CursoCard
                     key={curso.nrc}
-                    nrc={curso.nrc ?? ""}
+                    nrc={curso.nrc}
                     codigo={curso.course}
+                    status={curso.status}
                     asignatura={
                       cursos.find((c) => c.codigo === curso.course)
                         ?.asignatura || ""
                     }
-                    status={curso.status}
                   />
                 ))}
               </div>

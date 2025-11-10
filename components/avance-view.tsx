@@ -1,10 +1,17 @@
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import { CursoAvance, CursoMalla, Status } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { useState, useEffect } from "react";
-import { CursoAvanceCard } from "./curso-avance-card";
+import { CursoCard } from "./curso-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
 import { Carrera } from "@/src/types/carrera";
+import {
+  getCursosPorAnio,
+  getCursosPorNivel,
+  CursosPorAnio,
+  CursosPorNivel,
+  getCursoStatus,
+} from "@/src/utils/curso";
 
 type AvanceViewProps = {
   carrera: Carrera;
@@ -15,6 +22,8 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const [avance, setAvance] = useState<CursoAvance[]>([]);
   const [loading, setLoading] = useState(true);
+  const cursosPorNivel: CursosPorNivel = getCursosPorNivel(cursos);
+  const cursosPorAnio: CursosPorAnio = getCursosPorAnio(cursosPorNivel);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,33 +56,6 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
 
-  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
-    const cursoAvance = avance.filter((curso) => curso.course === codigo);
-    if (cursoAvance.length === 0) return "PENDIENTE";
-    if (cursoAvance.length === 1) return cursoAvance[0].status;
-    else {
-      const statuses = cursoAvance.map((curso) => curso.status);
-      if (statuses.includes("APROBADO")) return "APROBADO";
-      if (statuses.includes("INSCRITO")) return "INSCRITO";
-      return "REPROBADO";
-    }
-  }
-
-  const cursosPorNivel: Record<number, CursoMalla[]> = {};
-  cursos.forEach((curso) => {
-    if (!cursosPorNivel[curso.nivel]) {
-      cursosPorNivel[curso.nivel] = [];
-    }
-    cursosPorNivel[curso.nivel].push(curso);
-  });
-
-  const cursosPorAnio: Record<number, number[]> = {};
-  Object.keys(cursosPorNivel).forEach((level) => {
-    const anio = Math.ceil(Number(level) / 2);
-    if (!cursosPorAnio[anio]) cursosPorAnio[anio] = [];
-    cursosPorAnio[anio].push(Number(level));
-  });
-
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4">
@@ -95,13 +77,10 @@ export function AvanceView({ carrera, rut }: AvanceViewProps) {
 
                     {cursosPorNivel[level].map((course) => {
                       return (
-                        <CursoAvanceCard
+                        <CursoCard
                           key={course.codigo}
-                          asignatura={course.asignatura}
-                          codigo={course.codigo}
-                          creditos={course.creditos}
-                          status={getCursoStatus(course.codigo)}
-                          prereq={course.prereq}
+                          {...course}
+                          status={getCursoStatus(course.codigo, avance)}
                         />
                       );
                     })}
