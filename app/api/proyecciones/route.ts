@@ -1,26 +1,48 @@
 import prisma from "@/src/lib/prisma";
 import { CursoMalla } from "@/src/types/curso";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import { ca } from "zod/v4/locales";
 
 // TODO: implementar autenticación
+
+const getQuerySchema = z.object({
+  rut: z.string().trim().min(1, "El RUT es obligatorio"),
+  carrera: z.string().trim().min(1, "El código de carrera es obligatorio"),
+});
+
+const cursoSchema = z.object({
+  codigo: z.string().trim().min(1, "El código del curso es obligatorio"),
+});
+
+const postBodySchema = z.object({
+  estudianteRut: z.string().trim().min(1, "El RUT es obligatorio"),
+  carreraCodigo: z.string().trim().min(1, "El código de carrera es obligatorio"),
+  proyecciones: z.record(z.string(),z.array(cursoSchema)).refine((obj) => Object.keys(obj).length > 0, {
+    message: "Debe haber al menos una proyección",
+  }),
+});
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const estudianteRut = searchParams.get("rut");
-    const carreraCodigo = searchParams.get("carrera");
+    const estudianteRut = searchParams.get("rut") ?? "";
+    const carreraCodigo = searchParams.get("carrera") ?? "";
 
-    if (!estudianteRut || !carreraCodigo) {
-      return NextResponse.json(
-        { error: "Faltan parámetros obligatorios" },
-        { status: 400 }
+    const parsed = getQuerySchema.safeParse({rut: estudianteRut, carrera: carreraCodigo});
+    if (!parsed.success) {
+      const firstError = parsed.error.issues?.[0]?.message || "Datos inválidos";
+      return NextResponse.json({ error: firstError }, { status: 400 }
       );
     }
 
+    const { rut, carrera } = parsed.data;
+
+
     const proyecciones = await prisma.proyeccion.findMany({
       where: {
-        estudianteRut,
-        carreraCodigo,
+        estudianteRut: rut,
+        carreraCodigo: carrera,
       },
       include: {
         cursos: true,
@@ -46,15 +68,17 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const {
-      estudianteRut,
-      carreraCodigo,
-      proyecciones,
-    }: {
-      estudianteRut: string;
-      carreraCodigo: string;
-      proyecciones: Record<string, CursoMalla[]>;
-    } = await req.json();
+
+    const body = await req.json();
+    const parsed = postBodySchema.safeParse(body);
+
+    if (!parsed.success) {
+      const firstError = parsed.error.issues?.[0]?.message || "Datos inválidos";
+      return NextResponse.json({ error: firstError }, { status: 400 });
+    }
+    
+    const { estudianteRut, carreraCodigo, proyecciones } = parsed.data;
+
 
     const nuevaProyeccion = await prisma.proyeccion.create({
       data: {
