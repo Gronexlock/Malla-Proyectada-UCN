@@ -1,13 +1,12 @@
 import { MallaView } from "@/components/malla-view";
-import { CursoMalla } from "@/src/types/curso";
-import { fetchMalla } from "@/src/lib/malla";
+import { fetchMalla } from "@/src/actions/malla";
 
 export default async function Page() {
-  const malla: CursoMalla[] = await fetchMalla("8616", "202310");
+  const malla = await fetchMalla("8616", "202310");
 
-  return (
-    <div className="p-4">
-      <MallaView cursos={malla} />
-    </div>
-  );
+  if (malla.length === 0) {
+    return "Error";
+  }
+
+  return <MallaView cursos={malla} />;
 }

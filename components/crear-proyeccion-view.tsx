@@ -11,7 +11,7 @@ import { Lock } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
-import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/cursoUtils";
+import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
 import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 

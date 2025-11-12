@@ -1,5 +1,5 @@
 import { CursoMalla } from "@/src/types/curso";
-import { formatPrereq } from "../utils/cursoUtils";
+import { formatPrereq } from "../utils/curso";
 
 export async function fetchMalla(codigo: string, catalogo: string) {
   const url = `https://losvilos.ucn.cl/hawaii/api/mallas?${codigo}-${catalogo}`;

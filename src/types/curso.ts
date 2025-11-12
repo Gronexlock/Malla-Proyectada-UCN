@@ -1,13 +1,7 @@
-export interface CursoMalla {
-  codigo: string;
-  asignatura: string;
-  creditos: number;
-  nivel: number;
-  prereq: {
-    codigo: string;
-    asignatura: string;
-  }[];
-}
+import z from "zod";
+import { CursoMallaSchema } from "@/src/schemas/malla";
+
+export type CursoMalla = z.infer<typeof CursoMallaSchema>;
 
 export interface CursoAvance {
   nrc?: string;
