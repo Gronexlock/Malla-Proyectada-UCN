@@ -57,7 +57,7 @@ export default function ProyeccionesView({
 
     try {
       const response = await fetch(
-        `/api/proyecciones?rut=${rut}&carrera=${carrera}`
+        `/api/proyecciones?rut=${rut}&carrera=${carrera}&page=1`
       );
 
       if (!response.ok) {

@@ -6,13 +6,14 @@ import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { MoveLeft, MoveRight } from "lucide-react";
-import { useCrearProyeccion } from "@/hooks/use-proyeccion";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Lock } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { useState } from "react";
-import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/curso";
+import { useEffect, useState } from "react";
+import { getCursosPorAnio, getCursosPorNivel } from "@/src/utils/cursoUtils";
+import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
 
 type CrearProyeccionViewProps = {
   carrera: Carrera;
@@ -23,16 +24,213 @@ export function CrearProyeccionView({
   carrera,
   rut,
 }: CrearProyeccionViewProps) {
-  const proyeccion = useCrearProyeccion(carrera, rut);
-  const cursosPorNivel = getCursosPorNivel(proyeccion.cursos);
-  const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
   const [altura, setAltura] = useState(0);
+  const [cursos, setCursos] = useState<CursoMalla[]>([]);
+  const cursosPorNivel = getCursosPorNivel(cursos);
+  const cursosPorAnio = getCursosPorAnio(cursosPorNivel);
+  const [avance, setAvance] = useState<CursoAvance[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [semestres, setSemestres] = useState([
+    getSemestreSiguiente(getSemestreActual()),
+  ]);
+  const [semestreIndex, setSemestreIndex] = useState(0);
+  const semestreActual = semestres[semestreIndex];
+  const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
+    Record<string, CursoMalla[]>
+  >({});
+  const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
+  const [avancePorSemestre, setAvancePorSemestre] = useState<
+    Record<string, CursoAvance[]>
+  >({});
+  const LIMITE_CREDITOS = 30;
+  const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!carrera || !rut) return;
+      setLoading(true);
+
+      try {
+        const [cursosResponse, avanceResponse] = await Promise.all([
+          fetch(`/api/mallas/?codigo=${carrera.codigo}-${carrera.catalogo}`),
+          fetch(`/api/avance/?rut=${rut}&codCarrera=${carrera.codigo}`),
+        ]);
+        const [cursosData, avanceData] = await Promise.all([
+          cursosResponse.json(),
+          avanceResponse.json(),
+        ]);
+
+        const practicas = ["ECIN-08606", "ECIN-08616", "ECIN-08266"];
+        const practicaIdx = cursosData.findIndex((curso: CursoMalla) =>
+          practicas.includes(curso.codigo)
+        );
+        if (practicaIdx !== -1) cursosData.splice(practicaIdx, 1);
+
+        setCursos(cursosData);
+        setAvance(avanceData);
+        actualizarAvance();
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setCursos([]);
+        setAvance([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [carrera, rut]);
+
+  function agregarCursoAlAvance(codigo: string) {
+    setAvance((prev) => [...prev, { course: codigo, status: "INSCRITO" }]);
+  }
+
+  function eliminarInscripcion(codigo: string) {
+    const curso = avance.find(
+      (c) => c.course === codigo && c.status === "INSCRITO"
+    );
+    if (curso) {
+      setAvance((prev) => prev.filter((c) => c.course !== codigo));
+    }
+  }
+
+  function actualizarAvance() {
+    setAvance((prev) =>
+      prev.map((curso) =>
+        curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
+      )
+    );
+  }
+
+  async function guardarProyecciones() {
+    try {
+      const response = await fetch("/api/proyecciones", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          estudianteRut: rut,
+          carreraCodigo: carrera.codigo,
+          proyecciones: proyeccionesPorSemestre,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al guardar las proyecciones");
+      }
+    } catch (error) {
+      console.error("Error guardando proyecciones:", error);
+    }
+  }
+
+  function toggleCursoProyeccion(curso: CursoMalla) {
+    setProyeccionesPorSemestre((prev) => {
+      const isCursoSelected = proyeccionActual.some(
+        (c) => c.codigo === curso.codigo
+      );
+
+      if (isCursoSelected) {
+        eliminarInscripcion(curso.codigo);
+      } else {
+        agregarCursoAlAvance(curso.codigo);
+      }
+
+      return {
+        ...prev,
+        [semestreActual]: isCursoSelected
+          ? proyeccionActual.filter((c) => c.codigo !== curso.codigo)
+          : [...proyeccionActual, curso],
+      };
+    });
+  }
+
+  function isAlreadySelected(codigo: string): boolean {
+    for (let i = 0; i < semestres.length; i++) {
+      const semestre = semestres[i];
+      const proyeccion = proyeccionesPorSemestre[semestre] || [];
+      if (proyeccion.some((c) => c.codigo === codigo)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function irSiguienteSemestre() {
+    setAvancePorSemestre((prev) => ({
+      ...prev,
+      [semestreActual]: avance,
+    }));
+
+    if (semestreIndex < semestres.length - 1) {
+      setSemestreIndex(semestreIndex + 1);
+    } else {
+      const ultimoSemestre = semestres[semestres.length - 1];
+      const siguienteSemestre = getSemestreSiguiente(ultimoSemestre);
+      setSemestres((prev) => [...prev, siguienteSemestre]);
+      setSemestreIndex(semestreIndex + 1);
+    }
+    actualizarAvance();
+  }
+
+  function irSemestreAnterior() {
+    if (semestreIndex > 0) {
+      setAvancePorSemestre((prev) => ({
+        ...prev,
+        [semestreActual]: avance,
+      }));
+
+      setProyeccionesPorSemestre((prev) => {
+        const nuevo = { ...prev };
+        delete nuevo[semestreActual];
+        return nuevo;
+      });
+
+      const anteriorSemestre = semestres[semestreIndex - 1];
+      setAvance(avancePorSemestre[anteriorSemestre] || []);
+      setSemestreIndex(semestreIndex - 1);
+    }
+  }
+
+  function getCreditosSemestreActual(): number {
+    return proyeccionActual.reduce((total, curso) => total + curso.creditos, 0);
+  }
+
+  function cumplePrerrequisitos(curso: CursoMalla): boolean {
+    if (!curso.prereq || curso.prereq.length === 0 || ignorarRestricciones)
+      return true;
+    return curso.prereq.every((pre) =>
+      avance.some((a) => a.course === pre.codigo && a.status === "APROBADO")
+    );
+  }
+
+  function getCursosBloqueantes(curso: CursoMalla) {
+    if (getCursoStatus(curso.codigo) === "APROBADO") return [];
+    const aprobados = avance
+      .filter((a) => a.status === "APROBADO")
+      .map((a) => a.course);
+    return curso.prereq.filter((pre) => !aprobados.includes(pre.codigo));
+  }
+
+  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
+    const cursoAvance = avance.filter((curso) => curso.course === codigo);
+    if (cursoAvance.length === 0) {
+      return "PENDIENTE";
+    }
+    const statuses = cursoAvance.map((curso) => curso.status);
+    if (statuses.includes("APROBADO")) {
+      return "APROBADO";
+    }
+    if (statuses.includes("INSCRITO")) {
+      return "INSCRITO";
+    }
+    return "REPROBADO";
+  }
 
   const callbackRef = (node: HTMLDivElement | null) => {
     if (node) setAltura(node.offsetHeight);
   };
 
-  if (proyeccion.loading) {
+  if (loading) {
     return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
   }
 
@@ -59,22 +257,21 @@ export function CrearProyeccionView({
                         </h2>
                       </div>
                       {cursosPorNivel[level].map((course) => {
-                        const status = proyeccion.getCursoStatus(course.codigo);
-                        const alreadySelected = proyeccion.isAlreadySelected(
+                        const status = getCursoStatus(course.codigo);
+                        const alreadySelected = isAlreadySelected(
                           course.codigo
                         );
                         const canBeSelected =
                           (status === "INSCRITO" && alreadySelected) ||
                           (status !== "APROBADO" &&
                             !alreadySelected &&
-                            proyeccion.cumplePrerrequisitos(course));
+                            cumplePrerrequisitos(course));
                         status !== "APROBADO";
-                        const bloqueantes =
-                          proyeccion.getCursosBloqueantes(course);
+                        const bloqueantes = getCursosBloqueantes(course);
                         return (
                           <div className="relative">
                             {bloqueantes.length > 0 &&
-                              !proyeccion.ignorarRestricciones && (
+                              !ignorarRestricciones && (
                                 <HoverCard openDelay={200} closeDelay={200}>
                                   <HoverCardTrigger>
                                     <Lock
@@ -106,13 +303,12 @@ export function CrearProyeccionView({
                               className={cn(
                                 "rounded-md border border-transparent transition-opacity",
                                 (status === "APROBADO" ||
-                                  !proyeccion.cumplePrerrequisitos(course)) &&
+                                  !cumplePrerrequisitos(course)) &&
                                   "opacity-30"
                               )}
                               onClick={
                                 canBeSelected
-                                  ? () =>
-                                      proyeccion.toggleCursoProyeccion(course)
+                                  ? () => toggleCursoProyeccion(course)
                                   : undefined
                               }
                             >
@@ -122,9 +318,7 @@ export function CrearProyeccionView({
                                 creditos={course.creditos}
                                 status={status}
                                 prereq={course.prereq}
-                                bloqueantes={proyeccion.getCursosBloqueantes(
-                                  course
-                                )}
+                                bloqueantes={getCursosBloqueantes(course)}
                                 clickable={canBeSelected}
                               />
                             </div>
@@ -151,45 +345,38 @@ export function CrearProyeccionView({
             <div className="flex space-x-2 items-center w-full border-b justify-center py-4 mb-2">
               <Switch
                 id="ignorar-reestricciones"
-                checked={proyeccion.ignorarRestricciones}
-                onCheckedChange={proyeccion.setIgnorarRestricciones}
+                checked={ignorarRestricciones}
+                onCheckedChange={setIgnorarRestricciones}
               />
               <Label htmlFor="ignorar-reestricciones" className="text-md">
                 Ignorar restricciones
               </Label>
             </div>
-            <h2 className="font-bold text-lg mb-1">
-              {proyeccion.semestreActual}
-            </h2>
+            <h2 className="font-bold text-lg mb-1">{semestreActual}</h2>
             <div
               className={cn(
                 "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit",
                 {
-                  "bg-zinc-900":
-                    proyeccion.getCreditosSemestreActual() <
-                    proyeccion.LIMITE_CREDITOS,
+                  "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
                   "bg-amber-500":
-                    proyeccion.getCreditosSemestreActual() ===
-                    proyeccion.LIMITE_CREDITOS,
-                  "bg-red-600":
-                    proyeccion.getCreditosSemestreActual() >
-                    proyeccion.LIMITE_CREDITOS,
+                    getCreditosSemestreActual() === LIMITE_CREDITOS,
+                  "bg-red-600": getCreditosSemestreActual() > LIMITE_CREDITOS,
                 }
               )}
             >
-              Créditos: {proyeccion.getCreditosSemestreActual()}
+              Créditos: {getCreditosSemestreActual()}
             </div>
           </div>
         </div>
         <div className="mb-4 pt-2 flex flex-col items-center flex-1 w-full h-full overflow-y-auto">
-          {proyeccion.proyeccionActual.length === 0 && (
+          {proyeccionActual.length === 0 && (
             <div className="text-gray-400 text-sm ">
               Selecciona cursos pendientes o reprobados para agregarlos aquí.
             </div>
           )}
           <div className="w-full">
             <ul className="space-y-4">
-              {proyeccion.proyeccionActual.map((curso) => (
+              {proyeccionActual.map((curso) => (
                 <li
                   key={curso.codigo}
                   className="relative group flex justify-center"
@@ -198,10 +385,10 @@ export function CrearProyeccionView({
                     asignatura={curso.asignatura}
                     codigo={curso.codigo}
                     creditos={curso.creditos}
-                    status={proyeccion.getCursoStatus(curso.codigo)}
+                    status={getCursoStatus(curso.codigo)}
                     prereq={curso.prereq}
-                    bloqueantes={proyeccion.getCursosBloqueantes(curso)}
-                    onClick={() => proyeccion.toggleCursoProyeccion(curso)}
+                    bloqueantes={getCursosBloqueantes(curso)}
+                    onClick={() => toggleCursoProyeccion(curso)}
                     clickable
                   />
                 </li>
@@ -214,30 +401,29 @@ export function CrearProyeccionView({
             <div className="flex justify-between gap-4">
               <Button
                 className="cursor-pointer mt-4"
-                onClick={proyeccion.irSemestreAnterior}
-                disabled={proyeccion.semestreIndex === 0}
+                onClick={irSemestreAnterior}
+                disabled={semestreIndex === 0}
               >
                 <MoveLeft />
                 Anterior
               </Button>
               <Button
                 className="cursor-pointer mt-4"
-                onClick={proyeccion.irSiguienteSemestre}
-                disabled={proyeccion.proyeccionActual.length === 0}
+                onClick={irSiguienteSemestre}
+                disabled={proyeccionActual.length === 0}
               >
                 Siguiente
                 <MoveRight />
               </Button>
             </div>
             <Button
-              onClick={proyeccion.guardarProyecciones}
+              onClick={guardarProyecciones}
               className="w-full cursor-pointer"
               variant="default"
               disabled={
-                proyeccion.proyeccionActual.length === 0 ||
-                (!proyeccion.ignorarRestricciones &&
-                  proyeccion.getCreditosSemestreActual() >
-                    proyeccion.LIMITE_CREDITOS)
+                proyeccionActual.length === 0 ||
+                (!ignorarRestricciones &&
+                  getCreditosSemestreActual() > LIMITE_CREDITOS)
               }
             >
               Guardar Proyección

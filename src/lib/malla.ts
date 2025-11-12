@@ -1,22 +1,5 @@
 import { CursoMalla } from "@/src/types/curso";
-
-export function formatPrereq(
-  prereq: string,
-  cursos: CursoMalla[]
-): { codigo: string; asignatura: string }[] {
-  const prereqList = prereq
-    .split(",")
-    .map((p) => p.trim())
-    .filter((p) => p !== "");
-  const formatted = prereqList.map((p) => {
-    const curso = cursos.find((c) => c.codigo === p);
-    return {
-      codigo: p,
-      asignatura: curso ? curso.asignatura : p,
-    };
-  });
-  return formatted;
-}
+import { formatPrereq } from "../utils/cursoUtils";
 
 export async function fetchMalla(codigo: string, catalogo: string) {
   const url = `https://losvilos.ucn.cl/hawaii/api/mallas?${codigo}-${catalogo}`;
@@ -41,3 +24,4 @@ export async function fetchMalla(codigo: string, catalogo: string) {
     return [];
   }
 }
+export { formatPrereq };

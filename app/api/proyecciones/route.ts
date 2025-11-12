@@ -7,8 +7,11 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+
     const estudianteRut = searchParams.get("rut");
     const carreraCodigo = searchParams.get("carrera");
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "10", 10);
 
     if (!estudianteRut || !carreraCodigo) {
       return NextResponse.json(
@@ -16,6 +19,8 @@ export async function GET(req: Request) {
         { status: 400 }
       );
     }
+
+    const offset = (page - 1) * limit;
 
     const proyecciones = await prisma.proyeccion.findMany({
       where: {
@@ -25,6 +30,8 @@ export async function GET(req: Request) {
       include: {
         cursos: true,
       },
+      skip: offset,
+      take: limit,
     });
 
     if (proyecciones.length === 0) {
