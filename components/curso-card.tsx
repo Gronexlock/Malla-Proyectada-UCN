@@ -15,7 +15,6 @@ type CursoAvanceCardProps = {
     asignatura: string;
   }[];
   onClick?: () => void;
-  clickable?: boolean;
 };
 
 const statusColors: Record<CursoAvance["status"], string> = {
@@ -30,14 +29,12 @@ export function CursoAvanceCard({
   creditos,
   status,
   prereq,
-  bloqueantes,
   onClick,
-  clickable,
 }: CursoAvanceCardProps) {
   return (
     <Card
       className={`rounded-md p-0 w-36 shadow-sm overflow-hidden relative ${
-        clickable
+        onClick
           ? "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all"
           : ""
       }`}

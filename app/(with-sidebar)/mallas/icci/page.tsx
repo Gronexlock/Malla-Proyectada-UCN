@@ -1,9 +1,12 @@
 import { MallaView } from "@/components/malla-view";
 import { fetchMalla } from "@/src/actions/mallaActions";
+import { carreras } from "@/src/constants/carreras";
 
 export default async function Page() {
-  const malla = await fetchMalla("8606", "202320");
+  const carrera = carreras["icci"];
+  const malla = await fetchMalla(carrera.codigo, carrera.catalogo);
 
+  // TODO: crear página de error
   if (malla.length === 0) {
     return "Error";
   }

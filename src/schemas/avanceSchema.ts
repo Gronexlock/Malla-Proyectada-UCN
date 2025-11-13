@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const CourseProgressSchema = z.object({
+export const CursoAvanceSchema = z.object({
   nrc: z.string(),
   period: z.string(),
   student: z.string(),
@@ -9,5 +9,7 @@ export const CourseProgressSchema = z.object({
   inscriptionType: z.string(),
   status: z.enum(["APROBADO", "REPROBADO", "INSCRITO", "PENDIENTE"]),
 });
+export const AvanceSchema = z.array(CursoAvanceSchema);
 
-export const ProgressSchema = z.array(CourseProgressSchema);
+export type CursoAvance = z.infer<typeof CursoAvanceSchema>;
+export type Avance = z.infer<typeof AvanceSchema>;

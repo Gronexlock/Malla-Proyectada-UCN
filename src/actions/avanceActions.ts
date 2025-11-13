@@ -1,5 +1,5 @@
-import { ProgressSchema } from "../schemas/avanceSchema";
-import { CursoAvance } from "../types/curso";
+import { AvanceSchema } from "../schemas/avanceSchema";
+import { CursoAvance } from "@/src/schemas/avanceSchema";
 import { cookies } from "next/headers";
 import { verifyToken } from "./authActions";
 
@@ -33,7 +33,7 @@ export async function fetchAvance(rut: string, codigoCarrera: string) {
       );
     }
 
-    const parsedData = ProgressSchema.safeParse(data);
+    const parsedData = AvanceSchema.safeParse(data);
     if (!parsedData.success) {
       console.error(parsedData.error);
       throw new Error("Los datos recibidos no cumplen con el esquema esperado");

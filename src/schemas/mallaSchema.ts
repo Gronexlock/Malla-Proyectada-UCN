@@ -7,5 +7,6 @@ export const CursoMallaSchema = z.object({
   nivel: z.number().min(1).max(10),
   prereq: z.string(),
 });
-
 export const MallaSchema = z.array(CursoMallaSchema);
+
+export type CursoMalla = z.infer<typeof CursoMallaSchema>;
