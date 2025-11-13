@@ -4,6 +4,7 @@ import * as jose from "jose";
 import { cookies } from "next/headers";
 import { UserSchema, User } from "../schemas/userSchema";
 import { setUser } from "./cookiesActions";
+import { redirect } from "next/dist/server/api-utils";
 
 export async function login(email: string, password: string) {
   const url = `https://puclaro.ucn.cl/eross/avance/login.php?email=${email}&password=${password}`;
@@ -40,4 +41,15 @@ export async function login(email: string, password: string) {
   await setUser(parsedData.data as User);
 
   return { success: true, user: data };
+}
+
+export async function logout() {
+  const cookieStore = await cookies();
+
+  cookieStore.set("token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+    path: "/",
+  });
 }

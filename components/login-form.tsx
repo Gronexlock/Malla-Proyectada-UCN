@@ -15,9 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useUserStore } from "@/src/store/useUserStore";
-import { setUser } from "@/src/actions/cookiesActions";
 import { login } from "@/src/actions/authActions";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -26,7 +25,7 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { setRut, setCarreras, setSelectedCarrera } = useUserStore();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +33,12 @@ export function LoginForm() {
 
     try {
       await login(email, password);
-      window.location.href = "/";
+      router.push("/");
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");
       setShowError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
