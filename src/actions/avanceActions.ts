@@ -1,5 +1,7 @@
-import { ProgressSchema } from "../schemas/progressSchema";
+import { ProgressSchema } from "../schemas/avanceSchema";
 import { CursoAvance } from "../types/curso";
+import { cookies } from "next/headers";
+import { verifyToken } from "./authActions";
 
 export async function fetchAvance(rut: string, codigoCarrera: string) {
   try {
@@ -7,6 +9,13 @@ export async function fetchAvance(rut: string, codigoCarrera: string) {
       throw new Error(
         "Los parámetros 'rut' y 'codigoCarrera' son obligatorios"
       );
+    }
+
+    const token = (await cookies()).get("token")?.value;
+    const payload = await verifyToken(token);
+
+    if (payload.rut !== rut) {
+      throw new Error("No autorizado para acceder a este recurso");
     }
 
     const url = `https://puclaro.ucn.cl/eross/avance/avance.php?rut=${rut}&codcarrera=${codigoCarrera}`;

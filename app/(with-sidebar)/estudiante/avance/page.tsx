@@ -1,6 +1,6 @@
 import { AvanceView } from "@/components/avance-view";
-import { fetchAvance } from "@/src/actions/progressActions";
-import { fetchMalla } from "@/src/actions/malla";
+import { fetchAvance } from "@/src/actions/avanceActions";
+import { fetchMalla } from "@/src/actions/mallaActions";
 import { cookies } from "next/headers";
 
 export default async function Page() {

@@ -1,5 +1,5 @@
 import { MallaView } from "@/components/malla-view";
-import { fetchMalla } from "@/src/actions/malla";
+import { fetchMalla } from "@/src/actions/mallaActions";
 
 export default async function Page() {
   const malla = await fetchMalla("8266", "202410");

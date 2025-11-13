@@ -1,4 +1,4 @@
-import { MallaSchema } from "../schemas/malla";
+import { MallaSchema } from "../schemas/mallaSchema";
 import { CursoMalla } from "../types/curso";
 
 export async function fetchMalla(codigo: string, catalogo: string) {

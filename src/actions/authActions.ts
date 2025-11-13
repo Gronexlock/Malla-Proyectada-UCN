@@ -4,7 +4,6 @@ import * as jose from "jose";
 import { cookies } from "next/headers";
 import { UserSchema, User } from "../schemas/userSchema";
 import { setUser } from "./cookiesActions";
-import { redirect } from "next/dist/server/api-utils";
 
 export async function login(email: string, password: string) {
   const url = `https://puclaro.ucn.cl/eross/avance/login.php?email=${email}&password=${password}`;
@@ -52,4 +51,18 @@ export async function logout() {
     expires: new Date(0),
     path: "/",
   });
+}
+
+export async function verifyToken(token: string | undefined) {
+  if (!token) {
+    throw new Error("No autenticado");
+  }
+
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    const { payload } = await jose.jwtVerify(token, secret);
+    return payload;
+  } catch {
+    throw new Error("Token inválido");
+  }
 }
