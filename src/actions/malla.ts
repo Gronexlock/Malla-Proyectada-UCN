@@ -1,5 +1,3 @@
-"use server";
-
 import { MallaSchema } from "../schemas/malla";
 import { CursoMalla } from "../types/curso";
 
@@ -24,13 +22,13 @@ export async function fetchMalla(codigo: string, catalogo: string) {
       },
     });
     if (response.status === 401) {
-      console.error("Autenticación fallida:", response.statusText);
+      console.error(response.statusText);
       throw new Error(
         "Autenticación fallida. Verifica el header de autenticación."
       );
     }
     if (!response.ok) {
-      console.error("Error al obtener los datos:", response.statusText);
+      console.error(response.statusText);
       throw new Error("Error al obtener los datos");
     }
 
@@ -44,7 +42,7 @@ export async function fetchMalla(codigo: string, catalogo: string) {
 
     const parsedData = MallaSchema.safeParse(data);
     if (!parsedData.success) {
-      console.error("Error de validación de datos:", parsedData.error);
+      console.error(parsedData.error);
       throw new Error("Los datos recibidos no cumplen con el esquema esperado");
     }
 

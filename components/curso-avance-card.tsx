@@ -8,10 +8,7 @@ type CursoAvanceCardProps = {
   asignatura: string;
   creditos: number;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
-  prereq: {
-    codigo: string;
-    asignatura: string;
-  }[];
+  prereq: string;
   bloqueantes?: {
     codigo: string;
     asignatura: string;
@@ -66,9 +63,9 @@ export function CursoAvanceCard({
                       PRERREQUISITOS
                     </h2>
                     <hr />
-                    {prereq.map((pre) => (
-                      <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura}
+                    {prereq.split(",").map((pre) => (
+                      <p key={pre} className="text-xs">
+                        • {pre}
                       </p>
                     ))}
                   </div>
