@@ -1,4 +1,4 @@
-import { CursoMalla } from "../types/curso";
+import { Curso } from "../types/curso";
 
 /**
  * Agrupa los cursos por nivel.
@@ -6,10 +6,8 @@ import { CursoMalla } from "../types/curso";
  * @param cursos Lista de cursos a agrupar.
  * @returns Un objeto donde las claves son los niveles y los valores son listas de cursos.
  */
-export function getCursosPorNivel(
-  cursos: CursoMalla[]
-): Record<number, CursoMalla[]> {
-  const cursosPorNivel: Record<number, CursoMalla[]> = {};
+export function getCursosPorNivel(cursos: Curso[]): Record<number, Curso[]> {
+  const cursosPorNivel: Record<number, Curso[]> = {};
   cursos.forEach((curso) => {
     if (!cursosPorNivel[curso.nivel]) {
       cursosPorNivel[curso.nivel] = [];

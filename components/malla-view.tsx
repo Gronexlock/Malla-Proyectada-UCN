@@ -1,11 +1,11 @@
-import { CursoMalla } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { CursoMallaCard } from "./curso-malla-card";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { getCursosPorNivel } from "@/src/utils/malla";
+import { Curso } from "@/src/types/curso";
+import { CursoCard } from "./curso-card";
 
 type MallaViewProps = {
-  cursos: CursoMalla[];
+  cursos: Curso[];
 };
 
 export function MallaView({ cursos }: MallaViewProps) {
@@ -25,7 +25,7 @@ export function MallaView({ cursos }: MallaViewProps) {
               </div>
 
               {cursosPorNivel[Number(nivel)].map((course) => (
-                <CursoMallaCard key={course.codigo} curso={course} />
+                <CursoCard key={course.codigo} curso={course} />
               ))}
             </div>
           ))}

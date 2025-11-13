@@ -4,12 +4,12 @@ import { carreras } from "@/src/constants/carreras";
 
 export default async function Page() {
   const carrera = carreras["icci"];
-  const malla = await fetchMalla(carrera.codigo, carrera.catalogo);
+  const cursos = await fetchMalla(carrera.codigo, carrera.catalogo);
 
   // TODO: crear página de error
-  if (malla.length === 0) {
+  if (cursos.length === 0) {
     return "Error";
   }
 
-  return <MallaView cursos={malla} />;
+  return <MallaView cursos={cursos} />;
 }

@@ -1,5 +1,5 @@
 import { MallaSchema } from "../schemas/mallaSchema";
-import { CursoMalla } from "../types/curso";
+import { getCursosMallaAsCursos } from "../utils/cursosUtils";
 
 export async function fetchMalla(codigo: string, catalogo: string) {
   try {
@@ -46,7 +46,9 @@ export async function fetchMalla(codigo: string, catalogo: string) {
       throw new Error("Los datos recibidos no cumplen con el esquema esperado");
     }
 
-    return parsedData.data as CursoMalla[];
+    const cursos = getCursosMallaAsCursos(parsedData.data);
+
+    return cursos;
   } catch (error) {
     console.error("Error al obtener la malla curricular:", error);
     return [];
