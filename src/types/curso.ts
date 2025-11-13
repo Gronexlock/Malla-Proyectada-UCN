@@ -1,6 +1,6 @@
 import z from "zod";
 import { CursoMallaSchema } from "@/src/schemas/malla";
-import { CursoAvanceSchema } from "../schemas/avance";
+import { CourseProgressSchema } from "../schemas/progressSchema";
 
 export type CursoMalla = z.infer<typeof CursoMallaSchema>;
-export type CursoAvance = z.infer<typeof CursoAvanceSchema>;
+export type CursoAvance = z.infer<typeof CourseProgressSchema>;

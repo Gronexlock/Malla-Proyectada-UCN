@@ -16,6 +16,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useUserStore } from "@/src/store/useUserStore";
+import { setUser } from "@/src/actions/cookiesActions";
+import { login } from "@/src/actions/authActions";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -31,46 +33,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        redirect: "follow",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrorMessage(data.error || "Error desconocido");
-        setShowError(true);
-        return;
-      }
-
-      setRut(data.user.rut);
-      setCarreras(data.user.carreras);
-
-      const storedCarrera = localStorage.getItem("user-storage");
-      let ultimaSeleccion: string | null = null;
-
-      if (storedCarrera) {
-        try {
-          const parsed = JSON.parse(storedCarrera);
-          ultimaSeleccion = parsed.state?.selectedCarrera?.codigo ?? null;
-        } catch {
-          ultimaSeleccion = null;
-        }
-      }
-
-      const carreraValida = data.user.carreras.find(
-        (c: any) => c.codigo === ultimaSeleccion
-      );
-
-      if (carreraValida) {
-        setSelectedCarrera(carreraValida);
-      } else {
-        setSelectedCarrera(data.user.carreras[0]);
-      }
-
+      await login(email, password);
       window.location.href = "/";
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");

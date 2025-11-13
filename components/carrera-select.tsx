@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { useUserStore } from "@/src/store/useUserStore";
 import { nombresCompletos } from "@/src/constants/carreras";
-import { setSelectedCarrera } from "@/src/actions/carrera";
+import { setSelectedCarrera } from "@/src/actions/cookiesActions";
 import { useEffect } from "react";
 
 export default function CarreraSelect() {
@@ -25,8 +25,7 @@ export default function CarreraSelect() {
       if (selectedCarrera) {
         await setSelectedCarrera(
           selectedCarrera.codigo,
-          selectedCarrera.catalogo,
-          rut
+          selectedCarrera.catalogo
         );
       }
     }
@@ -36,7 +35,7 @@ export default function CarreraSelect() {
   const handleChange = async (codigo: string) => {
     const carrera = carreras.find((c) => c.codigo === codigo);
     if (carrera) {
-      await setSelectedCarrera(carrera.codigo, carrera.catalogo, rut);
+      await setSelectedCarrera(carrera.codigo, carrera.catalogo);
       setCarreraState(carrera);
     }
   };

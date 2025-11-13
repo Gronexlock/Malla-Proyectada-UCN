@@ -3,6 +3,7 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { CursoAvanceCard } from "./curso-avance-card";
 import { getCursosPorNivel } from "@/src/utils/malla";
+import { getCursoStatus } from "@/src/utils/avance";
 
 type AvanceViewProps = {
   cursos: CursoMalla[];
@@ -11,18 +12,6 @@ type AvanceViewProps = {
 
 export function AvanceView({ cursos, avance }: AvanceViewProps) {
   const cursosPorNivel = getCursosPorNivel(cursos);
-
-  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
-    const cursoAvance = avance.filter((curso) => curso.course === codigo);
-    if (cursoAvance.length === 0) return "PENDIENTE";
-    if (cursoAvance.length === 1) return cursoAvance[0].status;
-    else {
-      const statuses = cursoAvance.map((curso) => curso.status);
-      if (statuses.includes("APROBADO")) return "APROBADO";
-      if (statuses.includes("INSCRITO")) return "INSCRITO";
-      return "REPROBADO";
-    }
-  }
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
@@ -43,7 +32,7 @@ export function AvanceView({ cursos, avance }: AvanceViewProps) {
                   asignatura={course.asignatura}
                   codigo={course.codigo}
                   creditos={course.creditos}
-                  status={getCursoStatus(course.codigo)}
+                  status={getCursoStatus(course.codigo, avance)}
                   prereq={course.prereq}
                 />
               ))}

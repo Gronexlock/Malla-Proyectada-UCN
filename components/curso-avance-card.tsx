@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ListChecks, Lock } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { CursoAvance } from "@/src/types/curso";
 
 type CursoAvanceCardProps = {
   codigo: string;
@@ -17,7 +18,7 @@ type CursoAvanceCardProps = {
   clickable?: boolean;
 };
 
-const statusColors: Record<string, string> = {
+const statusColors: Record<CursoAvance["status"], string> = {
   APROBADO: "bg-green-500",
   REPROBADO: "bg-red-500",
   INSCRITO: "bg-yellow-400",

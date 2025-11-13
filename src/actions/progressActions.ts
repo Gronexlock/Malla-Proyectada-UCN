@@ -1,4 +1,4 @@
-import { AvanceSchema } from "../schemas/avance";
+import { ProgressSchema } from "../schemas/progressSchema";
 import { CursoAvance } from "../types/curso";
 
 export async function fetchAvance(rut: string, codigoCarrera: string) {
@@ -24,7 +24,7 @@ export async function fetchAvance(rut: string, codigoCarrera: string) {
       );
     }
 
-    const parsedData = AvanceSchema.safeParse(data);
+    const parsedData = ProgressSchema.safeParse(data);
     if (!parsedData.success) {
       console.error(parsedData.error);
       throw new Error("Los datos recibidos no cumplen con el esquema esperado");
