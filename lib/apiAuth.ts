@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUserSession } from "@/lib/session";
 
-export async function requireAuth(req: Request) {
+export async function requireAuth(req?: Request) {
   const session = await getUserSession(req);
 
   if (!session) {
