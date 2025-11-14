@@ -2,7 +2,6 @@ import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { CursoAvanceCard } from "./curso-avance-card";
 import { MallaSkeleton } from "./skeletons/malla-skeleton";
-import { Carrera } from "@/src/types/carrera";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { MoveLeft, MoveRight } from "lucide-react";
@@ -10,94 +9,36 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Lock } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { useEffect, useState } from "react";
-import { getCursosPorNivel } from "@/src/utils/malla";
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import { Curso } from "@/src/types/curso";
 import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
+import { useState } from "react";
+import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 
 type CrearProyeccionViewProps = {
-  carrera: Carrera;
-  rut: string;
+  avance: Curso[];
 };
 
-export function CrearProyeccionView({
-  carrera,
-  rut,
-}: CrearProyeccionViewProps) {
+export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
+  const [cursos, setCursos] = useState<Curso[]>(avance);
   const [altura, setAltura] = useState(0);
-  const [cursos, setCursos] = useState<CursoMalla[]>([]);
   const cursosPorNivel = getCursosPorNivel(cursos);
-  const [avance, setAvance] = useState<CursoAvance[]>([]);
-  const [loading, setLoading] = useState(true);
   const [semestres, setSemestres] = useState([
     getSemestreSiguiente(getSemestreActual()),
   ]);
   const [semestreIndex, setSemestreIndex] = useState(0);
   const semestreActual = semestres[semestreIndex];
   const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
-    Record<string, CursoMalla[]>
+    Record<string, Curso[]>
   >({});
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
   const [avancePorSemestre, setAvancePorSemestre] = useState<
-    Record<string, CursoAvance[]>
+    Record<string, Curso[]>
   >({});
   const LIMITE_CREDITOS = 30;
   const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!carrera || !rut) return;
-      setLoading(true);
-
-      try {
-        const [cursosResponse, avanceResponse] = await Promise.all([
-          fetch(`/api/mallas/?codigo=${carrera.codigo}-${carrera.catalogo}`),
-          fetch(`/api/avance/?rut=${rut}&codCarrera=${carrera.codigo}`),
-        ]);
-        const [cursosData, avanceData] = await Promise.all([
-          cursosResponse.json(),
-          avanceResponse.json(),
-        ]);
-
-        const practicas = ["ECIN-08606", "ECIN-08616", "ECIN-08266"];
-        const practicaIdx = cursosData.findIndex((curso: CursoMalla) =>
-          practicas.includes(curso.codigo)
-        );
-        if (practicaIdx !== -1) cursosData.splice(practicaIdx, 1);
-
-        setCursos(cursosData);
-        setAvance(avanceData);
-        actualizarAvance();
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setCursos([]);
-        setAvance([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [carrera, rut]);
-
   function agregarCursoAlAvance(codigo: string) {
     setAvance((prev) => [...prev, { course: codigo, status: "INSCRITO" }]);
-  }
-
-  function eliminarInscripcion(codigo: string) {
-    const curso = avance.find(
-      (c) => c.course === codigo && c.status === "INSCRITO"
-    );
-    if (curso) {
-      setAvance((prev) => prev.filter((c) => c.course !== codigo));
-    }
-  }
-
-  function actualizarAvance() {
-    setAvance((prev) =>
-      prev.map((curso) =>
-        curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
-      )
-    );
   }
 
   async function guardarProyecciones() {

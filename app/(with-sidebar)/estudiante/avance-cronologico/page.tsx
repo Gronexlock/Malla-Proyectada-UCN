@@ -3,9 +3,7 @@ import { getUser } from "@/src/actions/cookiesActions";
 import { getAvanceCronologico } from "@/src/utils/cursosUtils";
 
 export default async function Page() {
-  const user = await getUser();
-  const { rut, selectedCarrera } = user;
-
+  const { rut, selectedCarrera } = await getUser();
   const cursos = await getAvanceCronologico(rut, selectedCarrera);
 
   return (
