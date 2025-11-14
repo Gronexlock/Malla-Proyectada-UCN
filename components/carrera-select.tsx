@@ -7,51 +7,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUserStore } from "@/src/store/useUserStore";
 import { nombresCompletos } from "@/src/constants/carreras";
-import { setSelectedCarrera } from "@/src/actions/cookiesActions";
-import { useEffect } from "react";
+import { getUser, setSelectedCarrera } from "@/src/actions/cookiesActions";
+import { useEffect, useState, useTransition } from "react";
+import { User } from "@/src/schemas/userSchema";
 
 export default function CarreraSelect() {
-  const {
-    carreras,
-    setSelectedCarrera: setCarreraState,
-    selectedCarrera,
-    rut,
-  } = useUserStore();
+  const [user, setUser] = useState<User>();
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    async function initializeCarrera() {
-      if (selectedCarrera) {
-        await setSelectedCarrera(
-          selectedCarrera.codigo,
-          selectedCarrera.catalogo
-        );
-      }
-    }
-    initializeCarrera();
-  }, [selectedCarrera, rut]);
+    startTransition(async () => {
+      const user = await getUser();
+      setUser(user);
+    });
+  }, []);
 
   const handleChange = async (codigo: string) => {
-    const carrera = carreras.find((c) => c.codigo === codigo);
+    const carrera = user?.carreras.find((c) => c.codigo === codigo);
     if (carrera) {
-      await setSelectedCarrera(carrera.codigo, carrera.catalogo);
-      setCarreraState(carrera);
+      await setSelectedCarrera(carrera.codigo);
     }
   };
 
   return (
     <Select
-      value={selectedCarrera?.codigo || ""}
+      value={user?.selectedCarrera.codigo || ""}
       onValueChange={(codigo) => handleChange(codigo)}
     >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecciona una carrera" />
       </SelectTrigger>
       <SelectContent>
-        {carreras.map((carrera) => (
+        {user?.carreras.map((carrera) => (
           <SelectItem value={carrera.codigo} key={carrera.codigo}>
-            {nombresCompletos[carrera.codigo] || carrera.nombre}
+            {nombresCompletos[Number(carrera.codigo)] || carrera.nombre}
           </SelectItem>
         ))}
       </SelectContent>

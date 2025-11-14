@@ -37,7 +37,10 @@ export async function login(email: string, password: string) {
     path: "/",
   });
 
-  await setUser(parsedData.data as User);
+  const user = parsedData.data as User;
+  user.selectedCarrera = user.carreras[0];
+
+  await setUser(user);
 
   return { success: true, user: data };
 }

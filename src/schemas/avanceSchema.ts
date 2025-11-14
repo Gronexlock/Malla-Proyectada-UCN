@@ -9,7 +9,9 @@ export const CursoAvanceSchema = z.object({
   inscriptionType: z.string(),
   status: z.enum(["APROBADO", "REPROBADO", "INSCRITO", "PENDIENTE"]),
 });
+
 export const AvanceSchema = z.array(CursoAvanceSchema);
 
 export type CursoAvance = z.infer<typeof CursoAvanceSchema>;
+
 export type Avance = z.infer<typeof AvanceSchema>;

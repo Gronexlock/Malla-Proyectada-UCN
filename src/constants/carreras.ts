@@ -1,6 +1,6 @@
 import { Carrera } from "../types/carrera";
 
-export const nombresCompletos = {
+export const nombresCompletos: Record<number, string> = {
   8606: "Ingeniería Civil en Computación e Informática",
   8616: "Ingeniería Civil Industrial",
   8266: "Ingeniería en Tecnologías de la Información",
