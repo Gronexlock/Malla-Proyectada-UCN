@@ -1,6 +1,6 @@
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { getCursosPorNivel } from "@/src/utils/malla";
+import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import { Curso } from "@/src/types/curso";
 import { CursoCard } from "./curso-card";
 
