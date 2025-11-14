@@ -37,32 +37,6 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
   const LIMITE_CREDITOS = 30;
   const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
-  function agregarCursoAlAvance(codigo: string) {
-    setAvance((prev) => [...prev, { course: codigo, status: "INSCRITO" }]);
-  }
-
-  async function guardarProyecciones() {
-    try {
-      const response = await fetch("/api/proyecciones", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          estudianteRut: rut,
-          carreraCodigo: carrera.codigo,
-          proyecciones: proyeccionesPorSemestre,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al guardar las proyecciones");
-      }
-    } catch (error) {
-      console.error("Error guardando proyecciones:", error);
-    }
-  }
-
   function toggleCursoProyeccion(curso: CursoMalla) {
     setProyeccionesPorSemestre((prev) => {
       const isCursoSelected = proyeccionActual.some(
