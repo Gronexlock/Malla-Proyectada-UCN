@@ -1,16 +1,14 @@
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { CursoAvanceCard } from "./curso-avance-card";
 import { getCursosPorNivel } from "@/src/utils/malla";
-import { getCursoStatus } from "@/src/utils/avance";
+import { Curso } from "@/src/types/curso";
+import { CursoCard } from "./curso-card";
 
 type AvanceViewProps = {
-  cursos: CursoMalla[];
-  avance: CursoAvance[];
+  cursos: Curso[];
 };
 
-export function AvanceView({ cursos, avance }: AvanceViewProps) {
+export function AvanceView({ cursos }: AvanceViewProps) {
   const cursosPorNivel = getCursosPorNivel(cursos);
 
   return (
@@ -26,15 +24,8 @@ export function AvanceView({ cursos, avance }: AvanceViewProps) {
                 </h2>
               </div>
 
-              {cursosPorNivel[Number(nivel)].map((course) => (
-                <CursoAvanceCard
-                  key={course.codigo}
-                  asignatura={course.asignatura}
-                  codigo={course.codigo}
-                  creditos={course.creditos}
-                  status={getCursoStatus(course.codigo, avance)}
-                  prereq={course.prereq}
-                />
+              {cursosPorNivel[Number(nivel)].map((curso) => (
+                <CursoCard key={curso.codigo} curso={curso} />
               ))}
             </div>
           ))}

@@ -2,7 +2,7 @@ import { AvanceView } from "@/components/avance-view";
 import { fetchAvance } from "@/src/actions/avanceActions";
 import { getUser } from "@/src/actions/cookiesActions";
 import { fetchMalla } from "@/src/actions/mallaActions";
-import { cookies } from "next/headers";
+import { getMallaConAvance } from "@/src/utils/cursosUtils";
 
 export default async function Page() {
   const user = await getUser();
@@ -12,10 +12,11 @@ export default async function Page() {
     fetchMalla(selectedCarrera.codigo, selectedCarrera.catalogo),
     fetchAvance(rut, selectedCarrera.codigo),
   ]);
+  const cursosConAvance = getMallaConAvance(cursos, avance);
 
   return (
     <div className="p-4">
-      <AvanceView cursos={cursos} avance={avance} />
+      <AvanceView cursos={cursosConAvance} />
     </div>
   );
 }
