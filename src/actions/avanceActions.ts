@@ -1,7 +1,6 @@
 import { AvanceSchema } from "../schemas/avanceSchema";
 import { cookies } from "next/headers";
 import { verifyToken } from "./authActions";
-import { getCursosAvanceAsCursos } from "../utils/cursosUtils";
 
 export async function fetchAvance(rut: string, codigoCarrera: string) {
   try {
@@ -39,9 +38,7 @@ export async function fetchAvance(rut: string, codigoCarrera: string) {
       throw new Error("Los datos recibidos no cumplen con el esquema esperado");
     }
 
-    const cursos = getCursosAvanceAsCursos(parsedData.data);
-
-    return cursos;
+    return parsedData.data;
   } catch (error) {
     console.error("Error al obtener el avance curricular:", error);
     return [];

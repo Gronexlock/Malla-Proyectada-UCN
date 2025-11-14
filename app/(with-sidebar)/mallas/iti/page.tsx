@@ -1,10 +1,10 @@
 import { MallaView } from "@/components/malla-view";
-import { fetchMalla } from "@/src/actions/mallaActions";
 import { carreras } from "@/src/constants/carreras";
+import { getMalla } from "@/src/utils/cursosUtils";
 
 export default async function Page() {
   const carrera = carreras["iti"];
-  const malla = await fetchMalla(carrera.codigo, carrera.catalogo);
+  const malla = await getMalla(carrera);
 
   // TODO: crear página de error
   if (malla.length === 0) {

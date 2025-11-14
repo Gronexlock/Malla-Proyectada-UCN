@@ -1,15 +1,19 @@
+import { get } from "node:http";
+import { fetchAvance } from "../actions/avanceActions";
+import { fetchMalla } from "../actions/mallaActions";
 import { CursoAvance } from "../schemas/avanceSchema";
 import { CursoMalla } from "../schemas/mallaSchema";
+import { Carrera } from "../types/carrera";
 import { Curso } from "../types/curso";
 
 /**
  * Obtiene los prerrequisitos de un curso como una lista de objetos Curso.
  * Los cursos resultantes no tienen prerrequisitos para evitar recursividad.
  * @param prereqString Cadena de prerrequisitos separada por comas.
- * @param cursosMalla Lista de cursos que retorna la API.
+ * @param cursosMalla Lista de cursos de la malla.
  * @returns Lista de objetos Curso.
  */
-export function getPrerrequisitosAsCursos(
+function getPrerrequisitosAsCursos(
   prereqString: string,
   cursosMalla: CursoMalla[]
 ): Curso[] {
@@ -37,14 +41,12 @@ export function getPrerrequisitosAsCursos(
  * @param cursosMalla  Lista de cursos de la malla.
  * @returns Lista de objetos Curso.
  */
-export function getCursosMallaAsCursos(cursosMalla: CursoMalla[]): Curso[] {
+export async function getMalla(carrera: Carrera): Promise<Curso[]> {
+  const cursosMalla = await fetchMalla(carrera.codigo, carrera.catalogo);
   const cursos: Curso[] = [];
   for (const cursoMalla of cursosMalla) {
     const curso: Curso = {
-      codigo: cursoMalla.codigo,
-      asignatura: cursoMalla.asignatura,
-      creditos: cursoMalla.creditos,
-      nivel: cursoMalla.nivel,
+      ...cursoMalla,
       prerrequisitos: getPrerrequisitosAsCursos(cursoMalla.prereq, cursosMalla),
       nrc: "",
       periodo: "",
@@ -56,23 +58,42 @@ export function getCursosMallaAsCursos(cursosMalla: CursoMalla[]): Curso[] {
 }
 
 /**
- * Obtiene la lista de cursos del avance del estudiante como una lista de
- * objetos Curso.
- * @param cursosAvance Lista de cursos del avance del estudiante.
+ * Obtiene la lista de cursos del avance del estudiante como una lista de objetos Curso.
+ * @param rut RUT del estudiante.
+ * @param carrera Carrera del estudiante.
  * @returns Lista de objetos Curso.
  */
-export function getCursosAvanceAsCursos(cursosAvance: CursoAvance[]): Curso[] {
+async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
+  const cursosAvance = await fetchAvance(rut, carrera.codigo);
   const cursos: Curso[] = [];
   for (const cursoAvance of cursosAvance) {
     const curso: Curso = {
+      ...cursoAvance,
       codigo: cursoAvance.course,
       asignatura: "",
       creditos: 0,
       nivel: 0,
       prerrequisitos: [],
-      nrc: cursoAvance.nrc,
       periodo: cursoAvance.period,
-      status: cursoAvance.status,
+    };
+    cursos.push(curso);
+  }
+  return cursos;
+}
+
+export async function getAvanceCurricular(
+  rut: string,
+  carrera: Carrera
+): Promise<Curso[]> {
+  const [cursosMalla, cursosAvance] = await Promise.all([
+    getMalla(carrera),
+    getAvance(rut, carrera),
+  ]);
+  const cursos: Curso[] = [];
+  for (const cursoMalla of cursosMalla) {
+    const curso: Curso = {
+      ...cursoMalla,
+      status: getCursoStatus(cursoMalla.codigo, cursosAvance),
     };
     cursos.push(curso);
   }
