@@ -1,11 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { ListChecks } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { Curso } from "@/src/types/curso";
+import { ListChecks } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export type CursoCardProps = {
   curso: Curso;
+  bloqueantes?: Curso[];
   onClick?: () => void;
 };
 

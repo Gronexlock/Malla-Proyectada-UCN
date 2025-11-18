@@ -1,5 +1,7 @@
-import { AvanceSchema } from "../schemas/avanceSchema";
+"use server";
+
 import { cookies } from "next/headers";
+import { AvanceSchema } from "../schemas/avanceSchema";
 import { verifyToken } from "./authActions";
 
 export async function fetchAvance(rut: string, codigoCarrera: string) {

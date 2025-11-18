@@ -160,8 +160,8 @@ export async function getAvanceCronologico(
  * @param cursos Lista de cursos a agrupar.
  * @returns Un objeto donde las claves son los niveles y los valores son listas de cursos.
  */
-export function getCursosPorNivel(cursos: Curso[]): Record<number, Curso[]> {
-  const cursosPorNivel: Record<number, Curso[]> = {};
+export function getCursosPorNivel(cursos: Curso[]): Record<string, Curso[]> {
+  const cursosPorNivel: Record<string, Curso[]> = {};
   cursos.forEach((curso) => {
     if (!cursosPorNivel[curso.nivel]) {
       cursosPorNivel[curso.nivel] = [];

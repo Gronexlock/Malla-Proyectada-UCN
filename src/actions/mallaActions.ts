@@ -1,3 +1,5 @@
+"use server";
+
 import { MallaSchema } from "../schemas/mallaSchema";
 
 export async function fetchMalla(codigo: string, catalogo: string) {

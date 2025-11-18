@@ -1,25 +1,26 @@
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { CursoAvanceCard } from "./curso-avance-card";
-import { MallaSkeleton } from "./skeletons/malla-skeleton";
+"use client";
+
 import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { MoveLeft, MoveRight } from "lucide-react";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
-import { Lock } from "lucide-react";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
+import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { Curso } from "@/src/types/curso";
-import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
-import { useState } from "react";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
+import { actualizarAvance } from "@/src/utils/proyeccionUtils";
+import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
+import { Lock, MoveLeft, MoveRight } from "lucide-react";
+import { useState } from "react";
+import { CursoCard } from "./curso-card";
+import { Button } from "./ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { Label } from "./ui/label";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
+import { Switch } from "./ui/switch";
 
 type CrearProyeccionViewProps = {
   avance: Curso[];
 };
 
 export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
-  const [cursos, setCursos] = useState<Curso[]>(avance);
+  const [cursos, setCursos] = useState<Curso[]>(actualizarAvance(avance));
   const [altura, setAltura] = useState(0);
   const cursosPorNivel = getCursosPorNivel(cursos);
   const [semestres, setSemestres] = useState([
@@ -44,17 +45,28 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
       );
 
       if (isCursoSelected) {
-        eliminarInscripcion(curso.codigo);
+        setCursos((prevCursos) =>
+          prevCursos.map((c) =>
+            c.codigo === curso.codigo ? { ...c, status: "PENDIENTE" } : c
+          )
+        );
+        return {
+          ...prev,
+          [semestreActual]: proyeccionActual.filter(
+            (c) => c.codigo !== curso.codigo
+          ),
+        };
       } else {
-        agregarCursoAlAvance(curso.codigo);
+        setCursos((prevCursos) =>
+          prevCursos.map((c) =>
+            c.codigo === curso.codigo ? { ...c, status: "INSCRITO" } : c
+          )
+        );
+        return {
+          ...prev,
+          [semestreActual]: [...proyeccionActual, curso],
+        };
       }
-
-      return {
-        ...prev,
-        [semestreActual]: isCursoSelected
-          ? proyeccionActual.filter((c) => c.codigo !== curso.codigo)
-          : [...proyeccionActual, curso],
-      };
     });
   }
 
@@ -83,7 +95,7 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
       setSemestres((prev) => [...prev, siguienteSemestre]);
       setSemestreIndex(semestreIndex + 1);
     }
-    actualizarAvance();
+    setCursos(actualizarAvance(cursos));
   }
 
   function irSemestreAnterior() {
@@ -100,7 +112,7 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
       });
 
       const anteriorSemestre = semestres[semestreIndex - 1];
-      setAvance(avancePorSemestre[anteriorSemestre] || []);
+      setCursos(avancePorSemestre[anteriorSemestre] || []);
       setSemestreIndex(semestreIndex - 1);
     }
   }
@@ -109,24 +121,25 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
     return proyeccionActual.reduce((total, curso) => total + curso.creditos, 0);
   }
 
-  function cumplePrerrequisitos(curso: CursoMalla): boolean {
-    if (!curso.prereq || curso.prereq.length === 0 || ignorarRestricciones)
-      return true;
-    return curso.prereq.every((pre) =>
-      avance.some((a) => a.course === pre.codigo && a.status === "APROBADO")
+  function cumplePrerrequisitos(curso: Curso): boolean {
+    if (curso.prerrequisitos.length !== 0 || ignorarRestricciones) return true;
+    return curso.prerrequisitos.every((pre) =>
+      avance.some((a) => a.codigo === pre.codigo && a.status === "APROBADO")
     );
   }
 
-  function getCursosBloqueantes(curso: CursoMalla) {
+  function getCursosBloqueantes(curso: Curso) {
     if (getCursoStatus(curso.codigo) === "APROBADO") return [];
     const aprobados = avance
       .filter((a) => a.status === "APROBADO")
-      .map((a) => a.course);
-    return curso.prereq.filter((pre) => !aprobados.includes(pre.codigo));
+      .map((a) => a.codigo);
+    return curso.prerrequisitos.filter(
+      (pre) => !aprobados.includes(pre.codigo)
+    );
   }
 
-  function getCursoStatus(codigo: string): CursoAvance["status"] | "PENDIENTE" {
-    const cursoAvance = avance.filter((curso) => curso.course === codigo);
+  function getCursoStatus(codigo: string): Curso["status"] {
+    const cursoAvance = avance.filter((curso) => curso.codigo === codigo);
     if (cursoAvance.length === 0) {
       return "PENDIENTE";
     }
@@ -144,10 +157,6 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
     if (node) setAltura(node.offsetHeight);
   };
 
-  if (loading) {
-    return <MallaSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />;
-  }
-
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
@@ -155,93 +164,71 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
           ref={callbackRef}
           className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100"
         >
-          {Object.keys(cursosPorAnio)
+          {Object.keys(cursosPorNivel)
             .sort((a, b) => Number(a) - Number(b))
-            .map((anio) => (
-              <div key={anio} className="flex flex-col gap-2">
-                <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
-                  Año {anio}
+            .map((level) => (
+              <div key={level} className="flex flex-col gap-2">
+                <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
+                  <h2 className="text-center font-semibold">
+                    {romanNumerals[level]}
+                  </h2>
                 </div>
-                <div className="flex gap-4">
-                  {cursosPorAnio[Number(anio)].map((level) => (
-                    <div key={level} className="flex flex-col gap-2">
-                      <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
-                        <h2 className="text-center font-semibold">
-                          {romanNumerals[level]}
-                        </h2>
-                      </div>
-                      {cursosPorNivel[level].map((course) => {
-                        const status = getCursoStatus(course.codigo);
-                        const alreadySelected = isAlreadySelected(
-                          course.codigo
-                        );
-                        const canBeSelected =
-                          (status === "INSCRITO" && alreadySelected) ||
-                          (status !== "APROBADO" &&
-                            !alreadySelected &&
-                            cumplePrerrequisitos(course));
-                        status !== "APROBADO";
-                        const bloqueantes = getCursosBloqueantes(course);
-                        return (
-                          <div className="relative">
-                            {bloqueantes.length > 0 &&
-                              !ignorarRestricciones && (
-                                <HoverCard openDelay={200} closeDelay={200}>
-                                  <HoverCardTrigger>
-                                    <Lock
-                                      size={16}
-                                      strokeWidth={2.3}
-                                      className="text-amber-600 absolute top-20 left-18 z-20"
-                                    />
-                                  </HoverCardTrigger>
-                                  <HoverCardContent className="flex justify-center w-40">
-                                    <div className="flex flex-col gap-1">
-                                      <h2 className="font-bold text-sm text-center">
-                                        BLOQUEADO POR
-                                      </h2>
-                                      <hr />
-                                      {bloqueantes.map((bloq) => (
-                                        <p
-                                          key={bloq.codigo}
-                                          className="text-xs"
-                                        >
-                                          • {bloq.asignatura}
-                                        </p>
-                                      ))}
-                                    </div>
-                                  </HoverCardContent>
-                                </HoverCard>
-                              )}
-                            <div
-                              key={course.codigo}
-                              className={cn(
-                                "rounded-md border border-transparent transition-opacity",
-                                (status === "APROBADO" ||
-                                  !cumplePrerrequisitos(course)) &&
-                                  "opacity-30"
-                              )}
-                              onClick={
-                                canBeSelected
-                                  ? () => toggleCursoProyeccion(course)
-                                  : undefined
-                              }
-                            >
-                              <CursoAvanceCard
-                                asignatura={course.asignatura}
-                                codigo={course.codigo}
-                                creditos={course.creditos}
-                                status={status}
-                                prereq={course.prereq}
-                                bloqueantes={getCursosBloqueantes(course)}
-                                clickable={canBeSelected}
-                              />
+                {cursosPorNivel[level].map((course) => {
+                  const status = course.status;
+                  const alreadySelected = isAlreadySelected(course.codigo);
+                  const canBeSelected =
+                    status !== "APROBADO" &&
+                    ((status === "INSCRITO" && alreadySelected) ||
+                      (!alreadySelected && cumplePrerrequisitos(course)));
+                  const bloqueantes = getCursosBloqueantes(course);
+                  return (
+                    <div key={course.codigo} className="relative">
+                      {bloqueantes.length > 0 && !ignorarRestricciones && (
+                        <HoverCard openDelay={200} closeDelay={200}>
+                          <HoverCardTrigger>
+                            <Lock
+                              size={16}
+                              strokeWidth={2.3}
+                              className="text-amber-600 absolute top-20 left-18 z-20"
+                            />
+                          </HoverCardTrigger>
+                          <HoverCardContent className="flex justify-center w-40">
+                            <div className="flex flex-col gap-1">
+                              <h2 className="font-bold text-sm text-center">
+                                BLOQUEADO POR
+                              </h2>
+                              <hr />
+                              {bloqueantes.map((bloq) => (
+                                <p key={bloq.codigo} className="text-xs">
+                                  • {bloq.asignatura}
+                                </p>
+                              ))}
                             </div>
-                          </div>
-                        );
-                      })}
+                          </HoverCardContent>
+                        </HoverCard>
+                      )}
+                      <div
+                        key={course.codigo}
+                        className={cn(
+                          "rounded-md border border-transparent transition-opacity",
+                          (status === "APROBADO" ||
+                            !cumplePrerrequisitos(course)) &&
+                            "opacity-30"
+                        )}
+                      >
+                        <CursoCard
+                          curso={course}
+                          bloqueantes={getCursosBloqueantes(course)}
+                          onClick={
+                            canBeSelected
+                              ? () => toggleCursoProyeccion(course)
+                              : undefined
+                          }
+                        />
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
             ))}
         </div>
@@ -295,15 +282,10 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
                   key={curso.codigo}
                   className="relative group flex justify-center"
                 >
-                  <CursoAvanceCard
-                    asignatura={curso.asignatura}
-                    codigo={curso.codigo}
-                    creditos={curso.creditos}
-                    status={getCursoStatus(curso.codigo)}
-                    prereq={curso.prereq}
+                  <CursoCard
+                    curso={curso}
                     bloqueantes={getCursosBloqueantes(curso)}
                     onClick={() => toggleCursoProyeccion(curso)}
-                    clickable
                   />
                 </li>
               ))}
@@ -331,7 +313,7 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
               </Button>
             </div>
             <Button
-              onClick={guardarProyecciones}
+              // onClick={guardarProyecciones}
               className="w-full cursor-pointer"
               variant="default"
               disabled={
