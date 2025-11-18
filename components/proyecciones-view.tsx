@@ -20,7 +20,6 @@ export default function ProyeccionesView({
   const [selectedProyeccion, setSelectedProyeccion] =
     useState<ProyeccionBySemestre>();
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const router = useRouter();
 
   useEffect(() => {

@@ -3,37 +3,55 @@ import { Curso } from "../types/curso";
 /**
  * Actualiza el avance del estudiante, cambiando todos los cursos con estado
  * "INSCRITO" a estado "APROBADO".
- * @param cursos Lista de cursos del avance del estudiante.
- * @returns Lista de cursos actualizada.
+ * @param setAvance Función para actualizar el estado del avance.
  */
-export function actualizarAvance(cursos: Curso[]): Curso[] {
-  return cursos.map((curso) =>
-    curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
+export function actualizarAvance(
+  setAvance: React.Dispatch<React.SetStateAction<Curso[]>>
+) {
+  setAvance((prev) =>
+    prev.map((curso) =>
+      curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
+    )
   );
 }
 
 /**
  * Agrega un curso con el código dado al avance del estudiante, cambiando
  * su estado a "INSCRITO".
- * @param cursos Lista de cursos del avance del estudiante.
  * @param codigo Código del curso que se agregará al avance.
- * @returns Lista de cursos actualizada.
+ * @param cursos Lista de cursos del avance del estudiante.
+ * @param setAvance Función para actualizar el estado del avance.
  */
-export function agregarCursoAlAvance(cursos: Curso[], codigo: string): Curso[] {
-  return cursos.map((curso) =>
-    curso.codigo === codigo ? { ...curso, status: "INSCRITO" } : curso
+export function agregarCursoAlAvance(
+  codigo: string,
+  cursos: Curso[],
+  setAvance: React.Dispatch<React.SetStateAction<Curso[]>>
+) {
+  const curso = cursos.find(
+    (c) =>
+      c.codigo === codigo &&
+      (c.status === "PENDIENTE" || c.status === "REPROBADO")
   );
+  if (curso) {
+    setAvance((prev) => [...prev, { ...curso, status: "INSCRITO" }]);
+  }
 }
-
 /**
  * Elimina un curso con el código dado del avance del estudiante, cambiando
  * su estado a "PENDIENTE".
- * @param cursos Lista de cursos del avance del estudiante.
  * @param codigo Código del curso que se eliminará del avance.
- * @returns Lista de cursos actualizada.
+ * @param cursos Lista de cursos del avance del estudiante.
+ * @param setAvance Función para actualizar el estado del avance.
  */
-export function eliminarInscripcion(cursos: Curso[], codigo: string): Curso[] {
-  return cursos.map((curso) =>
-    curso.codigo === codigo ? { ...curso, status: "PENDIENTE" } : curso
+export function eliminarInscripcion(
+  codigo: string,
+  cursos: Curso[],
+  setAvance: React.Dispatch<React.SetStateAction<Curso[]>>
+) {
+  const curso = cursos.find(
+    (c) => c.codigo === codigo && c.status === "INSCRITO"
   );
+  if (curso) {
+    setAvance((prev) => prev.filter((c) => c.codigo !== codigo));
+  }
 }

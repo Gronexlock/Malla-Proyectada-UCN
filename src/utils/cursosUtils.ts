@@ -125,6 +125,12 @@ export async function getAvanceCurricular(
   return cursos;
 }
 
+/**
+ * Obtiene todo el historial de cursos del estudiante en orden cronológico.
+ * @param rut RUT del estudiante.
+ * @param carrera Carrera del estudiante.
+ * @returns Lista de cursos del avance cronológico del estudiante.
+ */
 export async function getAvanceCronologico(
   rut: string,
   carrera: Carrera
@@ -141,6 +147,7 @@ export async function getAvanceCronologico(
     const curso: Curso = {
       ...cursoAvance,
       asignatura: cursoMalla?.asignatura || cursoAvance.codigo,
+      creditos: cursoMalla?.creditos || 0,
     };
     cursos.push(curso);
   }
@@ -165,10 +172,10 @@ export function getCursosPorNivel(cursos: Curso[]): Record<number, Curso[]> {
 }
 
 /**
- * Agrupa los cursos por nivel.
+ * Agrupa los cursos por periodo.
  *
  * @param cursos Lista de cursos a agrupar.
- * @returns Un objeto donde las claves son los niveles y los valores son listas de cursos.
+ * @returns Un objeto donde las claves son los periodos y los valores son listas de cursos.
  */
 export function getCursosPorPeriodo(cursos: Curso[]): Record<string, Curso[]> {
   const cursosPorPeriodo: Record<string, Curso[]> = {};

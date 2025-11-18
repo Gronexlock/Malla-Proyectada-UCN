@@ -37,7 +37,7 @@ export function CrearProyeccionView({ avance }: CrearProyeccionViewProps) {
   const LIMITE_CREDITOS = 30;
   const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
-  function toggleCursoProyeccion(curso: CursoMalla) {
+  function toggleCursoProyeccion(curso: Curso) {
     setProyeccionesPorSemestre((prev) => {
       const isCursoSelected = proyeccionActual.some(
         (c) => c.codigo === curso.codigo
