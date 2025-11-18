@@ -7,10 +7,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { nombresCompletos } from "@/src/constants/carreras";
 import { getUser, setSelectedCarrera } from "@/src/actions/cookiesActions";
-import { useEffect, useState, useTransition } from "react";
+import { nombresCompletos } from "@/src/constants/carreras";
 import { User } from "@/src/schemas/userSchema";
+import { useEffect, useState, useTransition } from "react";
 
 export default function CarreraSelect() {
   const [user, setUser] = useState<User>();
@@ -27,6 +27,21 @@ export default function CarreraSelect() {
     const carrera = user?.carreras.find((c) => c.codigo === codigo);
     if (carrera) {
       await setSelectedCarrera(carrera.codigo);
+      setUser((prevUser) =>
+        prevUser ? { ...prevUser, selectedCarrera: carrera } : prevUser
+      );
+      const handleChange = async (codigo: string) => {
+        const carrera = user?.carreras.find((c) => c.codigo === codigo);
+        if (carrera) {
+          await setSelectedCarrera(carrera.codigo);
+          // Actualiza el estado del usuario con la nueva carrera seleccionada
+          setUser((prevUser) =>
+            prevUser
+              ? { ...prevUser, selectedCarrera: { ...carrera } }
+              : undefined
+          );
+        }
+      };
     }
   };
 
