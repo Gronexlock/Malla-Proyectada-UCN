@@ -6,5 +6,5 @@ export type Curso = {
   prerrequisitos: Curso[];
   nrc: string;
   periodo: string;
-  status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
+  status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE" | "PROYECTADO";
 };

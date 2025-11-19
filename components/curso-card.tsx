@@ -14,6 +14,7 @@ const statusColors: Record<Curso["status"], string> = {
   APROBADO: "bg-green-500",
   REPROBADO: "bg-red-500",
   INSCRITO: "bg-yellow-400",
+  PROYECTADO: "bg-yellow-500",
   PENDIENTE: "",
 };
 
