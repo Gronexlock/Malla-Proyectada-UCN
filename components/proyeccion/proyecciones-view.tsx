@@ -1,7 +1,7 @@
 "use client";
 
-import { ProyeccionDetail } from "@/components/proyeccion-detail";
-import { ProyeccionesList } from "@/components/proyecciones-list";
+import { ProyeccionDetail } from "@/components/proyeccion/proyeccion-detail";
+import { ProyeccionesList } from "@/components/proyeccion/proyecciones-list";
 import { Proyeccion } from "@/src/types/proyeccion";
 import { useState } from "react";
 

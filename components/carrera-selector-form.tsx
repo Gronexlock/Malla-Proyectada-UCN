@@ -1,7 +1,7 @@
 "use client";
 
 import { setSelectedCarrera } from "@/src/actions/cookiesActions";
-import { nombresCompletos } from "@/src/constants/carreras";
+import { nombresCompletos } from "@/src/constants/carrerasInfo";
 import { User } from "@/src/schemas/userSchema";
 import { useState } from "react";
 import { toast } from "sonner";

@@ -1,6 +1,6 @@
-import { nombresCompletos } from "@/src/constants/carreras";
+import { nombresCompletos } from "@/src/constants/carrerasInfo";
 import { Proyeccion } from "@/src/types/proyeccion";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 type ProyeccionDetailProps = {
   proyeccion: Proyeccion;

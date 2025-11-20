@@ -2,8 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { ListChecks, Lock } from "lucide-react";
+import { Badge } from "../ui/badge";
 import { CursoHover } from "./curso-hover";
-import { Badge } from "./ui/badge";
 
 export type CursoCardProps = {
   curso: Curso;

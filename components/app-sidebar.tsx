@@ -15,7 +15,7 @@ import {
 import { getUser } from "@/src/actions/cookiesActions";
 import { getSidebarItems } from "@/src/constants/sidebarItems";
 import Link from "next/link";
-import LogoutButton from "./logout-button";
+import LogoutButton from "./auth/logout-button";
 import {
   Collapsible,
   CollapsibleContent,

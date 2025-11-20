@@ -1,4 +1,4 @@
-import { AvanceCronoView } from "@/components/avance-crono-view";
+import { AvanceCronoView } from "@/components/views/avance-crono-view";
 import { getUser } from "@/src/actions/cookiesActions";
 import { getAvanceCronologico } from "@/src/utils/cursosUtils";
 

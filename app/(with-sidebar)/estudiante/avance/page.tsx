@@ -1,4 +1,4 @@
-import { AvanceView } from "@/components/avance-view";
+import { AvanceView } from "@/components/views/avance-view";
 import { getUser } from "@/src/actions/cookiesActions";
 import { getAvanceCurricular } from "@/src/utils/cursosUtils";
 

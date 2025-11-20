@@ -1,6 +1,6 @@
 import CarreraSelectorForm from "@/components/carrera-selector-form";
 import { getUser } from "@/src/actions/cookiesActions";
-import { nombresCompletos } from "@/src/constants/carreras";
+import { nombresCompletos } from "@/src/constants/carrerasInfo";
 
 export default async function AlternarCarreraPage() {
   const user = await getUser();

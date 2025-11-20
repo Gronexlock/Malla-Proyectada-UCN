@@ -1,5 +1,9 @@
 import { Curso } from "@/src/types/curso";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 export type CursoHoverProps = {
   cursos: Curso[];
