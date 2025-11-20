@@ -202,7 +202,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
             </ul>
           </div>
         </div>
-        <div className="flex flex-col justify-end items-center pb-4">
+        <div className="flex flex-col justify-end items-center p-4">
           <div className="flex flex-col gap-4">
             <div className="flex justify-between gap-4">
               <Button

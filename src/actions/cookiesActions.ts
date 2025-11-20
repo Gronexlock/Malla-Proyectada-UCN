@@ -33,13 +33,23 @@ export async function getUser() {
 }
 
 export async function setSelectedCarrera(codigo: string) {
-  const user = await getUser();
-  const carrera = user.carreras.find((c) => c.codigo === codigo);
+  try {
+    const user = await getUser();
+    const carrera = user.carreras.find((c) => c.codigo === codigo);
 
-  if (!carrera) {
-    throw new Error("Carrera no encontrada");
+    if (!carrera) {
+      return { success: false, error: "Carrera no encontrada" };
+    }
+
+    user.selectedCarrera = carrera;
+    await setUser(user);
+
+    return { success: true, carrera };
+  } catch (e: any) {
+    console.error("Error al seleccionar carrera:", e);
+    return {
+      success: false,
+      error: e.message || "Error desconocido al seleccionar carrera",
+    };
   }
-
-  user.selectedCarrera = carrera;
-  await setUser(user);
 }

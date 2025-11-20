@@ -13,9 +13,8 @@ import {
   SidebarMenuSub,
 } from "@/components/ui/sidebar";
 import { getUser } from "@/src/actions/cookiesActions";
-import { items } from "@/src/constants/sidebarItems";
+import { getSidebarItems } from "@/src/constants/sidebarItems";
 import Link from "next/link";
-import CarreraSelect from "./carrera-select";
 import LogoutButton from "./logout-button";
 import {
   Collapsible,
@@ -25,7 +24,7 @@ import {
 
 export async function AppSidebar() {
   const user = await getUser();
-
+  const sidebarItems = getSidebarItems(user);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -48,10 +47,7 @@ export async function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem className="pb-4">
-                <CarreraSelect user={user} />
-              </SidebarMenuItem>
-              {items.map((item) => (
+              {sidebarItems.map((item) => (
                 <Collapsible
                   key={item.title}
                   defaultOpen
