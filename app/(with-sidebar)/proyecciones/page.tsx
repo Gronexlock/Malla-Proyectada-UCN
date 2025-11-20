@@ -1,10 +1,10 @@
-"use client";
-
 import ProyeccionesView from "@/components/proyecciones-view";
-import { useUserStore } from "@/src/store/useUserStore";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getProyecciones } from "@/src/utils/proyeccionUtils";
 
-export default function Page() {
-  const { rut, selectedCarrera } = useUserStore();
+export default async function ProyeccionesPage() {
+  const { selectedCarrera } = await getUser();
+  const proyecciones = await getProyecciones(selectedCarrera);
 
-  return <ProyeccionesView rut={rut} carrera={selectedCarrera.codigo} />;
+  return <ProyeccionesView proyecciones={proyecciones} />;
 }

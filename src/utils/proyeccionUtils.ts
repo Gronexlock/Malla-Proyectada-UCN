@@ -1,4 +1,45 @@
+import { fetchProyecciones } from "../actions/proyeccionActions";
+import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
+import { Proyeccion } from "../types/proyeccion";
+import { getMalla } from "./cursosUtils";
+
+export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
+  const [malla, proyeccionesDB] = await Promise.all([
+    getMalla(carrera),
+    fetchProyecciones(),
+  ]);
+
+  const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
+
+  return proyeccionesDB.map((proyeccionDB) => {
+    const cursosPorSemestre = new Map<string, Curso[]>();
+
+    proyeccionDB.cursos.forEach((item) => {
+      const curso = cursosMap.get(item.cursoCodigo);
+      if (curso) {
+        const cursos = cursosPorSemestre.get(item.semestre) || [];
+        cursos.push(curso);
+        cursosPorSemestre.set(item.semestre, cursos);
+      }
+    });
+
+    const semestres = Array.from(cursosPorSemestre.entries()).map(
+      ([semestre, cursos]) => ({
+        semestre,
+        cursos,
+      })
+    );
+
+    semestres.sort((a, b) => a.semestre.localeCompare(b.semestre));
+
+    return {
+      id: proyeccionDB.id,
+      carrera: proyeccionDB.carreraCodigo,
+      semestres,
+    };
+  });
+}
 
 /**
  * Agrega el estado de aprobado a los cursos que están inscritos.

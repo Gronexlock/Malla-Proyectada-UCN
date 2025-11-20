@@ -8,7 +8,7 @@ import { Curso } from "../types/curso";
 import { verifyToken } from "./authActions";
 import { getUser } from "./cookiesActions";
 
-export async function getProyecciones(page: number = 1, limit: number = 10) {
+export async function fetchProyecciones(page: number = 1, limit: number = 10) {
   try {
     const token = (await cookies()).get("token")?.value;
     const [user, { selectedCarrera }] = await Promise.all([
@@ -20,11 +20,17 @@ export async function getProyecciones(page: number = 1, limit: number = 10) {
       throw new Error("No se seleccionó una carrera");
     }
 
+    const parsedCarrera = CarreraSchema.safeParse(selectedCarrera);
+    if (!parsedCarrera.success) {
+      console.error(parsedCarrera.error);
+      throw new Error("La carrera no cumple con el esquema esperado");
+    }
+
     const offset = (page - 1) * limit;
     const proyecciones = await prisma.proyeccion.findMany({
       where: {
         estudianteRut: user.rut,
-        carreraCodigo: selectedCarrera.codigo,
+        carreraCodigo: parsedCarrera.data.codigo,
       },
       include: {
         cursos: true,

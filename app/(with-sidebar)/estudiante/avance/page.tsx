@@ -6,7 +6,7 @@ export default async function Page() {
   const user = await getUser();
   const { rut, selectedCarrera } = user;
 
-  const cursos = await getAvanceCurricular(rut, selectedCarrera);
+  const cursos = await getAvanceCurricular(selectedCarrera);
 
   return (
     <div className="p-4">

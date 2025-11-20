@@ -4,9 +4,9 @@ import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
 import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
 
 export default async function NuevaProyeccionPage() {
-  const { rut, selectedCarrera } = await getUser();
+  const { selectedCarrera } = await getUser();
   const cursos = aprobarCursosInscritos(
-    await getAvanceAgrupado(rut, selectedCarrera)
+    await getAvanceAgrupado(selectedCarrera)
   );
 
   return (

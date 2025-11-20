@@ -96,8 +96,8 @@ export async function getMalla(carrera: Carrera): Promise<Curso[]> {
  * @param carrera Carrera del estudiante.
  * @returns Lista de cursos que representan el avance del estudiante.
  */
-async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
-  const cursosAvance = await fetchAvance(rut, carrera.codigo);
+async function getAvance(): Promise<Curso[]> {
+  const cursosAvance = await fetchAvance();
   const cursos: Curso[] = [];
   for (const cursoAvance of cursosAvance) {
     const curso: Curso = {
@@ -123,13 +123,10 @@ async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
  * @param carrera Carrera del estudiante.
  * @returns Lista de cursos de la malla con su estado de avance.
  */
-export async function getAvanceCurricular(
-  rut: string,
-  carrera: Carrera
-): Promise<Curso[]> {
+export async function getAvanceCurricular(carrera: Carrera): Promise<Curso[]> {
   const [cursosMalla, cursosAvance] = await Promise.all([
     getMalla(carrera),
-    getAvance(rut, carrera),
+    getAvance(),
   ]);
   const cursos: Curso[] = [];
   for (const cursoMalla of cursosMalla) {
@@ -149,13 +146,10 @@ export async function getAvanceCurricular(
  * @param carrera Carrera del estudiante.
  * @returns Lista de cursos con los estados agrupados.
  */
-export async function getAvanceAgrupado(
-  rut: string,
-  carrera: Carrera
-): Promise<Curso[]> {
+export async function getAvanceAgrupado(carrera: Carrera): Promise<Curso[]> {
   const [cursosMalla, cursosAvance] = await Promise.all([
     getMalla(carrera),
-    getAvance(rut, carrera),
+    getAvance(),
   ]);
   const cursos: Curso[] = [];
   for (const cursoMalla of cursosMalla) {
@@ -177,13 +171,10 @@ export async function getAvanceAgrupado(
  * @param carrera Carrera del estudiante.
  * @returns Lista de cursos del avance cronológico del estudiante.
  */
-export async function getAvanceCronologico(
-  rut: string,
-  carrera: Carrera
-): Promise<Curso[]> {
+export async function getAvanceCronologico(carrera: Carrera): Promise<Curso[]> {
   const [cursosMalla, cursosAvance] = await Promise.all([
     getMalla(carrera),
-    getAvance(rut, carrera),
+    getAvance(),
   ]);
   const cursos: Curso[] = [];
   for (const cursoAvance of cursosAvance) {
