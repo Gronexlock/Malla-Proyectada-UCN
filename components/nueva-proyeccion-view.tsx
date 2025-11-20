@@ -4,6 +4,10 @@ import { cn } from "@/lib/utils";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { getCursosPorNivel, getCursoStatus } from "@/src/utils/cursosUtils";
+import {
+  getSemestreActual,
+  getSemestreSiguiente,
+} from "@/src/utils/semestreUtils";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CursoCard } from "./curso-card";
@@ -26,9 +30,101 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
 
   const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
-  const [proyeccionActual, setProyeccionesActuales] = useState<Curso[]>([]);
+  const [semestres, setSemestres] = useState<string[]>([
+    getSemestreSiguiente(getSemestreActual()),
+  ]);
+  const [semestreIndex, setSemestreIndex] = useState(0);
+  const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
+    Record<string, Curso[]>
+  >({ [semestres[0]]: [] });
 
-  function toggleCursoProyeccion(curso: Curso) {}
+  const semestreActual = semestres[semestreIndex];
+  const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
+
+  function toggleCursoProyeccion(cursoToToggle: Curso) {
+    const isInProyeccion = proyeccionActual.some(
+      (c) => c.codigo === cursoToToggle.codigo
+    );
+
+    const nuevaProyeccion = isInProyeccion
+      ? proyeccionActual.filter((c) => c.codigo !== cursoToToggle.codigo)
+      : [...proyeccionActual, cursoToToggle];
+
+    setProyeccionesPorSemestre((prev) => ({
+      ...prev,
+      [semestreActual]: nuevaProyeccion,
+    }));
+
+    setCursos((prevCursos) =>
+      prevCursos.map((curso) => {
+        if (curso.codigo === cursoToToggle.codigo) {
+          const newStatus = isInProyeccion
+            ? curso.status.filter((s) => s !== CursoStatus.INSCRITO)
+            : [...curso.status, CursoStatus.INSCRITO];
+          return { ...curso, status: newStatus };
+        }
+        return curso;
+      })
+    );
+  }
+
+  function irSiguienteSemestre() {
+    const codigosProyectados = proyeccionActual.map((c) => c.codigo);
+
+    setCursos((prevCursos) =>
+      prevCursos.map((curso) => {
+        if (codigosProyectados.includes(curso.codigo)) {
+          return { ...curso, status: [...curso.status, CursoStatus.APROBADO] };
+        }
+        return curso;
+      })
+    );
+
+    if (semestreIndex < semestres.length - 1) {
+      setSemestreIndex(semestreIndex + 1);
+    } else {
+      const siguienteSemestre = getSemestreSiguiente(semestreActual);
+      setSemestres((prev) => [...prev, siguienteSemestre]);
+      setProyeccionesPorSemestre((prev) => ({
+        ...prev,
+        [siguienteSemestre]: [],
+      }));
+      setSemestreIndex(semestreIndex + 1);
+    }
+  }
+
+  function irSemestreAnterior() {
+    if (semestreIndex > 0) {
+      const semestreAnterior = semestres[semestreIndex - 1];
+      const proyeccionAnterior =
+        proyeccionesPorSemestre[semestreAnterior] || [];
+
+      setCursos((prev) =>
+        prev.map((curso) => {
+          if (proyeccionActual.some((c) => c.codigo === curso.codigo)) {
+            return {
+              ...curso,
+              status: curso.status.filter((s) => s !== CursoStatus.INSCRITO),
+            };
+          }
+          if (proyeccionAnterior.some((c) => c.codigo === curso.codigo)) {
+            return {
+              ...curso,
+              status: curso.status.filter((s) => s !== CursoStatus.APROBADO),
+            };
+          }
+          return curso;
+        })
+      );
+
+      setProyeccionesPorSemestre((prev) => ({
+        ...prev,
+        [semestreActual]: [],
+      }));
+      setSemestres((prev) => prev.slice(0, -1));
+      setSemestreIndex(semestreIndex - 1);
+    }
+  }
 
   return (
     <div className="flex justify-center w-full">
@@ -84,8 +180,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 Ignorar restricciones
               </Label>
             </div>
-            {/* TODO: Quitar */}
-            <h2 className="font-bold text-lg mb-1">2026-1</h2>
+            <h2 className="font-bold text-lg mb-1">{semestreActual}</h2>
             <div
               className={cn(
                 "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit bg-zinc-900"
@@ -130,15 +225,15 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
             <div className="flex justify-between gap-4">
               <Button
                 className="cursor-pointer mt-4"
-                // onClick={irSemestreAnterior}
-                // disabled={semestreIndex === 0}
+                onClick={irSemestreAnterior}
+                disabled={semestreIndex === 0}
               >
                 <MoveLeft />
                 Anterior
               </Button>
               <Button
                 className="cursor-pointer mt-4"
-                // onClick={irSiguienteSemestre}
+                onClick={irSiguienteSemestre}
                 disabled={proyeccionActual.length === 0}
               >
                 Siguiente

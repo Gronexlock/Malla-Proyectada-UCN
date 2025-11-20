@@ -1,8 +1,8 @@
 import { Curso } from "@/src/types/curso";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { formatPeriod } from "@/src/utils/semestre";
 import { getCursosPorPeriodo } from "@/src/utils/cursosUtils";
+import { formatPeriod } from "@/src/utils/semestreUtils";
 import { CursoCard } from "./curso-card";
+import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 
 type AvanceCronoViewProps = {
   cursos: Curso[];

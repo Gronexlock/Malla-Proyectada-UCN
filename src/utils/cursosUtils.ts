@@ -15,7 +15,7 @@ function getPrerrequisitosAsCursos(
   prereqString: string,
   cursosMalla: CursoMalla[]
 ): Curso[] {
-  const prereqCodes = prereqString.split(",");
+  const prereqCodes = prereqString ? prereqString.split(",") : [];
   const prereqCursos: Curso[] = [];
   for (const code of prereqCodes) {
     const cursoMalla = cursosMalla.find((c) => c.codigo === code);
