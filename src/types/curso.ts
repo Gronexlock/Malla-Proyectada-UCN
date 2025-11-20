@@ -1,3 +1,10 @@
+export enum CursoStatus {
+  APROBADO = "APROBADO",
+  PENDIENTE = "PENDIENTE",
+  INSCRITO = "INSCRITO",
+  REPROBADO = "REPROBADO",
+}
+
 export type Curso = {
   codigo: string;
   asignatura: string;
@@ -6,5 +13,5 @@ export type Curso = {
   prerrequisitos: Curso[];
   nrc: string;
   periodo: string;
-  status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE" | "PROYECTADO";
+  status: CursoStatus[];
 };

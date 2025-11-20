@@ -1,36 +1,38 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Curso } from "@/src/types/curso";
+import { cn } from "@/lib/utils";
+import { Curso, CursoStatus } from "@/src/types/curso";
 import { ListChecks } from "lucide-react";
 import { Badge } from "./ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export type CursoCardProps = {
   curso: Curso;
+  muted?: boolean;
   bloqueantes?: Curso[];
   onClick?: () => void;
 };
 
-const statusColors: Record<Curso["status"], string> = {
-  APROBADO: "bg-green-500",
-  REPROBADO: "bg-red-500",
-  INSCRITO: "bg-yellow-400",
-  PROYECTADO: "bg-yellow-500",
-  PENDIENTE: "",
+const statusColors: Record<CursoStatus, string> = {
+  [CursoStatus.APROBADO]: "bg-green-500",
+  [CursoStatus.REPROBADO]: "bg-red-500",
+  [CursoStatus.INSCRITO]: "bg-yellow-400",
+  [CursoStatus.PENDIENTE]: "",
 };
 
-export function CursoCard({ curso, onClick }: CursoCardProps) {
+export function CursoCard({ curso, muted, onClick }: CursoCardProps) {
   return (
     <Card
-      className={`rounded-md p-0 w-36 shadow-sm overflow-hidden relative ${
-        onClick
-          ? "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all"
-          : ""
-      }`}
+      className={cn(
+        "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
+        onClick &&
+          "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
+        muted && "opacity-50"
+      )}
       onClick={onClick}
     >
       <CardContent className="p-0 flex h-full">
         <div
-          className={`w-1.5 ${statusColors[curso.status]} absolute h-full`}
+          className={`w-1.5 ${statusColors[curso.status[0]]} absolute h-full`}
         ></div>
         <div className="flex flex-col flex-1">
           <div className={`h-6 flex justify-end pr-0.5 items-center border-b`}>

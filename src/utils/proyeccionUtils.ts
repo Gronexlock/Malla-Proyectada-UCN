@@ -1,13 +1,12 @@
-import { Curso } from "../types/curso";
+import { Curso, CursoStatus } from "../types/curso";
 
-/**
- * Actualiza el avance del estudiante, cambiando todos los cursos con estado
- * "INSCRITO" a estado "APROBADO".
- * @param avance Lista de cursos que representan el avance curricular del estudiante.
- * @returns Una nueva lista de cursos con los estados actualizados.
- */
-export function actualizarAvance(avance: Curso[]): Curso[] {
-  return avance.map((curso) =>
-    curso.status === "INSCRITO" ? { ...curso, status: "APROBADO" } : curso
-  );
+export function actualizarAvance(cursos: Curso[]): Curso[] {
+  const cursosActualizados: Curso[] = [];
+  for (const curso of cursos) {
+    if (curso.status.includes(CursoStatus.INSCRITO)) {
+      curso.status.push(CursoStatus.APROBADO);
+    }
+    cursosActualizados.push(curso);
+  }
+  return cursosActualizados;
 }

@@ -2,14 +2,14 @@ import { fetchAvance } from "../actions/avanceActions";
 import { fetchMalla } from "../actions/mallaActions";
 import { CursoMalla } from "../schemas/mallaSchema";
 import { Carrera } from "../types/carrera";
-import { Curso } from "../types/curso";
+import { Curso, CursoStatus } from "../types/curso";
 
 /**
- * Obtiene los prerrequisitos de un curso como una lista de objetos Curso.
- * Los cursos resultantes no tienen prerrequisitos para evitar recursividad.
+ * Obtiene los prerrequisitos de un curso. Los cursos resultantes no
+ * tienen prerrequisitos para evitar recursividad.
  * @param prereqString Cadena de prerrequisitos separada por comas.
  * @param cursosMalla Lista de cursos de la malla.
- * @returns Lista de objetos Curso.
+ * @returns Lista de cursos que representan los prerrequisitos.
  */
 function getPrerrequisitosAsCursos(
   prereqString: string,
@@ -27,7 +27,7 @@ function getPrerrequisitosAsCursos(
       prerrequisitos: [], // Evitar recursividad
       nrc: "",
       periodo: "",
-      status: "PENDIENTE",
+      status: [CursoStatus.PENDIENTE],
     };
     prereqCursos.push(curso);
   }
@@ -43,16 +43,30 @@ function getPrerrequisitosAsCursos(
  * @param avance Lista de cursos que representan el avance del estudiante.
  * @returns El estado del curso.
  */
-function getCursoStatus(codigo: string, avance: Curso[]): Curso["status"] {
+function getFinalStatus(codigo: string, avance: Curso[]): CursoStatus {
   const cursoAvance = avance.filter((curso) => curso.codigo === codigo);
-  if (cursoAvance.length === 0) return "PENDIENTE";
-  if (cursoAvance.length === 1) return cursoAvance[0].status;
+  if (cursoAvance.length === 0) return CursoStatus.PENDIENTE;
+  if (cursoAvance.length === 1) return cursoAvance[0].status[0];
   else {
-    const statuses = cursoAvance.map((curso) => curso.status);
-    if (statuses.includes("APROBADO")) return "APROBADO";
-    if (statuses.includes("INSCRITO")) return "INSCRITO";
-    return "REPROBADO";
+    const statuses = cursoAvance.map((curso) => curso.status[0]);
+    if (statuses.includes(CursoStatus.APROBADO)) return CursoStatus.APROBADO;
+    if (statuses.includes(CursoStatus.INSCRITO)) return CursoStatus.INSCRITO;
+    return CursoStatus.REPROBADO;
   }
+}
+
+/**
+ * Obtiene el estado principal de un curso basado en su lista de estados. El estado
+ * se determina sigiuiendo el siguiente orden: APROBADO > INSCRITO > REPROBADO.
+ * @param curso Curso del cual se desea obtener el estado principal.
+ * @returns Estado principal del curso.
+ */
+export function getCursoStatus(curso: Curso): CursoStatus {
+  if (curso.status.includes(CursoStatus.APROBADO)) return CursoStatus.APROBADO;
+  if (curso.status.includes(CursoStatus.INSCRITO)) return CursoStatus.INSCRITO;
+  if (curso.status.includes(CursoStatus.REPROBADO))
+    return CursoStatus.REPROBADO;
+  return CursoStatus.PENDIENTE;
 }
 
 /**
@@ -69,7 +83,7 @@ export async function getMalla(carrera: Carrera): Promise<Curso[]> {
       prerrequisitos: getPrerrequisitosAsCursos(cursoMalla.prereq, cursosMalla),
       nrc: "",
       periodo: "",
-      status: "PENDIENTE",
+      status: [CursoStatus.PENDIENTE],
     };
     cursos.push(curso);
   }
@@ -77,10 +91,10 @@ export async function getMalla(carrera: Carrera): Promise<Curso[]> {
 }
 
 /**
- * Obtiene la lista de cursos del avance del estudiante como una lista de objetos Curso.
+ * Obtiene el avance del estudiante.
  * @param rut RUT del estudiante.
  * @param carrera Carrera del estudiante.
- * @returns Lista de objetos Curso.
+ * @returns Lista de cursos que representan el avance del estudiante.
  */
 async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
   const cursosAvance = await fetchAvance(rut, carrera.codigo);
@@ -88,6 +102,7 @@ async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
   for (const cursoAvance of cursosAvance) {
     const curso: Curso = {
       ...cursoAvance,
+      status: [cursoAvance.status as CursoStatus],
       codigo: cursoAvance.course,
       asignatura: "",
       creditos: 0,
@@ -101,7 +116,9 @@ async function getAvance(rut: string, carrera: Carrera): Promise<Curso[]> {
 }
 
 /**
- * Obtiene la malla curricular del estudiante con el estado de avance en cada curso.
+ * Obtiene la malla curricular del estudiante con el estado de avance en cada curso. Si un curso
+ * aparece múltiples veces en el avance, se determina el estado final siguiendo el siguiente orden:
+ * REPROBADO < INSCRITO < APROBADO.
  * @param rut RUT del estudiante.
  * @param carrera Carrera del estudiante.
  * @returns Lista de cursos de la malla con su estado de avance.
@@ -118,7 +135,36 @@ export async function getAvanceCurricular(
   for (const cursoMalla of cursosMalla) {
     const curso: Curso = {
       ...cursoMalla,
-      status: getCursoStatus(cursoMalla.codigo, cursosAvance),
+      status: [getFinalStatus(cursoMalla.codigo, cursosAvance)],
+    };
+    cursos.push(curso);
+  }
+  return cursos;
+}
+
+/**
+ * Obtiene el avance del estudiante con los estados agrupados. Por ejemplo, si un curso aparece
+ * múltiples veces en el avance, el estado del curso será una lista con todos los estados.
+ * @param rut RUT del estudiante.
+ * @param carrera Carrera del estudiante.
+ * @returns Lista de cursos con los estados agrupados.
+ */
+export async function getAvanceAgrupado(
+  rut: string,
+  carrera: Carrera
+): Promise<Curso[]> {
+  const [cursosMalla, cursosAvance] = await Promise.all([
+    getMalla(carrera),
+    getAvance(rut, carrera),
+  ]);
+  const cursos: Curso[] = [];
+  for (const cursoMalla of cursosMalla) {
+    const estadosCurso = cursosAvance
+      .filter((curso) => curso.codigo === cursoMalla.codigo)
+      .map((curso) => curso.status[0]);
+    const curso: Curso = {
+      ...cursoMalla,
+      status: estadosCurso.length > 0 ? estadosCurso : [CursoStatus.PENDIENTE],
     };
     cursos.push(curso);
   }

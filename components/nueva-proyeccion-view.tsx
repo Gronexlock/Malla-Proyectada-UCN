@@ -2,8 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { Curso } from "@/src/types/curso";
-import { getCursosPorNivel } from "@/src/utils/cursosUtils";
+import { Curso, CursoStatus } from "@/src/types/curso";
+import { getCursosPorNivel, getCursoStatus } from "@/src/utils/cursosUtils";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CursoCard } from "./curso-card";
@@ -25,28 +25,10 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   }, [cursosProp.cursos]);
 
   const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
-  const [proyeccionActual, setProyeccionActual] = useState<Curso[]>([]);
 
-  function addCursoToProyeccion(curso: Curso) {
-    setProyeccionActual([...proyeccionActual, curso]);
-  }
+  const [proyeccionActual, setProyeccionesActuales] = useState<Curso[]>([]);
 
-  function removeCursoFromProyeccion(curso: Curso) {
-    setProyeccionActual(
-      proyeccionActual.filter((c) => c.codigo !== curso.codigo)
-    );
-  }
-
-  function toggleCursoProyeccion(curso: Curso) {
-    const isInProyeccion = proyeccionActual.some(
-      (c) => c.codigo === curso.codigo
-    );
-    if (isInProyeccion) {
-      removeCursoFromProyeccion(curso);
-    } else {
-      addCursoToProyeccion(curso);
-    }
-  }
+  function toggleCursoProyeccion(curso: Curso) {}
 
   return (
     <div className="flex justify-center w-full">
@@ -62,6 +44,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                   </h2>
                 </div>
                 {cursosPorNivel[level].map((course) => {
+                  const status = getCursoStatus(course);
                   return (
                     <div
                       key={course.codigo}
@@ -70,11 +53,14 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                       <CursoCard
                         curso={{
                           ...course,
-                          status: proyeccionActual.includes(course)
-                            ? "PROYECTADO"
-                            : course.status,
+                          status: [status],
                         }}
-                        onClick={() => toggleCursoProyeccion(course)}
+                        muted={status === "APROBADO"}
+                        onClick={
+                          status !== "APROBADO"
+                            ? () => toggleCursoProyeccion(course)
+                            : undefined
+                        }
                       />
                     </div>
                   );
@@ -111,7 +97,8 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 // }
               )}
             >
-              Créditos: 25
+              Créditos:{" "}
+              {proyeccionActual.reduce((acc, c) => acc + c.creditos, 0)}
             </div>
           </div>
         </div>
@@ -129,7 +116,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                   className="relative group flex justify-center"
                 >
                   <CursoCard
-                    curso={{ ...curso, status: "PENDIENTE" }}
+                    curso={{ ...curso, status: [CursoStatus.PENDIENTE] }}
                     onClick={() => toggleCursoProyeccion(curso)}
                     // bloqueantes={getCursosBloqueantes(curso)}
                   />
@@ -152,7 +139,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               <Button
                 className="cursor-pointer mt-4"
                 // onClick={irSiguienteSemestre}
-                // disabled={proyeccionActual.length === 0}
+                disabled={proyeccionActual.length === 0}
               >
                 Siguiente
                 <MoveRight />
