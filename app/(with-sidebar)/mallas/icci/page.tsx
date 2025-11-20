@@ -1,5 +1,5 @@
-import { MallaView } from "@/components/malla-view";
-import { carreras } from "@/src/constants/carreras";
+import { MallaView } from "@/components/views/malla-view";
+import { carreras } from "@/src/constants/carrerasInfo";
 import { getMalla } from "@/src/utils/cursosUtils";
 
 export default async function Page() {

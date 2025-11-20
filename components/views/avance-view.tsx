@@ -1,8 +1,8 @@
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import { Curso } from "@/src/types/curso";
-import { CursoCard } from "./curso-card";
+import { getCursosPorNivel } from "@/src/utils/cursosUtils";
+import { CursoCard } from "../curso/curso-card";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 type AvanceViewProps = {
   cursos: Curso[];

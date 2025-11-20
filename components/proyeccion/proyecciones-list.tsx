@@ -1,6 +1,6 @@
-import { nombresCompletos } from "@/src/constants/carreras";
+import { nombresCompletos } from "@/src/constants/carrerasInfo";
 import { Proyeccion } from "@/src/types/proyeccion";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 type ProyeccionesListProps = {
   proyecciones: Proyeccion[];

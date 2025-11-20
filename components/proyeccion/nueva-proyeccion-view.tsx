@@ -20,11 +20,11 @@ import {
 } from "@/src/utils/semestreUtils";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
-import { CursoCard } from "./curso-card";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { Switch } from "./ui/switch";
+import { CursoCard } from "../curso/curso-card";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { Switch } from "../ui/switch";
 
 type CrearProyeccionViewProps = {
   cursos: Curso[];
