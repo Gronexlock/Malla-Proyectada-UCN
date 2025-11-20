@@ -2,16 +2,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import { ListChecks, Lock } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { CursoAvance } from "@/src/schemas/avanceSchema";
 
 type CursoAvanceCardProps = {
   codigo: string;
   asignatura: string;
   creditos: number;
   status: "APROBADO" | "REPROBADO" | "INSCRITO" | "PENDIENTE";
-  prereq: {
-    codigo: string;
-    asignatura: string;
-  }[];
+  prereq: string;
   bloqueantes?: {
     codigo: string;
     asignatura: string;
@@ -20,7 +18,7 @@ type CursoAvanceCardProps = {
   clickable?: boolean;
 };
 
-const statusColors: Record<string, string> = {
+const statusColors: Record<CursoAvance["status"], string> = {
   APROBADO: "bg-green-500",
   REPROBADO: "bg-red-500",
   INSCRITO: "bg-yellow-400",
@@ -66,9 +64,9 @@ export function CursoAvanceCard({
                       PRERREQUISITOS
                     </h2>
                     <hr />
-                    {prereq.map((pre) => (
-                      <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura}
+                    {prereq.split(",").map((pre) => (
+                      <p key={pre} className="text-xs">
+                        • {pre}
                       </p>
                     ))}
                   </div>

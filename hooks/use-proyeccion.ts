@@ -1,7 +1,10 @@
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
-import { useState, useEffect } from "react";
 import { Carrera } from "@/src/types/carrera";
-import { getSemestreActual, getSemestreSiguiente } from "@/src/utils/semestre";
+import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import {
+  getSemestreActual,
+  getSemestreSiguiente,
+} from "@/src/utils/semestreUtils";
+import { useEffect, useState } from "react";
 
 export function useCrearProyeccion(carrera: Carrera, rut: string) {
   const [cursos, setCursos] = useState<CursoMalla[]>([]);

@@ -1,14 +1,16 @@
-"use client";
-
 import { AvanceView } from "@/components/avance-view";
-import { useUserStore } from "@/src/store/useUserStore";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getAvanceCurricular } from "@/src/utils/cursosUtils";
 
-export default function Page() {
-  const { rut, selectedCarrera } = useUserStore();
+export default async function Page() {
+  const user = await getUser();
+  const { rut, selectedCarrera } = user;
+
+  const cursos = await getAvanceCurricular(selectedCarrera);
 
   return (
     <div className="p-4">
-      <AvanceView carrera={selectedCarrera} rut={rut} />
+      <AvanceView cursos={cursos} />
     </div>
   );
 }

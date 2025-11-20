@@ -1,22 +1,10 @@
-export interface Proyeccion {
-  id: number;
-  estudianteRut: string;
-  carreraCodigo: string;
-  cursos: {
-    cursoCodigo: string;
-    proyeccionId: number;
-    semestre: string;
-  }[];
-}
+import { Curso } from "./curso";
 
-export interface ProyeccionBySemestre {
+export type Proyeccion = {
   id: number;
-  estudianteRut: string;
-  carreraCodigo: string;
+  carrera: string;
   semestres: {
     semestre: string;
-    cursos: {
-      cursoCodigo: string;
-    }[];
+    cursos: Curso[];
   }[];
-}
+};

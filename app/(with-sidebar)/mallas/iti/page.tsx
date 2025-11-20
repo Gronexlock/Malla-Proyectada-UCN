@@ -1,13 +1,15 @@
 import { MallaView } from "@/components/malla-view";
-import { CursoMalla } from "@/src/types/curso";
-import { fetchMalla } from "@/src/lib/malla";
+import { carreras } from "@/src/constants/carreras";
+import { getMalla } from "@/src/utils/cursosUtils";
 
 export default async function Page() {
-  const malla: CursoMalla[] = await fetchMalla("8266", "202410");
+  const carrera = carreras["iti"];
+  const malla = await getMalla(carrera);
 
-  return (
-    <div className="p-4">
-      <MallaView cursos={malla} />
-    </div>
-  );
+  // TODO: crear página de error
+  if (malla.length === 0) {
+    return "Error";
+  }
+
+  return <MallaView cursos={malla} />;
 }

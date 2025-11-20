@@ -1,53 +1,32 @@
-import { CursoMalla } from "@/src/types/curso";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { CursoMallaCard } from "./curso-malla-card";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
+import { getCursosPorNivel } from "@/src/utils/cursosUtils";
+import { Curso } from "@/src/types/curso";
+import { CursoCard } from "./curso-card";
 
 type MallaViewProps = {
-  cursos: CursoMalla[];
+  cursos: Curso[];
 };
 
 export function MallaView({ cursos }: MallaViewProps) {
-  const cursosPorNivel: Record<number, CursoMalla[]> = {};
-  cursos.forEach((curso) => {
-    if (!cursosPorNivel[curso.nivel]) {
-      cursosPorNivel[curso.nivel] = [];
-    }
-    cursosPorNivel[curso.nivel].push(curso);
-  });
-
-  const cursosPorAnio: Record<number, number[]> = {};
-  Object.keys(cursosPorNivel).forEach((level) => {
-    const anio = Math.ceil(Number(level) / 2);
-    if (!cursosPorAnio[anio]) cursosPorAnio[anio] = [];
-    cursosPorAnio[anio].push(Number(level));
-  });
+  const cursosPorNivel = getCursosPorNivel(cursos);
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
       <div className="flex justify-center min-w-max gap-4">
-        {Object.keys(cursosPorAnio)
+        {Object.keys(cursosPorNivel)
           .sort((a, b) => Number(a) - Number(b))
-          .map((anio) => (
-            <div key={anio} className="flex flex-col gap-2">
-              <div className="rounded-sm text-center text-white font-bold mb-2 bg-zinc-800">
-                Año {anio}
+          .map((nivel) => (
+            <div key={nivel} className="flex flex-col gap-2">
+              <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
+                <h2 className="text-center font-semibold">
+                  {romanNumerals[Number(nivel)]}
+                </h2>
               </div>
-              <div className="flex gap-4">
-                {cursosPorAnio[Number(anio)].map((level) => (
-                  <div key={level} className="flex flex-col gap-2">
-                    <div className="bg-zinc-400 rounded-sm flex justify-center items-center mb-2">
-                      <h2 className="text-center font-semibold">
-                        {romanNumerals[level]}
-                      </h2>
-                    </div>
 
-                    {cursosPorNivel[level].map((course) => (
-                      <CursoMallaCard key={course.codigo} curso={course} />
-                    ))}
-                  </div>
-                ))}
-              </div>
+              {cursosPorNivel[Number(nivel)].map((course) => (
+                <CursoCard key={course.codigo} curso={course} />
+              ))}
             </div>
           ))}
       </div>

@@ -1,14 +1,17 @@
-"use client";
+import { NuevaProyeccionView } from "@/components/nueva-proyeccion-view";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
+import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
 
-import { CrearProyeccionView } from "@/components/crear-proyeccion-view";
-import { useUserStore } from "@/src/store/useUserStore";
-
-export default function Page() {
-  const { rut, selectedCarrera } = useUserStore();
+export default async function NuevaProyeccionPage() {
+  const { selectedCarrera } = await getUser();
+  const cursos = aprobarCursosInscritos(
+    await getAvanceAgrupado(selectedCarrera)
+  );
 
   return (
     <div className="p-4">
-      <CrearProyeccionView carrera={selectedCarrera} rut={rut} />
+      <NuevaProyeccionView cursos={cursos} />
     </div>
   );
 }

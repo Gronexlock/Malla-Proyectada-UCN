@@ -27,9 +27,9 @@ export function CursoMallaCard({ curso }: CursoMallaCardProps) {
                       PRERREQUISITOS
                     </h2>
                     <hr />
-                    {curso.prereq.map((pre) => (
-                      <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura}
+                    {curso.prereq.split(",").map((pre) => (
+                      <p key={pre} className="text-xs">
+                        • {pre}
                       </p>
                     ))}
                   </div>

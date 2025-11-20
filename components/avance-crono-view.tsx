@@ -1,66 +1,15 @@
-import { CursoAvance, CursoMalla } from "@/src/types/curso";
+import { Curso } from "@/src/types/curso";
+import { getCursosPorPeriodo } from "@/src/utils/cursosUtils";
+import { formatPeriod } from "@/src/utils/semestreUtils";
+import { CursoCard } from "./curso-card";
 import { ScrollArea, ScrollBar } from "./ui/scroll-area";
-import { useState, useEffect } from "react";
-import { Carrera } from "@/src/types/carrera";
-import { AvanceCronoSkeleton } from "./skeletons/avance-crono-skeleton";
-import { formatPeriod } from "@/src/utils/semestre";
-import { CursoCronoCard } from "./curso-crono-card";
 
 type AvanceCronoViewProps = {
-  carrera: Carrera;
-  rut: string;
+  cursos: Curso[];
 };
 
-export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
-  const [cursos, setCursos] = useState<CursoMalla[]>([]);
-  const [avance, setAvance] = useState<CursoAvance[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!carrera || !rut) return;
-      setLoading(true);
-
-      try {
-        const [cursosResponse, avanceResponse] = await Promise.all([
-          fetch(`/api/mallas/?codigo=${carrera.codigo}-${carrera.catalogo}`),
-          fetch(`/api/avance/?rut=${rut}&codCarrera=${carrera.codigo}`),
-        ]);
-        const [cursosData, avanceData] = await Promise.all([
-          cursosResponse.json(),
-          avanceResponse.json(),
-        ]);
-        setCursos(cursosData);
-        setAvance(avanceData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setCursos([]);
-        setAvance([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [carrera, rut]);
-
-  if (loading) {
-    return (
-      <AvanceCronoSkeleton nombreCarrera={carrera.nombre.toLocaleLowerCase()} />
-    );
-  }
-
-  function agruparPorSemestre(cursos: CursoAvance[]) {
-    return cursos.reduce<Record<string, CursoAvance[]>>((acc, curso) => {
-      const periodo = curso.period;
-      if (!acc[periodo ?? ""]) {
-        acc[periodo ?? ""] = [];
-      }
-      acc[periodo ?? ""].push(curso);
-      return acc;
-    }, {});
-  }
-
-  const cursosPorSemestre = agruparPorSemestre(avance);
+export function AvanceCronoView({ cursos }: AvanceCronoViewProps) {
+  const cursosPorSemestre = getCursosPorPeriodo(cursos);
 
   return (
     <ScrollArea className="w-full whitespace-nowrap h-[calc(100vh-64px)]">
@@ -76,16 +25,7 @@ export function AvanceCronoView({ carrera, rut }: AvanceCronoViewProps) {
               </div>
               <div className="flex flex-col gap-2">
                 {cursosPorSemestre[semestre].map((curso) => (
-                  <CursoCronoCard
-                    key={curso.nrc}
-                    nrc={curso.nrc ?? ""}
-                    codigo={curso.course}
-                    asignatura={
-                      cursos.find((c) => c.codigo === curso.course)
-                        ?.asignatura || ""
-                    }
-                    status={curso.status}
-                  />
+                  <CursoCard key={curso.nrc} curso={curso} />
                 ))}
               </div>
             </div>

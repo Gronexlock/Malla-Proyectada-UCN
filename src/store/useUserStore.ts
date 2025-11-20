@@ -21,6 +21,6 @@ export const useUserStore = create<UserState>()(
       setCarreras: (carreras) => set({ carreras }),
       setSelectedCarrera: (selectedCarrera) => set({ selectedCarrera }),
     }),
-    { name: "user-storage" }
+    { name: "user-store" }
   )
 );

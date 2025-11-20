@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, NotebookPen, User } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,50 +12,19 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from "@/components/ui/sidebar";
-import LogoutButton from "./logout-button";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getSidebarItems } from "@/src/constants/sidebarItems";
 import Link from "next/link";
-import CarreraSelect from "./carrera-select";
+import LogoutButton from "./logout-button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./ui/collapsible";
 
-const items = [
-  {
-    title: "Mallas",
-    icon: Calendar,
-    subitems: [
-      { title: "ICCI", url: "/mallas/icci" },
-      { title: "ICI", url: "/mallas/ici" },
-      { title: "ITI", url: "/mallas/iti" },
-    ],
-  },
-  {
-    title: "Proyecciones",
-    icon: NotebookPen,
-    subitems: [
-      {
-        title: "Crear proyección",
-        url: "/proyecciones/nueva",
-      },
-      {
-        title: "Mis proyecciones",
-        url: "/proyecciones",
-      },
-    ],
-  },
-  {
-    title: "Estudiante",
-    icon: User,
-    subitems: [
-      { title: "Mi avance curricular", url: "/estudiante/avance" },
-      { title: "Mi avance cronológico", url: "/estudiante/avance-cronologico" },
-    ],
-  },
-];
-
-export function AppSidebar() {
+export async function AppSidebar() {
+  const user = await getUser();
+  const sidebarItems = getSidebarItems(user);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -78,10 +47,7 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem className="pb-4">
-                <CarreraSelect />
-              </SidebarMenuItem>
-              {items.map((item) => (
+              {sidebarItems.map((item) => (
                 <Collapsible
                   key={item.title}
                   defaultOpen

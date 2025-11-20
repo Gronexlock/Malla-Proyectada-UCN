@@ -15,7 +15,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useUserStore } from "@/src/store/useUserStore";
+import { login } from "@/src/actions/authActions";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -24,57 +25,20 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const { setRut, setCarreras, setSelectedCarrera } = useUserStore();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        redirect: "follow",
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrorMessage(data.error || "Error desconocido");
-        setShowError(true);
-        return;
-      }
-
-      setRut(data.user.rut);
-      setCarreras(data.user.carreras);
-
-      const storedCarrera = localStorage.getItem("user-storage");
-      let ultimaSeleccion: string | null = null;
-
-      if (storedCarrera) {
-        try {
-          const parsed = JSON.parse(storedCarrera);
-          ultimaSeleccion = parsed.state?.selectedCarrera?.codigo ?? null;
-        } catch {
-          ultimaSeleccion = null;
-        }
-      }
-
-      const carreraValida = data.user.carreras.find(
-        (c: any) => c.codigo === ultimaSeleccion
-      );
-
-      if (carreraValida) {
-        setSelectedCarrera(carreraValida);
-      } else {
-        setSelectedCarrera(data.user.carreras[0]);
-      }
-
-      window.location.href = "/";
+      await login(email, password);
+      router.push("/");
     } catch (err) {
       setErrorMessage("Error de red. Inténtalo de nuevo.");
       setShowError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
