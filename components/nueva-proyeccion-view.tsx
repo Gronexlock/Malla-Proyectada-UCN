@@ -51,6 +51,12 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   const semestreActual = semestres[semestreIndex];
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
 
+  const [altura, setAltura] = useState(0);
+
+  function callbackRef(node: HTMLDivElement | null) {
+    if (node) setAltura(node.offsetHeight);
+  }
+
   function toggleCursoProyeccion(cursoToToggle: Curso) {
     const nuevaProyeccion = toggleCursoProyeccionActual(
       cursoToToggle,
@@ -98,7 +104,10 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   return (
     <div className="flex justify-center w-full">
       <ScrollArea className="min-w-0">
-        <div className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100">
+        <div
+          className="inline-flex gap-4 p-6 pb-9 border border-r-0 rounded-l-lg bg-zinc-100"
+          ref={callbackRef}
+        >
           {Object.keys(cursosPorNivel)
             .sort((a, b) => Number(a) - Number(b))
             .map((level) => (
@@ -136,7 +145,10 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
         </div>
         <ScrollBar orientation="horizontal" className="" />
       </ScrollArea>
-      <div className="w-64 bg-white shrink-0 flex flex-col border border-l-0 rounded-r-lg items-center text-wrap text-center">
+      <div
+        className="w-64 bg-white h- flex flex-col border border-l-0 rounded-r-lg items-center text-wrap text-center"
+        style={{ height: altura }}
+      >
         <div className="w-full">
           <div className="flex flex-col items-center">
             <div className="flex space-x-2 items-center w-full border-b justify-center py-4 mb-2">
@@ -179,7 +191,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               {proyeccionActual.map((curso) => (
                 <li
                   key={curso.codigo}
-                  className="relative group flex justify-center"
+                  className="relative group flex justify-center hover:cursor-pointer"
                 >
                   <CursoCard
                     curso={{ ...curso, status: [CursoStatus.PENDIENTE] }}
@@ -214,11 +226,11 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               onClick={handleGuardarProyeccion}
               className="w-full cursor-pointer"
               variant="default"
-              //   disabled={
-              //     proyeccionActual.length === 0 ||
-              //     (!ignorarRestricciones &&
-              //       getCreditosSemestreActual() > LIMITE_CREDITOS)
-              //   }
+              disabled={
+                proyeccionActual.length === 0 ||
+                (!ignorarRestricciones &&
+                  getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS)
+              }
             >
               Guardar Proyección
             </Button>
