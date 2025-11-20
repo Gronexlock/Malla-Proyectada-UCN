@@ -2,24 +2,37 @@
 
 import { cookies } from "next/headers";
 import { AvanceSchema } from "../schemas/avanceSchema";
+import { CarreraSchema } from "../schemas/userSchema";
 import { verifyToken } from "./authActions";
+import { getUser } from "./cookiesActions";
 
-export async function fetchAvance(rut: string, codigoCarrera: string) {
+export async function fetchAvance() {
   try {
-    if (!rut || !codigoCarrera) {
-      throw new Error(
-        "Los parámetros 'rut' y 'codigoCarrera' son obligatorios"
-      );
-    }
-
     const token = (await cookies()).get("token")?.value;
-    const payload = await verifyToken(token);
+    const [user, { selectedCarrera }] = await Promise.all([
+      verifyToken(token),
+      getUser(),
+    ]);
 
-    if (payload.rut !== rut) {
-      throw new Error("No autorizado para acceder a este recurso");
+    if (!selectedCarrera) {
+      throw new Error("No se seleccionó una carrera");
     }
 
-    const url = `https://puclaro.ucn.cl/eross/avance/avance.php?rut=${rut}&codcarrera=${codigoCarrera}`;
+    const parsedCarrera = CarreraSchema.safeParse(selectedCarrera);
+    if (!parsedCarrera.success) {
+      console.error(parsedCarrera.error);
+      throw new Error("La carrera no cumple con el esquema esperado");
+    }
+
+    if (
+      !user.carreras.some(
+        (carrera) => carrera.codigo === parsedCarrera.data.codigo
+      )
+    ) {
+      throw new Error("La carrera no pertenece al usuario");
+    }
+
+    const url = `https://puclaro.ucn.cl/eross/avance/avance.php?rut=${user.rut}&codcarrera=${parsedCarrera.data.codigo}`;
 
     const response = await fetch(url);
     if (!response.ok) {

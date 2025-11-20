@@ -2,7 +2,7 @@
 
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { UserSchema, User } from "../schemas/userSchema";
+import { User, UserSchema } from "../schemas/userSchema";
 import { setUser } from "./cookiesActions";
 
 export async function login(email: string, password: string) {
@@ -24,7 +24,7 @@ export async function login(email: string, password: string) {
     throw new Error("Los datos recibidos no cumplen con el esquema esperado");
   }
 
-  const token = await new jose.SignJWT({ rut: data.rut })
+  const token = await new jose.SignJWT({ user: parsedData.data })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime("24h")
     .sign(new TextEncoder().encode(process.env.JWT_SECRET));
@@ -42,7 +42,7 @@ export async function login(email: string, password: string) {
 
   await setUser(user);
 
-  return { success: true, user: data };
+  return { success: true, user };
 }
 
 export async function logout() {
@@ -64,7 +64,7 @@ export async function verifyToken(token: string | undefined) {
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     const { payload } = await jose.jwtVerify(token, secret);
-    return payload;
+    return payload.user as User;
   } catch {
     throw new Error("Token inválido");
   }

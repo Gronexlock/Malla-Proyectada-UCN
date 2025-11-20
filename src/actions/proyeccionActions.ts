@@ -3,35 +3,28 @@
 import prisma from "@/src/lib/prisma";
 import { cookies } from "next/headers";
 import { ProyeccionSchema } from "../schemas/proyeccionSchema";
+import { CarreraSchema } from "../schemas/userSchema";
 import { Curso } from "../types/curso";
 import { verifyToken } from "./authActions";
 import { getUser } from "./cookiesActions";
 
-export async function getProyecciones(
-  rut: string,
-  codigoCarrera: string,
-  page: number = 1,
-  limit: number = 10
-) {
+export async function getProyecciones(page: number = 1, limit: number = 10) {
   try {
-    if (!rut || !codigoCarrera) {
-      throw new Error(
-        "Los parámetros 'rut' y 'codigoCarrera' son obligatorios"
-      );
-    }
-
     const token = (await cookies()).get("token")?.value;
-    const payload = await verifyToken(token);
+    const [user, { selectedCarrera }] = await Promise.all([
+      verifyToken(token),
+      getUser(),
+    ]);
 
-    if (payload.rut !== rut) {
-      throw new Error("No autorizado para acceder a este recurso");
+    if (!selectedCarrera) {
+      throw new Error("No se seleccionó una carrera");
     }
 
     const offset = (page - 1) * limit;
     const proyecciones = await prisma.proyeccion.findMany({
       where: {
-        estudianteRut: rut,
-        carreraCodigo: codigoCarrera,
+        estudianteRut: user.rut,
+        carreraCodigo: selectedCarrera.codigo,
       },
       include: {
         cursos: true,
@@ -49,11 +42,21 @@ export async function getProyecciones(
 
 export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
   try {
-    const user = await getUser();
-    if (!user) {
-      throw new Error("Usuario no autenticado");
+    const token = (await cookies()).get("token")?.value;
+    const [user, { selectedCarrera }] = await Promise.all([
+      verifyToken(token),
+      getUser(),
+    ]);
+
+    if (!selectedCarrera) {
+      throw new Error("No se seleccionó una carrera");
     }
-    const { rut, selectedCarrera } = user;
+
+    const parsedCarrera = CarreraSchema.safeParse(selectedCarrera);
+    if (!parsedCarrera.success) {
+      console.error(parsedCarrera.error);
+      throw new Error("La carrera no cumple con el esquema esperado");
+    }
 
     if (!proyeccion || Object.keys(proyeccion).length === 0) {
       throw new Error("La proyección no puede estar vacía");
@@ -84,7 +87,7 @@ export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
 
     const nuevaProyeccion = await prisma.proyeccion.create({
       data: {
-        estudianteRut: rut,
+        estudianteRut: user.rut,
         carreraCodigo: selectedCarrera.codigo,
         cursos: {
           create: cursosParaConectar,

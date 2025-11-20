@@ -1,16 +1,22 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { User } from "../schemas/userSchema";
+import { User, UserSchema } from "../schemas/userSchema";
 
 export async function setUser(user: User) {
+  const parsedUser = UserSchema.safeParse(user);
+  if (!parsedUser.success) {
+    console.error(parsedUser.error);
+    throw new Error("El usuario no cumple con el esquema esperado");
+  }
+
   const cookieStore = await cookies();
 
   cookieStore.set("user", JSON.stringify(user), {
     path: "/",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 24,
     sameSite: "lax",
   });
 }
