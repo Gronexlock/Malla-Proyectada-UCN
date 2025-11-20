@@ -3,26 +3,26 @@
 import prisma from "@/src/lib/prisma";
 
 export async function GET() {
-  return;
   try {
     const [res1, res2, res3] = await Promise.all([
       fetch(`https://losvilos.ucn.cl/hawaii/api/mallas?8606-202320`, {
         headers: {
-          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_KEY ?? "",
+          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_HEADER ?? "",
         },
       }),
       fetch(`https://losvilos.ucn.cl/hawaii/api/mallas?8616-202310`, {
         headers: {
-          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_KEY ?? "",
+          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_HEADER ?? "",
         },
       }),
       fetch(`https://losvilos.ucn.cl/hawaii/api/mallas?8266-202410`, {
         headers: {
-          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_KEY ?? "",
+          "X-HAWAII-AUTH": process.env.HAWAII_AUTH_HEADER ?? "",
         },
       }),
     ]);
     const data = await Promise.all([res1.json(), res2.json(), res3.json()]);
+    console.log(data);
     const cursos = data.flat().map((curso) => {
       return { codigo: curso.codigo };
     });

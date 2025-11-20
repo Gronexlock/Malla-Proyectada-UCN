@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { guardarProyeccion } from "@/src/actions/proyeccionActions";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
 import { Curso, CursoStatus } from "@/src/types/curso";
@@ -88,6 +89,10 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
     }));
     setSemestres((prev) => prev.slice(0, -1));
     setSemestreIndex(semestreIndex - 1);
+  }
+
+  async function handleGuardarProyeccion() {
+    await guardarProyeccion(proyeccionesPorSemestre);
   }
 
   return (
@@ -206,7 +211,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               </Button>
             </div>
             <Button
-              // onClick={guardarProyecciones}
+              onClick={handleGuardarProyeccion}
               className="w-full cursor-pointer"
               variant="default"
               //   disabled={

@@ -1,14 +1,17 @@
-import { CrearProyeccionView } from "@/components/crear-proyeccion-view";
+import { NuevaProyeccionView } from "@/components/nueva-proyeccion-view";
 import { getUser } from "@/src/actions/cookiesActions";
-import { getAvanceCurricular } from "@/src/utils/cursosUtils";
+import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
+import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
 
-export default async function Page() {
+export default async function NuevaProyeccionPage() {
   const { rut, selectedCarrera } = await getUser();
-  const cursos = await getAvanceCurricular(rut, selectedCarrera);
+  const cursos = aprobarCursosInscritos(
+    await getAvanceAgrupado(rut, selectedCarrera)
+  );
 
   return (
     <div className="p-4">
-      <CrearProyeccionView avance={cursos} />
+      <NuevaProyeccionView cursos={cursos} />
     </div>
   );
 }
