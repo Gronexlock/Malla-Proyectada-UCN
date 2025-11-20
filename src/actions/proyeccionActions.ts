@@ -1,6 +1,6 @@
 import prisma from "@/src/lib/prisma";
-import { verifyToken } from "./authActions";
 import { cookies } from "next/headers";
+import { verifyToken } from "./authActions";
 
 export async function getProyecciones(
   rut: string,

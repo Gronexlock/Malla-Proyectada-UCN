@@ -2,8 +2,17 @@
 
 import { cn } from "@/lib/utils";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
+import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { getCursosPorNivel, getCursoStatus } from "@/src/utils/cursosUtils";
+import {
+  aprobarCursosInscritos,
+  getCreditosProyeccion,
+  getCursosBloqueantes,
+  inscribirCursosAprobados,
+  toggleCursoProyeccionActual,
+  toggleEstadoCurso,
+} from "@/src/utils/proyeccionUtils";
 import {
   getSemestreActual,
   getSemestreSiguiente,
@@ -42,88 +51,43 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
 
   function toggleCursoProyeccion(cursoToToggle: Curso) {
-    const isInProyeccion = proyeccionActual.some(
-      (c) => c.codigo === cursoToToggle.codigo
+    const nuevaProyeccion = toggleCursoProyeccionActual(
+      cursoToToggle,
+      proyeccionActual
     );
 
-    const nuevaProyeccion = isInProyeccion
-      ? proyeccionActual.filter((c) => c.codigo !== cursoToToggle.codigo)
-      : [...proyeccionActual, cursoToToggle];
-
+    setCursos(toggleEstadoCurso(cursos, cursoToToggle));
     setProyeccionesPorSemestre((prev) => ({
       ...prev,
       [semestreActual]: nuevaProyeccion,
     }));
-
-    setCursos((prevCursos) =>
-      prevCursos.map((curso) => {
-        if (curso.codigo === cursoToToggle.codigo) {
-          const newStatus = isInProyeccion
-            ? curso.status.filter((s) => s !== CursoStatus.INSCRITO)
-            : [...curso.status, CursoStatus.INSCRITO];
-          return { ...curso, status: newStatus };
-        }
-        return curso;
-      })
-    );
   }
 
   function irSiguienteSemestre() {
-    const codigosProyectados = proyeccionActual.map((c) => c.codigo);
+    const siguienteSemestre = getSemestreSiguiente(semestreActual);
 
-    setCursos((prevCursos) =>
-      prevCursos.map((curso) => {
-        if (codigosProyectados.includes(curso.codigo)) {
-          return { ...curso, status: [...curso.status, CursoStatus.APROBADO] };
-        }
-        return curso;
-      })
-    );
-
-    if (semestreIndex < semestres.length - 1) {
-      setSemestreIndex(semestreIndex + 1);
-    } else {
-      const siguienteSemestre = getSemestreSiguiente(semestreActual);
-      setSemestres((prev) => [...prev, siguienteSemestre]);
-      setProyeccionesPorSemestre((prev) => ({
-        ...prev,
-        [siguienteSemestre]: [],
-      }));
-      setSemestreIndex(semestreIndex + 1);
-    }
+    setCursos(aprobarCursosInscritos(cursos));
+    setSemestreIndex(semestreIndex + 1);
+    setSemestres((prev) => [...prev, siguienteSemestre]);
+    setProyeccionesPorSemestre((prev) => ({
+      ...prev,
+      [siguienteSemestre]: [],
+    }));
   }
 
   function irSemestreAnterior() {
-    if (semestreIndex > 0) {
-      const semestreAnterior = semestres[semestreIndex - 1];
-      const proyeccionAnterior =
-        proyeccionesPorSemestre[semestreAnterior] || [];
+    const semestreAnterior = semestres[semestreIndex - 1];
+    const proyeccionAnterior = proyeccionesPorSemestre[semestreAnterior] || [];
 
-      setCursos((prev) =>
-        prev.map((curso) => {
-          if (proyeccionActual.some((c) => c.codigo === curso.codigo)) {
-            return {
-              ...curso,
-              status: curso.status.filter((s) => s !== CursoStatus.INSCRITO),
-            };
-          }
-          if (proyeccionAnterior.some((c) => c.codigo === curso.codigo)) {
-            return {
-              ...curso,
-              status: curso.status.filter((s) => s !== CursoStatus.APROBADO),
-            };
-          }
-          return curso;
-        })
-      );
-
-      setProyeccionesPorSemestre((prev) => ({
-        ...prev,
-        [semestreActual]: [],
-      }));
-      setSemestres((prev) => prev.slice(0, -1));
-      setSemestreIndex(semestreIndex - 1);
-    }
+    setCursos(
+      inscribirCursosAprobados(cursos, proyeccionActual, proyeccionAnterior)
+    );
+    setProyeccionesPorSemestre((prev) => ({
+      ...prev,
+      [semestreActual]: [],
+    }));
+    setSemestres((prev) => prev.slice(0, -1));
+    setSemestreIndex(semestreIndex - 1);
   }
 
   return (
@@ -139,22 +103,23 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                     {romanNumerals[level]}
                   </h2>
                 </div>
-                {cursosPorNivel[level].map((course) => {
-                  const status = getCursoStatus(course);
+                {cursosPorNivel[level].map((curso) => {
+                  const status = getCursoStatus(curso);
                   return (
                     <div
-                      key={course.codigo}
+                      key={curso.codigo}
                       className="rounded-md border border-transparent transition-opacity"
                     >
                       <CursoCard
                         curso={{
-                          ...course,
+                          ...curso,
                           status: [status],
                         }}
                         muted={status === "APROBADO"}
+                        bloqueantes={getCursosBloqueantes(curso, cursos)}
                         onClick={
                           status !== "APROBADO"
-                            ? () => toggleCursoProyeccion(course)
+                            ? () => toggleCursoProyeccion(curso)
                             : undefined
                         }
                       />
@@ -183,17 +148,18 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
             <h2 className="font-bold text-lg mb-1">{semestreActual}</h2>
             <div
               className={cn(
-                "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit bg-zinc-900"
-                // {
-                //   "bg-zinc-900": getCreditosSemestreActual() < LIMITE_CREDITOS,
-                //   "bg-amber-500":
-                //     getCreditosSemestreActual() === LIMITE_CREDITOS,
-                //   "bg-red-600": getCreditosSemestreActual() > LIMITE_CREDITOS,
-                // }
+                "px-2 py-1 rounded-full text-white text-sm font-semibold transition-colors mt-1 mb-4 max-w-fit bg-zinc-900",
+                {
+                  "bg-zinc-900":
+                    getCreditosProyeccion(proyeccionActual) < LIMITE_CREDITOS,
+                  "bg-amber-500":
+                    getCreditosProyeccion(proyeccionActual) === LIMITE_CREDITOS,
+                  "bg-red-600":
+                    getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS,
+                }
               )}
             >
-              Créditos:{" "}
-              {proyeccionActual.reduce((acc, c) => acc + c.creditos, 0)}
+              Créditos: {getCreditosProyeccion(proyeccionActual)}
             </div>
           </div>
         </div>
@@ -213,7 +179,6 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                   <CursoCard
                     curso={{ ...curso, status: [CursoStatus.PENDIENTE] }}
                     onClick={() => toggleCursoProyeccion(curso)}
-                    // bloqueantes={getCursosBloqueantes(curso)}
                   />
                 </li>
               ))}

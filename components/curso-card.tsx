@@ -1,9 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Curso, CursoStatus } from "@/src/types/curso";
-import { ListChecks } from "lucide-react";
+import { ListChecks, Lock } from "lucide-react";
+import { CursoHover } from "./curso-hover";
 import { Badge } from "./ui/badge";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 export type CursoCardProps = {
   curso: Curso;
@@ -19,14 +19,21 @@ const statusColors: Record<CursoStatus, string> = {
   [CursoStatus.PENDIENTE]: "",
 };
 
-export function CursoCard({ curso, muted, onClick }: CursoCardProps) {
+export function CursoCard({
+  curso,
+  muted,
+  bloqueantes,
+  onClick,
+}: CursoCardProps) {
   return (
     <Card
       className={cn(
         "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
         onClick &&
+          bloqueantes &&
+          bloqueantes.length === 0 &&
           "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
-        muted && "opacity-50"
+        muted || (bloqueantes && bloqueantes.length > 0) ? "opacity-50" : ""
       )}
       onClick={onClick}
     >
@@ -42,25 +49,25 @@ export function CursoCard({ curso, muted, onClick }: CursoCardProps) {
             <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
           </div>
           <div className="flex justify-end items-center p-1 gap-1.5">
+            {bloqueantes && bloqueantes.length > 0 && (
+              <CursoHover
+                cursos={bloqueantes}
+                title="BLOQUEADO POR"
+                icon={
+                  <Lock
+                    className="text-orange-600"
+                    size={18}
+                    strokeWidth={2.4}
+                  />
+                }
+              />
+            )}
             {curso.prerrequisitos.length > 0 && (
-              <HoverCard openDelay={200} closeDelay={200}>
-                <HoverCardTrigger>
-                  <ListChecks className="text-zinc-900" size={20} />
-                </HoverCardTrigger>
-                <HoverCardContent className="flex justify-center w-40">
-                  <div className="flex flex-col gap-1">
-                    <h2 className="font-bold text-sm text-center">
-                      PRERREQUISITOS
-                    </h2>
-                    <hr />
-                    {curso.prerrequisitos.map((pre) => (
-                      <p key={pre.codigo} className="text-xs">
-                        • {pre.asignatura}
-                      </p>
-                    ))}
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
+              <CursoHover
+                cursos={curso.prerrequisitos}
+                title="PRERREQUISITOS"
+                icon={<ListChecks className="text-zinc-900" size={20} />}
+              />
             )}
             <Badge className="rounded-full h-5 w-5 font-semibold">
               {curso.creditos}
