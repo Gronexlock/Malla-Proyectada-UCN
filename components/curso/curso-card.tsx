@@ -8,9 +8,9 @@ import { PrerrequisitosHover } from "./hovers/prereq-hover";
 
 export type CursoCardProps = {
   curso: Curso;
-  ignorarRestricciones?: boolean;
   bloqueantes?: Curso[];
   disperso?: boolean;
+  muted?: boolean;
   onClick?: () => void;
 };
 
@@ -23,23 +23,21 @@ const statusColors: Record<CursoStatus, string> = {
 
 export function CursoCard({
   curso,
-  ignorarRestricciones,
   bloqueantes,
   disperso,
+  muted,
   onClick,
 }: CursoCardProps) {
-  const esClickeable =
-    !curso.status.includes(CursoStatus.APROBADO) &&
-    (ignorarRestricciones || (!bloqueantes?.length && !disperso));
+  const isClickable = !!onClick && !curso.status.includes(CursoStatus.APROBADO);
   return (
     <Card
       className={cn(
         "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
-        esClickeable
-          ? "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all"
-          : "opacity-50"
+        isClickable &&
+          "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
+        muted && "opacity-50"
       )}
-      onClick={onClick}
+      onClick={isClickable ? onClick : undefined}
     >
       <CardContent className="p-0 flex h-full">
         <div

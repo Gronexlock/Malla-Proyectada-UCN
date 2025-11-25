@@ -122,6 +122,14 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 {cursosPorNivel[level].map((curso) => {
                   const status = getCursoStatus(curso);
                   const nivel = getNivelEstudiante(cursos);
+                  const isCursoDisperso = isDisperso(curso, nivel);
+                  const bloqueantes = getCursosBloqueantes(curso, cursos);
+
+                  const isClicklable =
+                    !curso.status.includes(CursoStatus.APROBADO) &&
+                    (ignorarRestricciones ||
+                      (!isCursoDisperso && bloqueantes?.length === 0));
+
                   return (
                     <div
                       key={curso.codigo}
@@ -132,10 +140,14 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                           ...curso,
                           status: [status],
                         }}
-                        ignorarRestricciones={ignorarRestricciones}
-                        bloqueantes={getCursosBloqueantes(curso, cursos)}
-                        disperso={isDisperso(curso, nivel)}
-                        onClick={() => toggleCursoProyeccion(curso)}
+                        bloqueantes={bloqueantes}
+                        disperso={isCursoDisperso}
+                        muted={!isClicklable}
+                        onClick={
+                          isClicklable
+                            ? () => toggleCursoProyeccion(curso)
+                            : undefined
+                        }
                       />
                     </div>
                   );
