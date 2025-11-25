@@ -2,7 +2,7 @@ import { fetchProyecciones } from "../actions/proyeccionActions";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
 import { Proyeccion } from "../types/proyeccion";
-import { getMalla } from "./cursosUtils";
+import { getCursosPorNivel, getMalla } from "./cursosUtils";
 
 export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
   const [malla, proyeccionesDB] = await Promise.all([
@@ -165,4 +165,26 @@ export function getCursosBloqueantes(curso: Curso, cursos: Curso[]): Curso[] {
     }
   }
   return bloqueantes;
+}
+
+/**
+ * Obtiene el nivel académico del estudiante basado en los cursos aprobados. El nivel
+ * se obtiene buscando el ramo más atrasado que no tenga aprobado.
+ * @param cursos
+ */
+export function getNivelEstudiante(cursos: Curso[]) {
+  const cursosPorNivel: Record<string, Curso[]> = getCursosPorNivel(cursos);
+  const sorted = Object.entries(cursosPorNivel)
+    .map(([nivel, cursos]) => ({ nivel: Number(nivel), cursos }))
+    .sort((a, b) => a.nivel - b.nivel);
+
+  for (const { nivel, cursos } of sorted) {
+    const allAprobados = cursos.every((curso) =>
+      curso.status.includes(CursoStatus.APROBADO)
+    );
+    if (!allAprobados) {
+      return nivel;
+    }
+  }
+  return 0;
 }
