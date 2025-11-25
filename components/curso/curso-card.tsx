@@ -1,14 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Curso, CursoStatus } from "@/src/types/curso";
-import { ListChecks, Lock } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { CursoHover } from "./curso-hover";
+import { PendientesHover } from "./hovers/bloqueantes-hover";
+import { DispersionHover } from "./hovers/dispersion-hover";
+import { PrerrequisitosHover } from "./hovers/prereq-hover";
 
 export type CursoCardProps = {
   curso: Curso;
   muted?: boolean;
   bloqueantes?: Curso[];
+  disperso?: boolean;
   onClick?: () => void;
 };
 
@@ -23,6 +25,7 @@ export function CursoCard({
   curso,
   muted,
   bloqueantes,
+  disperso,
   onClick,
 }: CursoCardProps) {
   return (
@@ -30,10 +33,10 @@ export function CursoCard({
       className={cn(
         "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
         onClick &&
-          bloqueantes &&
-          bloqueantes.length === 0 &&
           "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
-        muted || (bloqueantes && bloqueantes.length > 0) ? "opacity-50" : ""
+        muted || (bloqueantes && bloqueantes.length > 0) || disperso
+          ? "opacity-50"
+          : ""
       )}
       onClick={onClick}
     >
@@ -48,30 +51,21 @@ export function CursoCard({
           <div className="px-2 flex h-12 flex-col justify-center items-center">
             <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
           </div>
-          <div className="flex justify-end items-center p-1 gap-1.5">
-            {bloqueantes && bloqueantes.length > 0 && (
-              <CursoHover
-                cursos={bloqueantes}
-                title="BLOQUEADO POR"
-                icon={
-                  <Lock
-                    className="text-orange-600"
-                    size={18}
-                    strokeWidth={2.4}
-                  />
-                }
-              />
-            )}
-            {curso.prerrequisitos.length > 0 && (
-              <CursoHover
-                cursos={curso.prerrequisitos}
-                title="PRERREQUISITOS"
-                icon={<ListChecks className="text-zinc-900" size={20} />}
-              />
-            )}
-            <Badge className="rounded-full h-5 w-5 font-semibold">
-              {curso.creditos}
-            </Badge>
+          <div className="flex justify-between items-center p-1">
+            <div className="flex gap-1 items-center">
+              {disperso && <DispersionHover nivelNecesario={curso.nivel - 2} />}
+              {bloqueantes && bloqueantes.length > 0 && (
+                <PendientesHover cursos={bloqueantes} />
+              )}
+            </div>
+            <div className="flex gap-1 items-center">
+              {curso.prerrequisitos.length > 0 && (
+                <PrerrequisitosHover cursos={curso.prerrequisitos} />
+              )}
+              <Badge className="rounded-full h-5 w-5 font-semibold">
+                {curso.creditos}
+              </Badge>
+            </div>
           </div>
         </div>
       </CardContent>

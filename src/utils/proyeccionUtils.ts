@@ -188,3 +188,13 @@ export function getNivelEstudiante(cursos: Curso[]) {
   }
   return 0;
 }
+
+export function isDisperso(curso: Curso, nivelEstudiante: number): boolean {
+  if (
+    curso.nivel <= nivelEstudiante ||
+    curso.status.includes(CursoStatus.APROBADO)
+  ) {
+    return false;
+  }
+  return curso.nivel - nivelEstudiante > 2;
+}

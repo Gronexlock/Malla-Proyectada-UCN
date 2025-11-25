@@ -10,7 +10,9 @@ import {
   aprobarCursosInscritos,
   getCreditosProyeccion,
   getCursosBloqueantes,
+  getNivelEstudiante,
   inscribirCursosAprobados,
+  isDisperso,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
 } from "@/src/utils/proyeccionUtils";
@@ -119,6 +121,11 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 </div>
                 {cursosPorNivel[level].map((curso) => {
                   const status = getCursoStatus(curso);
+                  const nivel = getNivelEstudiante(cursos);
+                  const isClickable =
+                    status !== "APROBADO" &&
+                    getCursosBloqueantes(curso, cursos).length === 0 &&
+                    !isDisperso(curso, nivel);
                   return (
                     <div
                       key={curso.codigo}
@@ -131,8 +138,9 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                         }}
                         muted={status === "APROBADO"}
                         bloqueantes={getCursosBloqueantes(curso, cursos)}
+                        disperso={isDisperso(curso, nivel)}
                         onClick={
-                          status !== "APROBADO"
+                          isClickable
                             ? () => toggleCursoProyeccion(curso)
                             : undefined
                         }
