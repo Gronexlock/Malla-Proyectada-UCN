@@ -8,7 +8,7 @@ import { PrerrequisitosHover } from "./hovers/prereq-hover";
 
 export type CursoCardProps = {
   curso: Curso;
-  muted?: boolean;
+  ignorarRestricciones?: boolean;
   bloqueantes?: Curso[];
   disperso?: boolean;
   onClick?: () => void;
@@ -23,20 +23,21 @@ const statusColors: Record<CursoStatus, string> = {
 
 export function CursoCard({
   curso,
-  muted,
+  ignorarRestricciones,
   bloqueantes,
   disperso,
   onClick,
 }: CursoCardProps) {
+  const esClickeable =
+    !curso.status.includes(CursoStatus.APROBADO) &&
+    (ignorarRestricciones || (!bloqueantes?.length && !disperso));
   return (
     <Card
       className={cn(
         "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
-        onClick &&
-          "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
-        muted || (bloqueantes && bloqueantes.length > 0) || disperso
-          ? "opacity-50"
-          : ""
+        esClickeable
+          ? "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all"
+          : "opacity-50"
       )}
       onClick={onClick}
     >
@@ -52,7 +53,7 @@ export function CursoCard({
             <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
           </div>
           <div className="flex justify-between items-center p-1">
-            <div className="flex gap-1 items-center">
+            <div className="flex gap-1 items-center pl-1">
               {disperso && <DispersionHover nivelNecesario={curso.nivel - 2} />}
               {bloqueantes && bloqueantes.length > 0 && (
                 <PendientesHover cursos={bloqueantes} />
