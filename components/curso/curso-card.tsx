@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Curso, CursoStatus } from "@/src/types/curso";
-import { BloqueadoHover } from "./hovers/bloqueantes-hover";
 
 export type CursoCardProps = {
   curso: Curso;
@@ -26,9 +25,7 @@ export function CursoCard({
   onClick,
 }: CursoCardProps) {
   const isClickable = !!onClick && !curso.status.includes(CursoStatus.APROBADO);
-
-  const tieneRestricciones =
-    (bloqueantes && bloqueantes.length > 0) || disperso;
+  (bloqueantes && bloqueantes.length > 0) || disperso;
 
   return (
     <Card
@@ -56,18 +53,8 @@ export function CursoCard({
             </span>
             <span className="font-semibold pr-1 text-xs">{curso.codigo}</span>
           </div>
-          <div className="px-2 py-8 flex h-12 flex-col justify-center items-center">
+          <div className="px-2 py-8 mb-2 flex h-12 flex-col justify-center items-center">
             <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
-          </div>
-          <div className="flex justify-between items-center p-1">
-            <div className="flex gap-1 items-center pl-1">
-              {tieneRestricciones && (
-                <BloqueadoHover
-                  cursosPendientes={bloqueantes}
-                  nivelDispersion={disperso ? curso.nivel : undefined}
-                />
-              )}
-            </div>
           </div>
         </div>
       </CardContent>

@@ -9,18 +9,20 @@ import {
 } from "../../ui/hover-card";
 
 export type BloqueadoHoverProps = {
+  className?: string;
   cursosPendientes?: Curso[];
   nivelDispersion?: number;
 };
 
 export function BloqueadoHover({
+  className,
   cursosPendientes,
   nivelDispersion,
 }: BloqueadoHoverProps) {
   return (
     <HoverCard openDelay={200} closeDelay={200}>
-      <HoverCardTrigger>
-        <Lock className="text-orange-600" size={13} strokeWidth={2.4} />
+      <HoverCardTrigger className={className}>
+        <Lock className="text-red-500" size={13} strokeWidth={2.4} />
       </HoverCardTrigger>
       <HoverCardContent className="p-0 max-w-52">
         <h2 className="text-center font-semibold py-2 border-b">

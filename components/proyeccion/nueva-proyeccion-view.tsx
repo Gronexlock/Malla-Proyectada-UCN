@@ -23,6 +23,7 @@ import {
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CursoCard } from "../curso/curso-card";
+import { BloqueadoHover } from "../curso/hovers/bloqueantes-hover";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
@@ -124,6 +125,8 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                   const nivel = getNivelEstudiante(cursos);
                   const isCursoDisperso = isDisperso(curso, nivel);
                   const bloqueantes = getCursosBloqueantes(curso, cursos);
+                  const tieneRestricciones =
+                    (bloqueantes && bloqueantes.length > 0) || isCursoDisperso;
 
                   const isClicklable =
                     !curso.status.includes(CursoStatus.APROBADO) &&
@@ -133,7 +136,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                   return (
                     <div
                       key={curso.codigo}
-                      className="rounded-md border border-transparent transition-opacity"
+                      className="rounded-md border border-transparent transition-opacity relative"
                     >
                       <CursoCard
                         curso={{
@@ -149,6 +152,15 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                             : undefined
                         }
                       />
+                      {tieneRestricciones && (
+                        <BloqueadoHover
+                          className="absolute bottom-1 left-1"
+                          cursosPendientes={bloqueantes}
+                          nivelDispersion={
+                            isCursoDisperso ? curso.nivel : undefined
+                          }
+                        />
+                      )}
                     </div>
                   );
                 })}
