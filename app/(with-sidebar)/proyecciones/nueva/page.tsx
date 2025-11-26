@@ -9,9 +9,5 @@ export default async function NuevaProyeccionPage() {
     await getAvanceAgrupado(selectedCarrera)
   );
 
-  return (
-    <div className="p-4">
-      <NuevaProyeccionView cursos={cursos} />
-    </div>
-  );
+  return <NuevaProyeccionView cursos={cursos} />;
 }
