@@ -4,17 +4,21 @@ import { Curso, CursoStatus } from "../types/curso";
 import { Proyeccion } from "../types/proyeccion";
 import { getCursosPorNivel, getMalla } from "./cursosUtils";
 
+/**
+ * Obtiene las proyecciones de un estudiante para una carrera específica desde
+ * la base de datos.
+ * @param carrera La carrera del estudiante.
+ * @returns La lista de proyecciones del estudiante.
+ */
 export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
   const [malla, proyeccionesDB] = await Promise.all([
     getMalla(carrera),
     fetchProyecciones(),
   ]);
-
   const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
 
   return proyeccionesDB.map((proyeccionDB) => {
     const cursosPorSemestre = new Map<string, Curso[]>();
-
     proyeccionDB.cursos.forEach((item) => {
       const curso = cursosMap.get(item.cursoCodigo);
       if (curso) {
@@ -23,14 +27,12 @@ export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
         cursosPorSemestre.set(item.semestre, cursos);
       }
     });
-
     const semestres = Array.from(cursosPorSemestre.entries()).map(
       ([semestre, cursos]) => ({
         semestre,
         cursos,
       })
     );
-
     semestres.sort((a, b) => a.semestre.localeCompare(b.semestre));
 
     return {
@@ -138,12 +140,38 @@ export function toggleCursoProyeccionActual(
 }
 
 /**
- * Calcula la cantidad de créditos totales de una proyección de cursos.
- * @param proyeccion Lista de cursos en la proyección.
+ * Calcula la cantidad de créditos totales de una proyección semestral de cursos.
+ * @param proyeccion Lista de cursos en la proyección semestral.
  * @returns Cantidad total de créditos.
  */
 export function getCreditosProyeccion(proyeccion: Curso[]): number {
   return proyeccion.reduce((total, curso) => total + curso.creditos, 0);
+}
+
+/**
+ * Calcula la cantidad de créditos totales de la proyección completa.
+ * @param proyeccion Lista de cursos en la proyección, organizada por semestres.
+ * @returns Cantidad total de créditos.
+ */
+export function getCreditosProyeccionTotal(
+  proyeccion: Record<string, Curso[]>
+): number {
+  let totalCreditos = 0;
+  Object.values(proyeccion).forEach((cursos) => {
+    totalCreditos += getCreditosProyeccion(cursos);
+  });
+  return totalCreditos;
+}
+
+/**
+ * Obtiene la cantidad de semestres en una proyección de cursos.
+ * @param proyeccion Proyección de cursos organizada por semestres.
+ * @returns Cantidad de semestres en la proyección.
+ */
+export function getCantidadSemestresProyeccion(
+  proyeccion: Record<string, Curso[]>
+): number {
+  return Object.keys(proyeccion).length;
 }
 
 /**
@@ -189,6 +217,14 @@ export function getNivelEstudiante(cursos: Curso[]) {
   return 0;
 }
 
+/**
+ * Verifica si un curso está disperso para un nivel de estudiante dado. Se
+ * considera disperso si el nivel del curso es mayor en más de 2 niveles
+ * que el nivel del estudiante, y el curso no está aprobado.
+ * @param curso El curso a evaluar.
+ * @param nivelEstudiante El nivel académico del estudiante.
+ * @returns True si el curso está disperso, false en caso contrario.
+ */
 export function isDisperso(curso: Curso, nivelEstudiante: number): boolean {
   if (
     curso.nivel <= nivelEstudiante ||
@@ -197,4 +233,52 @@ export function isDisperso(curso: Curso, nivelEstudiante: number): boolean {
     return false;
   }
   return curso.nivel - nivelEstudiante > 2;
+}
+
+/**
+ * Calcula el porcentaje de avance académico basado en los cursos aprobados.
+ * @param cursos Lista de cursos del estudiante.
+ * @returns Porcentaje de avance académico.
+ */
+export function calcularPorcentajeAvance(cursos: Curso[]): number {
+  const cantidadAprobados = cursos.filter((curso) =>
+    curso.status.includes(CursoStatus.APROBADO)
+  ).length;
+  return Math.floor((cantidadAprobados / cursos.length) * 100);
+}
+
+/** Obtiene el último semestre de una proyección de cursos.
+ * @param proyeccion Proyección de cursos organizada por semestres.
+ * @returns El último semestre en formato string.
+ */
+export function getUltimoSemestreProyeccion(
+  proyeccion: Record<string, Curso[]>
+): string | undefined {
+  const semestres = Object.keys(proyeccion);
+  if (semestres.length === 0) {
+    return undefined;
+  }
+  return semestres[semestres.length - 1];
+}
+
+/**
+ * Obtiene la cantidad de cursos pendientes (no aprobados).
+ * @param cursos Lista de cursos del estudiante.
+ * @returns Cantidad de cursos pendientes (no aprobados).
+ */
+export function getCantidadCursosPendientes(cursos: Curso[]): number {
+  return cursos.filter((curso) => !curso.status.includes(CursoStatus.APROBADO))
+    .length;
+}
+
+/**
+ * Obtiene la cantidad de créditos restantes (de cursos no aprobados).
+ * @param cursos Lista de cursos del estudiante.
+ * @returns Cantidad de créditos restantes (de cursos no aprobados).
+ */
+export function getCantidadCreditosRestantes(cursos: Curso[]): number {
+  const cursosPendientes = cursos.filter(
+    (curso) => !curso.status.includes(CursoStatus.APROBADO)
+  );
+  return cursosPendientes.reduce((total, curso) => total + curso.creditos, 0);
 }

@@ -1,11 +1,19 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { guardarProyeccion } from "@/src/actions/proyeccionActions";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { getCursosPorNivel, getCursoStatus } from "@/src/utils/cursosUtils";
 import { generarProyeccionOptima } from "@/src/utils/generarProyeccionOptima";
 import {
   aprobarCursosInscritos,
+  calcularPorcentajeAvance,
+  getCantidadCreditosRestantes,
+  getCantidadCursosPendientes,
+  getCantidadSemestresProyeccion,
+  getCreditosProyeccion,
+  getCreditosProyeccionTotal,
+  getUltimoSemestreProyeccion,
   inscribirCursosAprobados,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
@@ -15,6 +23,7 @@ import {
   getSemestreSiguiente,
 } from "@/src/utils/semestreUtils";
 import {
+  ArrowDownToLine,
   ArrowRight,
   BookOpen,
   CalendarDays,
@@ -150,23 +159,27 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
 
   const statusStyles: Record<
     CursoStatus,
-    { color: string; icon: React.ComponentType<any> }
+    { color: string; icon: React.ComponentType<any>; ring: boolean }
   > = {
     [CursoStatus.APROBADO]: {
       color: "emerald",
       icon: CircleCheckBig,
+      ring: false,
     },
     [CursoStatus.PENDIENTE]: {
       color: "blue",
       icon: Clock4,
+      ring: false,
     },
     [CursoStatus.REPROBADO]: {
       color: "gray",
       icon: CircleCheckBig,
+      ring: false,
     },
     [CursoStatus.INSCRITO]: {
-      color: "--",
+      color: "blue",
       icon: Clock4,
+      ring: true,
     },
   };
 
@@ -185,7 +198,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               </div>
               {/* Porcentaje de avance */}
               <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
-                46% avance
+                {calcularPorcentajeAvance(cursos)}% avance
               </span>
             </div>
             {/* Leyenda de colores */}
@@ -206,7 +219,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
           </header>
           <main className="flex p-3 gap-3 overflow-auto flex-1">
             {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2" key={nivel}>
                 <div className="flex items-center gap-2 border-b border-zinc-700 pb-2">
                   <div className="flex bg-secondary size-5 items-center justify-center rounded-full">
                     <span className="text-[10px] font-semibold">{nivel}</span>
@@ -217,11 +230,18 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 </div>
                 {cursosNivel.map((curso) => {
                   const cursoColor = statusStyles[getCursoStatus(curso)].color;
+                  const ring = statusStyles[getCursoStatus(curso)].ring
+                    ? "ring-2 ring-green-500"
+                    : "";
                   const IconComponent =
                     statusStyles[getCursoStatus(curso)].icon;
                   return (
                     <div
-                      className={`flex flex-col bg-${cursoColor}-500/20 border border-${cursoColor}-500/50 text-${cursoColor}-400 opacity-80 p-2 rounded-lg`}
+                      key={curso.codigo}
+                      className={cn(
+                        `flex flex-col bg-${cursoColor}-500/20 border border-${cursoColor}-500/50 text-${cursoColor}-400 ${ring} opacity-80 p-2 rounded-lg hover:scale-[1.02] transition-all cursor-pointer`
+                      )}
+                      onClick={() => toggleCursoProyeccion(curso)}
                     >
                       <div className="flex justify-between">
                         <p className="opacity-70 font-mono text-[11px]">
@@ -253,7 +273,9 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               </div>
               {/* Créditos/semestres*/}
               <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
-                7 SCT / 1 sem.
+                {getCreditosProyeccionTotal(proyeccionesPreview)} SCT /{" "}
+                {getCantidadSemestresProyeccion(proyeccionesPreview)} sem.
+                {}
               </span>
             </div>
             {/* Egreso estimado */}
@@ -261,45 +283,64 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               <div className="flex items-center gap-1">
                 <CalendarDays className="text-muted-foreground" size={14} />
                 <p className="text-xs text-muted-foreground">
-                  Egreso estimado: 2026-1
+                  {getUltimoSemestreProyeccion(proyeccionesPreview)
+                    ? `Egreso estimado: ${getUltimoSemestreProyeccion(
+                        proyeccionesPreview
+                      )}`
+                    : "Haz clic en cursos pendientes para proyectar"}
                 </p>
               </div>
             </div>
           </header>
           <main className="flex p-3 gap-3 overflow-auto flex-1">
-            {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
-                  <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
-                    <span className="text-[11px] font-semibold text-green-400">
-                      2026-1
-                    </span>
-                  </div>
-                  <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
-                    <span className="text-[10px] font-semibold">7 SCT</span>
-                  </div>
-                </div>
-                {cursosNivel.map((curso) => {
-                  return (
-                    <div
-                      className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg`}
-                    >
-                      <div className="flex justify-between">
-                        <p className="opacity-70 font-mono text-[11px]">
-                          {curso.codigo}
-                        </p>
+            {Object.keys(proyeccionesPreview).length > 0 ? (
+              Object.entries(proyeccionesPreview).map(
+                ([nivel, cursosNivel]) => (
+                  <div className="flex flex-col gap-2" key={nivel}>
+                    <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
+                      <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
+                        <span className="text-[11px] font-semibold text-green-400">
+                          {nivel}
+                        </span>
                       </div>
-                      <p className="text-sm text-foreground truncate">
-                        {curso.asignatura}
-                      </p>
-                      <span className="text-[11px] opacity-70 mt-1">
-                        {curso.creditos} SCT
-                      </span>
+                      <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
+                        <span className="text-[10px] font-semibold">
+                          {getCreditosProyeccion(cursosNivel)} SCT
+                        </span>
+                      </div>
                     </div>
-                  );
-                })}
+                    {cursosNivel.map((curso) => {
+                      return (
+                        <div
+                          key={curso.codigo}
+                          className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg`}
+                        >
+                          <div className="flex justify-between">
+                            <p className="opacity-70 font-mono text-[11px]">
+                              {curso.codigo}
+                            </p>
+                          </div>
+                          <p className="text-sm text-foreground truncate">
+                            {curso.asignatura}
+                          </p>
+                          <span className="text-[11px] opacity-70 mt-1">
+                            {curso.creditos} SCT
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )
+              )
+            ) : (
+              <div className="flex justify-center items-center flex-col w-full">
+                <Target className="text-zinc-700 mb-1" size={42} />
+                <p className="text-muted-foreground">Sin proyección aún</p>
+                <p className="text-muted-foreground text-sm">
+                  Selecciona cursos pendientes de la malla
+                </p>
               </div>
-            ))}
+            )}
           </main>
         </section>
       </div>
@@ -307,23 +348,35 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
       {/* Editor de Proyección */}
       <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
         {/* Header de Editor */}
-        <header className="flex flex-col mb-4">
-          <div className="flex justify-between">
-            <div className="flex items-center gap-2">
-              <Plus className="text-green-600" size={18} />
-              <h2 className="font-semibold text">Editor de Proyección</h2>
+        <header className="flex mb-4 justify-between items-center">
+          <div className="flex flex-col">
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <Plus className="text-green-600" size={18} />
+                <h2 className="font-semibold text">Editor de Proyección</h2>
+              </div>
+            </div>
+            <div className="flex gap-2 ">
+              <div className="flex items-center gap-1">
+                <p className="text-sm text-muted-foreground">
+                  Agrega cursos al semestre actual de tu proyección
+                </p>
+              </div>
             </div>
           </div>
-          {/* Egreso estimado */}
-          <div className="flex gap-2 ">
-            <div className="flex items-center gap-1">
-              <p className="text-sm text-muted-foreground">
-                Agrega cursos al semestro actual de tu proyección
-              </p>
-            </div>
+          <div className="flex items-center gap-2">
+            <Button
+              className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
+              onClick={irSiguienteSemestre}
+            >
+              <ArrowRight />
+              Siguiente Semestre
+            </Button>
           </div>
         </header>
+        {/* Cartas de Editor */}
         <main className="grid grid-cols-3 flex-1 gap-3 min-h-0">
+          {/* Carta izquierda */}
           <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-8">
             <header className="px-3">Buscar Cursos Disponibles</header>
             <div className="px-3 pt-2">
@@ -336,7 +389,10 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
             </div>
             <div className="flex-1 overflow-y-auto pt-2 gap-2 flex flex-col px-3 min-h-0">
               {cursos.map((curso) => (
-                <div className="flex border items-center rounded-lg p-2 justify-between">
+                <div
+                  key={curso.codigo}
+                  className="flex border items-center rounded-lg p-2 justify-between hover:bg-secondary transition-all hover:cursor-pointer hover:border-green-500/50"
+                >
                   <div className="flex flex-col">
                     <span className="font-mono text-xs text-muted-foreground">
                       {curso.codigo}
@@ -348,87 +404,112 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                           {curso.creditos} SCT
                         </span>
                       </div>
-                      <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-md">
-                        <span className="text-[10px] font-semibold">
-                          Prereq: EST101
-                        </span>
-                      </div>
                     </div>
                   </div>
-                  <div className="mr-2">
+                  <div className="mr-1 hover:bg-zinc-700 rounded p-1 transition-all">
                     <Plus size={18} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
+          {/* Carta central */}
           <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
             <div className="flex justify-between px-3 items-center">
-              <header className="">Cursos en 2026-1</header>
+              <header className="">Cursos en {semestreActual}</header>
               <div className="flex border border-zinc-700 h-5 py-2 px-3 items-center justify-center rounded-md">
-                <span className="text-xs font-semibold">0 créditos</span>
+                <span className="text-xs font-semibold">
+                  {getCreditosProyeccion(proyeccionActual)} créditos
+                </span>
               </div>
             </div>
             <div className="flex-1 overflow-y-auto pt-2 gap-2 flex flex-col px-3 min-h-0">
-              {cursos.map((curso) => (
-                <div className="flex border border-green-500/30 bg-green-500/10 items-center rounded-lg p-2 justify-between">
-                  <div className="flex flex-col flex-1">
-                    <span className="font-mono text-xs text-muted-foreground">
-                      {curso.codigo}
-                    </span>
-                    <span className="">{curso.asignatura}</span>
-                  </div>
-                  <div className="flex mr-2 gap-2">
-                    <div className="flex border border-zinc-700 h-5 px-2 items-center justify-center rounded-full">
-                      <span className="text-[10px] font-semibold">
-                        {curso.creditos} SCT
+              {proyeccionActual.length > 0 ? (
+                proyeccionActual.map((curso) => (
+                  <div
+                    key={curso.codigo}
+                    className="flex border border-green-500/30 bg-green-500/10 items-center rounded-lg p-2 justify-between"
+                  >
+                    <div className="flex flex-col flex-1">
+                      <span className="font-mono text-xs text-muted-foreground">
+                        {curso.codigo}
                       </span>
+                      <span className="">{curso.asignatura}</span>
                     </div>
-                    <Trash2 size={18} className="text-red-600" />
+                    <div className="flex mr-1 gap-2 items-center">
+                      <div className="flex border border-zinc-700 h-5 px-2 items-center justify-center rounded-full">
+                        <span className="text-[10px] font-semibold">
+                          {curso.creditos} SCT
+                        </span>
+                      </div>
+                      <div
+                        className="rounded p-1 hover:bg-zinc-700/50 transition-all hover:cursor-pointer"
+                        onClick={() => toggleCursoProyeccion(curso)}
+                      >
+                        <Trash2 size={18} className="text-red-600" />
+                      </div>
+                    </div>
                   </div>
+                ))
+              ) : (
+                <div className="flex flex-col justify-center items-center h-4/5">
+                  <p className="text-muted-foreground">Sin cursos agregados</p>
+                  <p className="text-muted-foreground text-sm">
+                    Selecciona cursos de la lista
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
+          {/* Carta derecha */}
           <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
             <header className="px-3">Acciones</header>
             <div className="px-3 pt-2">
               <div className="flex flex-col bg-zinc-800 p-3 border rounded-lg mb-3">
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-muted-foreground mb-1">
                   Resumen de la proyección
                 </span>
                 <div className="grid grid-rows-2 grid-cols-2">
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Total semestres
                     </p>
-                    <p className="font-semibold">4</p>
+                    <p className="font-semibold">
+                      {getCantidadSemestresProyeccion(proyeccionesPreview)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Créditos restantes
                     </p>
-                    <p className="font-semibold">48</p>
+                    <p className="font-semibold">
+                      {getCantidadCreditosRestantes(cursos)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Egreso estimado
                     </p>
-                    <p className="font-semibold">2027-2</p>
+                    <p className="font-semibold">
+                      {getUltimoSemestreProyeccion(proyeccionesPreview) ??
+                        semestreActual}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                       Cursos pendientes
                     </p>
-                    <p className="font-semibold">15</p>
+                    <p className="font-semibold">
+                      {getCantidadCursosPendientes(cursos)}
+                    </p>
                   </div>
                 </div>
               </div>
-              <Button className="bg-green-600 hover:bg-green-700 font-semibold w-full mb-3">
-                <ArrowRight />
+              <Button className="bg-green-600 hover:bg-green-700 font-semibold w-full mb-3 hover:cursor-pointer">
+                <ArrowDownToLine />
                 Guardar Proyección
               </Button>
-              <Button className="bg-primary-foreground text-primary hover:bg-secondary font-semibold border w-full">
+              <Button className="bg-primary-foreground text-primary hover:bg-secondary font-semibold border w-full hover:cursor-pointer">
                 Limpiar Todo
               </Button>
             </div>
