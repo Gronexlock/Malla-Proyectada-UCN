@@ -1,4 +1,4 @@
-import { NuevaProyeccionView } from "@/components/proyeccion/nueva-proyeccion-view-v2";
+import { NuevaProyeccionView } from "@/components/proyeccion/crear-proyeccion/crear-proyeccion-view";
 import { getUser } from "@/src/actions/cookiesActions";
 import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
 import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
