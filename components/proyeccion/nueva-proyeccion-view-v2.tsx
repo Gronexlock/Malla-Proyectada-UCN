@@ -15,6 +15,7 @@ import {
   getSemestreSiguiente,
 } from "@/src/utils/semestreUtils";
 import {
+  ArrowRight,
   BookOpen,
   CalendarDays,
   CircleCheckBig,
@@ -22,8 +23,10 @@ import {
   Plus,
   Search,
   Target,
+  Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -168,138 +171,141 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   };
 
   return (
-    <div
-      className={`grid grid-rows-2 grid-cols-2 h-[calc(100vh-2rem)] bg-neutral-950`}
-    >
-      {/* Malla Curricular */}
-      <section className="flex flex-col border-t border-zinc-700">
-        {/* Header Malla Curricular */}
-        <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
-          <div className="flex justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen className="text-green-600" size={18} />
-              <h2 className="font-semibold text-sm">Malla Curricular</h2>
-            </div>
-            {/* Porcentaje de avance */}
-            <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
-              46% avance
-            </span>
-          </div>
-          {/* Leyenda de colores */}
-          <div className="flex gap-2 ">
-            <div className="flex items-center gap-1">
-              <div className="size-3 bg-emerald-500/50 rounded-full"></div>
-              <p className="text-xs text-muted-foreground">Aprobado</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="size-3 bg-red-500/50 rounded-full"></div>
-              <p className="text-xs text-muted-foreground">Reprobado</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="size-3 bg-blue-500/50 rounded-full"></div>
-              <p className="text-xs text-muted-foreground">Pendiente</p>
-            </div>
-          </div>
-        </header>
-        <main className="flex p-3 gap-3 overflow-auto">
-          {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 border-b border-zinc-700 pb-2">
-                <div className="flex bg-secondary size-5 items-center justify-center rounded-full">
-                  <span className="text-[10px] font-semibold">{nivel}</span>
-                </div>
-                <h3 className="text-muted-foreground text-sm">Nivel {nivel}</h3>
+    <div className={`h-[calc(100vh-2.5rem)] flex flex-col`}>
+      {/* Sección superior: Malla Curricular y Proyección */}
+      <div className="flex flex-[2] min-h-0">
+        {/* Malla Curricular */}
+        <section className="flex flex-col border-t border-zinc-700 w-1/2 min-h-0">
+          {/* Header Malla Curricular */}
+          <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <BookOpen className="text-green-600" size={18} />
+                <h2 className="font-semibold text-sm">Malla Curricular</h2>
               </div>
-              {cursosNivel.map((curso) => {
-                const cursoColor = statusStyles[getCursoStatus(curso)].color;
-                const IconComponent = statusStyles[getCursoStatus(curso)].icon;
-                return (
-                  <div
-                    className={`flex flex-col bg-${cursoColor}-500/20 border border-${cursoColor}-500/50 text-${cursoColor}-400 opacity-80 p-2 rounded-lg`}
-                  >
-                    <div className="flex justify-between">
-                      <p className="opacity-70 font-mono text-[11px]">
-                        {curso.codigo}
+              {/* Porcentaje de avance */}
+              <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
+                46% avance
+              </span>
+            </div>
+            {/* Leyenda de colores */}
+            <div className="flex gap-2 ">
+              <div className="flex items-center gap-1">
+                <div className="size-3 bg-emerald-500/50 rounded-full"></div>
+                <p className="text-xs text-muted-foreground">Aprobado</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="size-3 bg-red-500/50 rounded-full"></div>
+                <p className="text-xs text-muted-foreground">Reprobado</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="size-3 bg-blue-500/50 rounded-full"></div>
+                <p className="text-xs text-muted-foreground">Pendiente</p>
+              </div>
+            </div>
+          </header>
+          <main className="flex p-3 gap-3 overflow-auto flex-1">
+            {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 border-b border-zinc-700 pb-2">
+                  <div className="flex bg-secondary size-5 items-center justify-center rounded-full">
+                    <span className="text-[10px] font-semibold">{nivel}</span>
+                  </div>
+                  <h3 className="text-muted-foreground text-sm">
+                    Nivel {nivel}
+                  </h3>
+                </div>
+                {cursosNivel.map((curso) => {
+                  const cursoColor = statusStyles[getCursoStatus(curso)].color;
+                  const IconComponent =
+                    statusStyles[getCursoStatus(curso)].icon;
+                  return (
+                    <div
+                      className={`flex flex-col bg-${cursoColor}-500/20 border border-${cursoColor}-500/50 text-${cursoColor}-400 opacity-80 p-2 rounded-lg`}
+                    >
+                      <div className="flex justify-between">
+                        <p className="opacity-70 font-mono text-[11px]">
+                          {curso.codigo}
+                        </p>
+                        <IconComponent size={13} />
+                      </div>
+                      <p className="text-sm text-foreground truncate">
+                        {curso.asignatura}
                       </p>
-                      <IconComponent size={13} />
+                      <span className="text-[11px] opacity-70 mt-1">
+                        {curso.creditos} SCT
+                      </span>
                     </div>
-                    <p className="text-sm text-foreground truncate">
-                      {curso.asignatura}
-                    </p>
-                    <span className="text-[11px] opacity-70 mt-1">
-                      {curso.creditos} SCT
+                  );
+                })}
+              </div>
+            ))}
+          </main>
+        </section>
+        {/* Proyección */}
+        <section className="flex flex-col border-t border-l border-zinc-700 w-1/2 min-h-0">
+          {/* Header Proyección */}
+          <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
+            <div className="flex justify-between">
+              <div className="flex items-center gap-2">
+                <Target className="text-green-600" size={18} />
+                <h2 className="font-semibold text-sm">Proyección</h2>
+              </div>
+              {/* Créditos/semestres*/}
+              <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
+                7 SCT / 1 sem.
+              </span>
+            </div>
+            {/* Egreso estimado */}
+            <div className="flex gap-2 ">
+              <div className="flex items-center gap-1">
+                <CalendarDays className="text-muted-foreground" size={14} />
+                <p className="text-xs text-muted-foreground">
+                  Egreso estimado: 2026-1
+                </p>
+              </div>
+            </div>
+          </header>
+          <main className="flex p-3 gap-3 overflow-auto flex-1">
+            {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
+                  <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
+                    <span className="text-[11px] font-semibold text-green-400">
+                      2026-1
                     </span>
                   </div>
-                );
-              })}
-            </div>
-          ))}
-        </main>
-      </section>
-
-      {/* Proyección */}
-      <section className="flex flex-col border-t border-l border-zinc-700">
-        {/* Header Proyección */}
-        <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
-          <div className="flex justify-between">
-            <div className="flex items-center gap-2">
-              <Target className="text-green-600" size={18} />
-              <h2 className="font-semibold text-sm">Proyección</h2>
-            </div>
-            {/* Créditos/semestres*/}
-            <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
-              7 SCT / 1 sem.
-            </span>
-          </div>
-          {/* Egreso estimado */}
-          <div className="flex gap-2 ">
-            <div className="flex items-center gap-1">
-              <CalendarDays className="text-muted-foreground" size={14} />
-              <p className="text-xs text-muted-foreground">
-                Egreso estimado: 2026-1
-              </p>
-            </div>
-          </div>
-        </header>
-        <main className="flex p-3 gap-3 overflow-auto">
-          {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
-                <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-[11px] font-semibold text-green-400">
-                    2026-1
-                  </span>
-                </div>
-                <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
-                  <span className="text-[10px] font-semibold">7 SCT</span>
-                </div>
-              </div>
-              {cursosNivel.map((curso) => {
-                return (
-                  <div
-                    className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg`}
-                  >
-                    <div className="flex justify-between">
-                      <p className="opacity-70 font-mono text-[11px]">
-                        {curso.codigo}
-                      </p>
-                    </div>
-                    <p className="text-sm text-foreground truncate">
-                      {curso.asignatura}
-                    </p>
-                    <span className="text-[11px] opacity-70 mt-1">
-                      {curso.creditos} SCT
-                    </span>
+                  <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
+                    <span className="text-[10px] font-semibold">7 SCT</span>
                   </div>
-                );
-              })}
-            </div>
-          ))}
-        </main>
-      </section>
+                </div>
+                {cursosNivel.map((curso) => {
+                  return (
+                    <div
+                      className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg`}
+                    >
+                      <div className="flex justify-between">
+                        <p className="opacity-70 font-mono text-[11px]">
+                          {curso.codigo}
+                        </p>
+                      </div>
+                      <p className="text-sm text-foreground truncate">
+                        {curso.asignatura}
+                      </p>
+                      <span className="text-[11px] opacity-70 mt-1">
+                        {curso.creditos} SCT
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </main>
+        </section>
+      </div>
 
       {/* Editor de Proyección */}
-      <section className="p-3 col-span-2 border-t border-zinc-700 flex flex-col">
+      <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
         {/* Header de Editor */}
         <header className="flex flex-col mb-4">
           <div className="flex justify-between">
@@ -317,9 +323,9 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
             </div>
           </div>
         </header>
-        <main className="grid grid-cols-3 flex-1 gap-3">
-          <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2">
-            <header className="pt-8 px-3">Buscar Cursos Disponibles</header>
+        <main className="grid grid-cols-3 flex-1 gap-3 min-h-0">
+          <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-8">
+            <header className="px-3">Buscar Cursos Disponibles</header>
             <div className="px-3 pt-2">
               <InputGroup>
                 <InputGroupAddon>
@@ -328,14 +334,14 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
                 <InputGroupInput placeholder="Buscar curso por código o nombre..." />
               </InputGroup>
             </div>
-            <div className="flex-1 overflow-y-auto pt-2 gap-2 flex flex-col max-h-96 px-3">
+            <div className="flex-1 overflow-y-auto pt-2 gap-2 flex flex-col px-3 min-h-0">
               {cursos.map((curso) => (
-                <div className="flex border items-center rounded p-2 justify-between">
+                <div className="flex border items-center rounded-lg p-2 justify-between">
                   <div className="flex flex-col">
                     <span className="font-mono text-xs text-muted-foreground">
                       {curso.codigo}
                     </span>
-                    <span>{curso.asignatura}</span>
+                    <span className="">{curso.asignatura}</span>
                     <div className="flex mt-1 gap-1">
                       <div className="flex border border-zinc-700 h-5 px-2 items-center justify-center rounded-full">
                         <span className="text-[10px] font-semibold">
@@ -356,8 +362,77 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
               ))}
             </div>
           </div>
-          <div className="bg-zinc-600">a</div>
-          <div className="bg-zinc-600">a</div>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
+            <div className="flex justify-between px-3 items-center">
+              <header className="">Cursos en 2026-1</header>
+              <div className="flex border border-zinc-700 h-5 py-2 px-3 items-center justify-center rounded-md">
+                <span className="text-xs font-semibold">0 créditos</span>
+              </div>
+            </div>
+            <div className="flex-1 overflow-y-auto pt-2 gap-2 flex flex-col px-3 min-h-0">
+              {cursos.map((curso) => (
+                <div className="flex border border-green-500/30 bg-green-500/10 items-center rounded-lg p-2 justify-between">
+                  <div className="flex flex-col flex-1">
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {curso.codigo}
+                    </span>
+                    <span className="">{curso.asignatura}</span>
+                  </div>
+                  <div className="flex mr-2 gap-2">
+                    <div className="flex border border-zinc-700 h-5 px-2 items-center justify-center rounded-full">
+                      <span className="text-[10px] font-semibold">
+                        {curso.creditos} SCT
+                      </span>
+                    </div>
+                    <Trash2 size={18} className="text-red-600" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
+            <header className="px-3">Acciones</header>
+            <div className="px-3 pt-2">
+              <div className="flex flex-col bg-zinc-800 p-3 border rounded-lg mb-3">
+                <span className="text-sm text-muted-foreground">
+                  Resumen de la proyección
+                </span>
+                <div className="grid grid-rows-2 grid-cols-2">
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Total semestres
+                    </p>
+                    <p className="font-semibold">4</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Créditos restantes
+                    </p>
+                    <p className="font-semibold">48</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Egreso estimado
+                    </p>
+                    <p className="font-semibold">2027-2</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Cursos pendientes
+                    </p>
+                    <p className="font-semibold">15</p>
+                  </div>
+                </div>
+              </div>
+              <Button className="bg-green-600 hover:bg-green-700 font-semibold w-full mb-3">
+                <ArrowRight />
+                Guardar Proyección
+              </Button>
+              <Button className="bg-primary-foreground text-primary hover:bg-secondary font-semibold border w-full">
+                Limpiar Todo
+              </Button>
+            </div>
+          </div>
         </main>
       </section>
     </div>
