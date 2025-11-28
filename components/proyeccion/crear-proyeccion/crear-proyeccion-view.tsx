@@ -2,10 +2,10 @@
 
 import { guardarProyeccion } from "@/src/actions/proyeccionActions";
 import { Curso, CursoStatus } from "@/src/types/curso";
-import { getCursoStatus } from "@/src/utils/cursosUtils";
 import { generarProyeccionOptima } from "@/src/utils/generarProyeccionOptima";
 import {
   aprobarCursosInscritos,
+  irSemestreAnterior,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
 } from "@/src/utils/proyeccionUtils";
@@ -73,6 +73,22 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
     }));
   }
 
+  function handleCambiarSemestre(semestreObjetivo: string) {
+    const { nuevosCursos, nuevosSemestres, nuevasProyecciones, nuevaPreview } =
+      irSemestreAnterior(
+        semestreObjetivo,
+        semestres,
+        cursos,
+        proyeccionesPorSemestre
+      );
+
+    setCursos(nuevosCursos);
+    setSemestres(nuevosSemestres);
+    setProyeccionesPorSemestre(nuevasProyecciones);
+    setProyeccionesPreview(nuevaPreview);
+    setSemestreIndex(nuevosSemestres.length - 1);
+  }
+
   async function handleGuardarProyeccion() {
     await guardarProyeccion(proyeccionesPorSemestre);
   }
@@ -124,17 +140,14 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
 
       <EditorProyeccion
         cursos={cursos}
-        cursosDisponibles={cursos.filter(
-          (c) =>
-            getCursoStatus(c) === CursoStatus.PENDIENTE ||
-            getCursoStatus(c) === CursoStatus.REPROBADO
-        )}
+        semestres={semestres}
         semestreActual={semestreActual}
         proyeccionActual={proyeccionActual}
         proyeccionesPreview={proyeccionesPreview}
         onAgregarCurso={toggleCursoProyeccion}
         onRemoverCurso={toggleCursoProyeccion}
         onSiguienteSemestre={irSiguienteSemestre}
+        onCambiarSemestre={handleCambiarSemestre}
         onGuardar={handleGuardarProyeccion}
         onLimpiar={() => {}}
       />

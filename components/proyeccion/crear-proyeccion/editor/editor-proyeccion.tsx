@@ -1,7 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Curso } from "@/src/types/curso";
+import { getCursosDisponibles } from "@/src/utils/proyeccionUtils";
 import { ArrowRight, Plus } from "lucide-react";
 import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
@@ -9,26 +17,28 @@ import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
 
 type EditorProyeccionProps = {
   cursos: Curso[];
-  cursosDisponibles: Curso[];
+  semestres: string[];
   proyeccionActual: Curso[];
   proyeccionesPreview: Record<string, Curso[]>;
   semestreActual: string;
   onAgregarCurso: (curso: Curso) => void;
   onRemoverCurso: (curso: Curso) => void;
   onSiguienteSemestre: () => void;
+  onCambiarSemestre: (semestre: string) => void;
   onGuardar: () => void;
   onLimpiar: () => void;
 };
 
 export function EditorProyeccion({
   cursos,
-  cursosDisponibles,
+  semestres,
   proyeccionActual,
   proyeccionesPreview,
   semestreActual,
   onAgregarCurso,
   onRemoverCurso,
   onSiguienteSemestre,
+  onCambiarSemestre,
   onGuardar,
   onLimpiar,
 }: EditorProyeccionProps) {
@@ -52,6 +62,18 @@ export function EditorProyeccion({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Select value={semestreActual} onValueChange={onCambiarSemestre}>
+            <SelectTrigger className="w-[150px] !bg-zinc-950 !border-zinc-800 hover:!bg-primary-foreground">
+              <SelectValue placeholder="Selecciona un semestre" />
+            </SelectTrigger>
+            <SelectContent>
+              {semestres.map((sem) => (
+                <SelectItem key={sem} value={sem}>
+                  {sem}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
             onClick={onSiguienteSemestre}
@@ -64,7 +86,7 @@ export function EditorProyeccion({
       {/* Cartas de Editor */}
       <main className="grid grid-cols-3 flex-1 gap-3 min-h-0">
         <ListaCursosDisponibles
-          cursos={cursosDisponibles}
+          cursos={getCursosDisponibles(cursos)}
           onAgregarCurso={onAgregarCurso}
         />
         <ListaCursosAgregados

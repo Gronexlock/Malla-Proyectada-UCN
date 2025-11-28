@@ -2,7 +2,7 @@ import { fetchProyecciones } from "../actions/proyeccionActions";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
 import { Proyeccion } from "../types/proyeccion";
-import { getCursosPorNivel, getMalla } from "./cursosUtils";
+import { getCursosPorNivel, getCursoStatus, getMalla } from "./cursosUtils";
 
 /**
  * Obtiene las proyecciones de un estudiante para una carrera específica desde
@@ -53,32 +53,6 @@ export function aprobarCursosInscritos(cursos: Curso[]): Curso[] {
   for (const curso of cursos) {
     if (curso.status.includes(CursoStatus.INSCRITO)) {
       curso.status.push(CursoStatus.APROBADO);
-    }
-    cursosActualizados.push(curso);
-  }
-  return cursosActualizados;
-}
-
-/**
- * Elimina el estado de inscrito de los cursos que están en la proyección actual.
- * Elimina el estado de aprobado de los cursos que están en la proyección anterior.
- * @param cursos Lista de cursos a actualizar.
- * @param proyeccionActual Lista de cursos en la proyección actual.
- * @param proyeccionAnterior Lista de cursos en la proyección anterior.
- * @returns Lista de cursos actualizados.
- */
-export function inscribirCursosAprobados(
-  cursos: Curso[],
-  proyeccionActual: Curso[],
-  proyeccionAnterior: Curso[]
-): Curso[] {
-  const cursosActualizados: Curso[] = [];
-  for (const curso of cursos) {
-    if (proyeccionActual.some((c) => c.codigo === curso.codigo)) {
-      curso.status = curso.status.filter((s) => s !== CursoStatus.INSCRITO);
-    }
-    if (proyeccionAnterior.some((c) => c.codigo === curso.codigo)) {
-      curso.status = curso.status.filter((s) => s !== CursoStatus.APROBADO);
     }
     cursosActualizados.push(curso);
   }
@@ -281,4 +255,74 @@ export function getCantidadCreditosRestantes(cursos: Curso[]): number {
     (curso) => !curso.status.includes(CursoStatus.APROBADO)
   );
   return cursosPendientes.reduce((total, curso) => total + curso.creditos, 0);
+}
+
+/**
+ * Obtiene la lista de cursos disponibles para proyección. Un curso está disponible si
+ * no está aprobado, todos sus prerrequisitos están aprobados, y no está disperso.
+ * @param cursos Lista de cursos en la malla curricular del estudiante.
+ * @returns Lista de cursos disponibles para proyección.
+ */
+export function getCursosDisponibles(cursos: Curso[]): Curso[] {
+  return cursos.filter(
+    (curso) =>
+      getCursoStatus(curso) !== CursoStatus.APROBADO &&
+      getCursoStatus(curso) !== CursoStatus.INSCRITO &&
+      getCursosBloqueantes(curso, cursos).length === 0 &&
+      !isDisperso(curso, getNivelEstudiante(cursos))
+  );
+}
+
+/**
+ * Retrocede la proyección a un semestre objetivo, eliminando todos los semestres
+ * y cursos proyectados posteriores a él.
+ * @param semestreObjetivo El semestre al que se desea retroceder.
+ * @param semestres El array actual de semestres en la proyección.
+ * @param cursos La lista maestra de todos los cursos.
+ * @param proyeccionesPorSemestre El registro de cursos proyectados por semestre.
+ * @returns Un objeto con los nuevos estados de cursos, semestres y proyecciones.
+ */
+export function irSemestreAnterior(
+  semestreObjetivo: string,
+  semestres: string[],
+  cursos: Curso[],
+  proyeccionesPorSemestre: Record<string, Curso[]>
+) {
+  const indexObjetivo = semestres.indexOf(semestreObjetivo);
+  let indexActual = semestres.length - 1;
+
+  while (indexActual >= indexObjetivo) {
+    const proyeccionActual = proyeccionesPorSemestre[semestres[indexActual]];
+    proyeccionActual.forEach((cursoProyectado) => {
+      const cursoMalla = cursos.find(
+        (c) => c.codigo === cursoProyectado.codigo
+      );
+      if (cursoMalla) {
+        cursoMalla.status = cursoMalla.status.filter(
+          (s) => s !== CursoStatus.APROBADO
+        );
+        if (indexActual !== indexObjetivo) {
+          cursoMalla.status = cursoMalla.status.filter(
+            (s) => s !== CursoStatus.INSCRITO
+          );
+        }
+      }
+    });
+    if (indexActual !== indexObjetivo) {
+      delete proyeccionesPorSemestre[semestres[indexActual]];
+      semestres.pop();
+    }
+    indexActual--;
+  }
+  const llaves = Object.keys(proyeccionesPorSemestre);
+  const ultimaLlave = llaves[llaves.length - 1];
+  const nuevaPreview = { ...proyeccionesPorSemestre };
+  delete nuevaPreview[ultimaLlave];
+
+  return {
+    nuevosCursos: cursos,
+    nuevosSemestres: semestres,
+    nuevasProyecciones: proyeccionesPorSemestre,
+    nuevaPreview: nuevaPreview,
+  };
 }
