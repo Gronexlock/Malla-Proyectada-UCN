@@ -278,7 +278,7 @@ export function getCursosDisponibles(cursos: Curso[]): Curso[] {
  * y cursos proyectados posteriores a él.
  * @param semestreObjetivo El semestre al que se desea retroceder.
  * @param semestres El array actual de semestres en la proyección.
- * @param cursos La lista maestra de todos los cursos.
+ * @param cursos La lista de todos los cursos.
  * @param proyeccionesPorSemestre El registro de cursos proyectados por semestre.
  * @returns Un objeto con los nuevos estados de cursos, semestres y proyecciones.
  */
@@ -325,4 +325,45 @@ export function irSemestreAnterior(
     nuevasProyecciones: proyeccionesPorSemestre,
     nuevaPreview: nuevaPreview,
   };
+}
+
+/**
+ * Verifica si una proyección está completa, es decir, si todos los cursos disponibles
+ * en la malla curricular están aprobados.
+ * @param cursos La lista de todos los cursos en la malla curricular.
+ * @returns True si la proyección está completa, false en caso contrario.
+ */
+export function isProyeccionCompleta(cursos: Curso[]): boolean {
+  return cursos.every((curso) => curso.status.includes(CursoStatus.APROBADO));
+}
+
+/**
+ * Remueve el estado de inscrito de todos los cursos en la lista.
+ * @param cursos La lista de cursos de la malla.
+ * @returns Una lista de cursos con el estado de inscrito removido.
+ */
+export function desinscribirCursos(cursos: Curso[]): Curso[] {
+  return cursos.map((curso) => {
+    if (curso.status.includes(CursoStatus.INSCRITO)) {
+      curso.status = curso.status.filter((s) => s !== CursoStatus.INSCRITO);
+    }
+    return curso;
+  });
+}
+
+/**
+ * Remueve todos los cursos inscritos de la proyección actual.
+ * @param proyeccionesPorSemestre El registro de cursos proyectados por semestre.
+ * @returns El registro actualizado sin los cursos inscritos del último semestre.
+ */
+export function limpiarProyeccionActual(
+  proyeccionesPorSemestre: Record<string, Curso[]>
+): Record<string, Curso[]> {
+  const keys = Object.keys(proyeccionesPorSemestre);
+  if (keys.length === 0) {
+    return proyeccionesPorSemestre;
+  }
+  const ultimaLlave = keys[keys.length - 1];
+  delete proyeccionesPorSemestre[ultimaLlave];
+  return proyeccionesPorSemestre;
 }

@@ -8,8 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
+import { useProyeccion } from "@/src/contexts/ProyeccionContext";
 import { Curso } from "@/src/types/curso";
-import { getCursosDisponibles } from "@/src/utils/proyeccionUtils";
+import {
+  getCreditosProyeccion,
+  getCursosDisponibles,
+} from "@/src/utils/proyeccionUtils";
 import { ArrowRight, Plus } from "lucide-react";
 import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
@@ -42,6 +47,7 @@ export function EditorProyeccion({
   onGuardar,
   onLimpiar,
 }: EditorProyeccionProps) {
+  const { ignorarRestricciones } = useProyeccion();
   return (
     <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
@@ -77,6 +83,11 @@ export function EditorProyeccion({
           <Button
             className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
             onClick={onSiguienteSemestre}
+            disabled={
+              (!ignorarRestricciones &&
+                getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS) ||
+              proyeccionActual.length === 0
+            }
           >
             <ArrowRight />
             Siguiente Semestre

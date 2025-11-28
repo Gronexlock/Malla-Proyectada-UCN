@@ -40,7 +40,7 @@ export function ProyeccionPreview({
                 ? `Egreso estimado: ${getUltimoSemestreProyeccion(
                     proyeccionesPreview
                   )}`
-                : "Haz clic en cursos pendientes para proyectar"}
+                : "Avanza un semestre para proyectar"}
             </p>
           </div>
         </div>
@@ -65,7 +65,7 @@ export function ProyeccionPreview({
                 return (
                   <div
                     key={curso.codigo}
-                    className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg`}
+                    className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg min-w-36`}
                   >
                     <div className="flex justify-between">
                       <p className="opacity-70 font-mono text-[11px]">
@@ -88,7 +88,7 @@ export function ProyeccionPreview({
             <Target className="text-zinc-700 mb-1" size={42} />
             <p className="text-muted-foreground">Sin proyección aún</p>
             <p className="text-muted-foreground text-sm">
-              Selecciona cursos pendientes de la malla
+              Avanza un semestre para ver tu proyección
             </p>
           </div>
         )}

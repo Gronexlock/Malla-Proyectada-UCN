@@ -5,7 +5,9 @@ import { Curso, CursoStatus } from "@/src/types/curso";
 import { generarProyeccionOptima } from "@/src/utils/generarProyeccionOptima";
 import {
   aprobarCursosInscritos,
+  desinscribirCursos,
   irSemestreAnterior,
+  limpiarProyeccionActual,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
 } from "@/src/utils/proyeccionUtils";
@@ -43,6 +45,8 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   const [proyeccionesPreview, setProyeccionesPreview] = useState<
     Record<string, Curso[]>
   >({});
+
+  const [ignorarReestricciones, setIgnorarReestricciones] = useState(false);
 
   function toggleCursoProyeccion(cursoToToggle: Curso) {
     const nuevaProyeccion = toggleCursoProyeccionActual(
@@ -91,6 +95,13 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
 
   async function handleGuardarProyeccion() {
     await guardarProyeccion(proyeccionesPorSemestre);
+  }
+
+  function handleLimpiarTodo() {
+    setCursos(desinscribirCursos(cursos));
+    setProyeccionesPorSemestre(
+      limpiarProyeccionActual(proyeccionesPorSemestre)
+    );
   }
 
   function handleGenerarProyeccionAutomatica() {
@@ -149,7 +160,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
         onSiguienteSemestre={irSiguienteSemestre}
         onCambiarSemestre={handleCambiarSemestre}
         onGuardar={handleGuardarProyeccion}
-        onLimpiar={() => {}}
+        onLimpiar={handleLimpiarTodo}
       />
     </div>
   );

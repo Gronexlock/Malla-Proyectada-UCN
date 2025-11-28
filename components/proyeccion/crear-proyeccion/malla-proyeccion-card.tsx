@@ -58,7 +58,7 @@ export default function MallaProyeccionCard({
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border ${statusStyles[status].class}`,
+        `flex flex-col p-2 rounded-lg border min-w-36 ${statusStyles[status].class}`,
         isClickable
           ? "hover:scale-[1.02] transition-all cursor-pointer"
           : "opacity-80"
@@ -76,14 +76,14 @@ export default function MallaProyeccionCard({
 
   if (cursosBloqueantes.length > 0) {
     return (
-      <Tooltip>
+      <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
         <TooltipContent side="right" className="max-w-xs">
           <p className="font-semibold text-xs mb-1">Requisitos pendientes:</p>
           <ul className="text-xs space-y-0.5">
             {cursosBloqueantes.map((prereq) => (
               <li key={prereq.codigo} className="flex items-center gap-1">
-                <XCircle className="h-3 w-3 text-orange-600" />
+                <XCircle className="h-3 w-3 text-orange-700" />
                 {prereq.asignatura}
               </li>
             ))}
@@ -100,7 +100,7 @@ export default function MallaProyeccionCard({
         <TooltipContent side="right" className="max-w-xs">
           <p className="font-semibold text-xs mb-1">Dispersión:</p>
           <p className="text-xs space-y-0.5 flex gap-1 items-center">
-            <XCircle className="h-3 w-3 text-orange-600" /> Debes tener todo
+            <XCircle className="h-3 w-3 text-orange-700" /> Debes tener todo
             aprobado hasta el nivel {curso.nivel - 2}
           </p>
         </TooltipContent>
