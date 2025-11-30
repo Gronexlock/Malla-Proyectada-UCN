@@ -367,3 +367,28 @@ export function limpiarProyeccionActual(
   delete proyeccionesPorSemestre[ultimaLlave];
   return proyeccionesPorSemestre;
 }
+
+/**
+ * Aplica los estados de los cursos basándose en una proyección generada.
+ * Cada uno de los cursos en la proyección se marcan como APROBADO.
+ * @param cursos Lista de cursos de la malla.
+ * @param proyeccionGenerada Proyección generada con cursos por semestre.
+ * @returns Lista de cursos con los estados actualizados.
+ */
+export function aplicarEstadosProyeccion(
+  cursos: Curso[],
+  proyeccionGenerada: Record<string, Curso[]>
+): Curso[] {
+  const codigosProyectados = new Set(
+    Object.values(proyeccionGenerada)
+      .flat()
+      .map((c) => c.codigo)
+  );
+
+  return cursos.map((curso) => {
+    if (codigosProyectados.has(curso.codigo)) {
+      return { ...curso, status: [CursoStatus.APROBADO] };
+    }
+    return curso;
+  });
+}

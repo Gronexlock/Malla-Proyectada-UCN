@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/select";
 import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
 import { useProyeccion } from "@/src/contexts/ProyeccionContext";
-import { Curso } from "@/src/types/curso";
 import {
   getCreditosProyeccion,
   getCursosDisponibles,
@@ -20,34 +19,18 @@ import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
 import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
 
-type EditorProyeccionProps = {
-  cursos: Curso[];
-  semestres: string[];
-  proyeccionActual: Curso[];
-  proyeccionesPreview: Record<string, Curso[]>;
-  semestreActual: string;
-  onAgregarCurso: (curso: Curso) => void;
-  onRemoverCurso: (curso: Curso) => void;
-  onSiguienteSemestre: () => void;
-  onCambiarSemestre: (semestre: string) => void;
-  onGuardar: () => void;
-  onLimpiar: () => void;
-};
+export function EditorProyeccion() {
+  const {
+    cursos,
+    semestres,
+    semestreActual,
+    proyeccionActual,
+    ignorarRestricciones,
+    toggleCursoProyeccion,
+    irSiguienteSemestre,
+    cambiarSemestre,
+  } = useProyeccion();
 
-export function EditorProyeccion({
-  cursos,
-  semestres,
-  proyeccionActual,
-  proyeccionesPreview,
-  semestreActual,
-  onAgregarCurso,
-  onRemoverCurso,
-  onSiguienteSemestre,
-  onCambiarSemestre,
-  onGuardar,
-  onLimpiar,
-}: EditorProyeccionProps) {
-  const { ignorarRestricciones } = useProyeccion();
   return (
     <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
@@ -68,7 +51,7 @@ export function EditorProyeccion({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Select value={semestreActual} onValueChange={onCambiarSemestre}>
+          <Select value={semestreActual} onValueChange={cambiarSemestre}>
             <SelectTrigger className="w-[150px] !bg-zinc-950 !border-zinc-800 hover:!bg-primary-foreground">
               <SelectValue placeholder="Selecciona un semestre" />
             </SelectTrigger>
@@ -82,11 +65,11 @@ export function EditorProyeccion({
           </Select>
           <Button
             className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
-            onClick={onSiguienteSemestre}
+            onClick={irSiguienteSemestre}
             disabled={
+              proyeccionActual.length === 0 ||
               (!ignorarRestricciones &&
-                getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS) ||
-              proyeccionActual.length === 0
+                getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS)
             }
           >
             <ArrowRight />
@@ -98,20 +81,14 @@ export function EditorProyeccion({
       <main className="grid grid-cols-3 flex-1 gap-3 min-h-0">
         <ListaCursosDisponibles
           cursos={getCursosDisponibles(cursos)}
-          onAgregarCurso={onAgregarCurso}
+          onAgregarCurso={toggleCursoProyeccion}
         />
         <ListaCursosAgregados
           cursos={proyeccionActual}
           semestreActual={semestreActual}
-          onRemoverCurso={onRemoverCurso}
+          onRemoverCurso={toggleCursoProyeccion}
         />
-        <AccionesProyeccion
-          cursos={cursos}
-          proyeccionesPreview={proyeccionesPreview}
-          semestreActual={semestreActual}
-          onGuardar={onGuardar}
-          onLimpiar={onLimpiar}
-        />
+        <AccionesProyeccion />
       </main>
     </section>
   );

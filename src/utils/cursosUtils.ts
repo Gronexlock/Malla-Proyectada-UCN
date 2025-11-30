@@ -1,5 +1,6 @@
 import { fetchAvance } from "../actions/avanceActions";
 import { fetchMalla } from "../actions/mallaActions";
+import { nombresCompletos } from "../constants/carrerasInfo";
 import { CursoMalla } from "../schemas/mallaSchema";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
@@ -77,6 +78,10 @@ export function getCursoStatus(curso: Curso): CursoStatus {
 export async function getMalla(carrera: Carrera): Promise<Curso[]> {
   const cursosMalla = await fetchMalla(carrera.codigo, carrera.catalogo);
   const cursos: Curso[] = [];
+  const practicaCodes = Object.keys(nombresCompletos).map(
+    (codigo) => `ECIN-0${codigo}`
+  );
+
   for (const cursoMalla of cursosMalla) {
     const curso: Curso = {
       ...cursoMalla,
@@ -85,7 +90,7 @@ export async function getMalla(carrera: Carrera): Promise<Curso[]> {
       periodo: "",
       status: [CursoStatus.PENDIENTE],
     };
-    cursos.push(curso);
+    !practicaCodes.includes(curso.codigo) && cursos.push(curso);
   }
   return cursos;
 }
