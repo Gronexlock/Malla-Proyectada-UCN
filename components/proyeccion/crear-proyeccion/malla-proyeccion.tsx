@@ -1,5 +1,3 @@
-"use client";
-
 import { Curso } from "@/src/types/curso";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import {

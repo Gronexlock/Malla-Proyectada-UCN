@@ -4,6 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useProyeccion } from "@/src/contexts/ProyeccionContext";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { getCursoStatus } from "@/src/utils/cursosUtils";
 import { CircleCheckBig, CircleX, Clock4, Lock, XCircle } from "lucide-react";
@@ -13,7 +14,6 @@ type MallaProyeccionCardProps = {
   onCursoClick: (curso: Curso) => void;
   disperso: boolean;
   cursosBloqueantes: Curso[];
-  ignorarRestricciones?: boolean;
 };
 
 const statusStyles: Record<
@@ -33,13 +33,11 @@ const statusStyles: Record<
     icon: CircleX,
   },
   [CursoStatus.INSCRITO]: {
-    class:
-      "bg-blue-500/20 border-blue-500/50 text-blue-400 ring-2 ring-green-500",
+    class: "bg-blue-500/20 border-blue-500/50 text-blue-400",
     icon: Clock4,
   },
   [CursoStatus.BLOQUEADO]: {
-    class:
-      "bg-orange-500/20 border-orange-500/50 text-orange-400 cursor-not-allowed",
+    class: "bg-orange-500/20 border-orange-500/50 text-orange-400",
     icon: Lock,
   },
 };
@@ -49,11 +47,20 @@ export default function MallaProyeccionCard({
   onCursoClick,
   disperso,
   cursosBloqueantes,
-  ignorarRestricciones,
 }: MallaProyeccionCardProps) {
+  const { ignorarRestricciones } = useProyeccion();
+
   const estaBloqueado = cursosBloqueantes.length > 0 || disperso;
-  const status = estaBloqueado ? CursoStatus.BLOQUEADO : getCursoStatus(curso);
-  const isClickable = status !== CursoStatus.APROBADO && !estaBloqueado;
+  const statusReal = getCursoStatus(curso);
+  const status = estaBloqueado ? CursoStatus.BLOQUEADO : statusReal;
+
+  const isInscrito = statusReal === CursoStatus.INSCRITO;
+  const isAprobado = statusReal === CursoStatus.APROBADO;
+
+  const isClickable =
+    statusReal !== CursoStatus.APROBADO &&
+    (!estaBloqueado || ignorarRestricciones);
+
   const IconComponent = statusStyles[status].icon;
 
   const cardContent = (
@@ -61,9 +68,11 @@ export default function MallaProyeccionCard({
       key={curso.codigo}
       className={cn(
         `flex flex-col p-2 rounded-lg border min-w-36 ${statusStyles[status].class}`,
+        isInscrito && "ring-2 ring-green-500",
         isClickable
           ? "hover:scale-[1.02] transition-all cursor-pointer"
-          : "opacity-80"
+          : "opacity-80",
+        !isClickable && !isAprobado && "cursor-not-allowed"
       )}
       onClick={() => isClickable && onCursoClick(curso)}
     >
