@@ -13,6 +13,7 @@ type MallaProyeccionCardProps = {
   onCursoClick: (curso: Curso) => void;
   disperso: boolean;
   cursosBloqueantes: Curso[];
+  ignorarRestricciones?: boolean;
 };
 
 const statusStyles: Record<
@@ -48,6 +49,7 @@ export default function MallaProyeccionCard({
   onCursoClick,
   disperso,
   cursosBloqueantes,
+  ignorarRestricciones,
 }: MallaProyeccionCardProps) {
   const estaBloqueado = cursosBloqueantes.length > 0 || disperso;
   const status = estaBloqueado ? CursoStatus.BLOQUEADO : getCursoStatus(curso);
