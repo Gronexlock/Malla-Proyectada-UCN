@@ -1,4 +1,4 @@
-import { NuevaProyeccionView } from "@/components/proyeccion/nueva-proyeccion-view";
+import { NuevaProyeccionView } from "@/components/proyeccion/crear-proyeccion/crear-proyeccion-view";
 import { getUser } from "@/src/actions/cookiesActions";
 import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
 import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
@@ -9,9 +9,5 @@ export default async function NuevaProyeccionPage() {
     await getAvanceAgrupado(selectedCarrera)
   );
 
-  return (
-    <div className="p-4">
-      <NuevaProyeccionView cursos={cursos} />
-    </div>
-  );
+  return <NuevaProyeccionView cursos={cursos} />;
 }
