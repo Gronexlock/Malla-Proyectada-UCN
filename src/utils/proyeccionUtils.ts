@@ -367,3 +367,32 @@ export function limpiarProyeccionActual(
   delete proyeccionesPorSemestre[ultimaLlave];
   return proyeccionesPorSemestre;
 }
+
+/**
+ * Reverts the status of courses when going back a semester.
+ * Courses in the previous projection go back to INSCRITO (remove APROBADO).
+ * Courses in the current projection (which is being discarded) lose INSCRITO status.
+ */
+export function inscribirCursosAprobados(
+  cursos: Curso[],
+  proyeccionActual: Curso[],
+  proyeccionAnterior: Curso[]
+): Curso[] {
+  return cursos.map((curso) => {
+    // Revert previous projection courses to INSCRITO (remove APROBADO)
+    if (proyeccionAnterior.some((c) => c.codigo === curso.codigo)) {
+      return {
+        ...curso,
+        status: curso.status.filter((s) => s !== CursoStatus.APROBADO),
+      };
+    }
+    // Revert current projection courses (remove INSCRITO)
+    if (proyeccionActual.some((c) => c.codigo === curso.codigo)) {
+      return {
+        ...curso,
+        status: curso.status.filter((s) => s !== CursoStatus.INSCRITO),
+      };
+    }
+    return curso;
+  });
+}

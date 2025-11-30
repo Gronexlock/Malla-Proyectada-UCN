@@ -23,6 +23,7 @@ import {
 } from "@/src/utils/semestreUtils";
 import { MoveLeft, MoveRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { CursoCard } from "../curso/curso-card";
 import { BloqueadoHover } from "../curso/hovers/bloqueantes-hover";
 import { Button } from "../ui/button";
@@ -103,7 +104,13 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   }
 
   async function handleGuardarProyeccion() {
-    await guardarProyeccion(proyeccionesPorSemestre);
+    try {
+      await guardarProyeccion(proyeccionesPorSemestre);
+      toast.success("Proyección guardada exitosamente");
+    } catch (error) {
+      console.error(error);
+      toast.error("Error al guardar la proyección");
+    }
   }
 
   function handleGenerarProyeccionAutomatica() {

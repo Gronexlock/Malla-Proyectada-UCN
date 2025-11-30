@@ -110,3 +110,32 @@ export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
     throw new Error("Error al guardar la proyección");
   }
 }
+
+export async function deleteProyeccion(id: number) {
+  try {
+    const token = (await cookies()).get("token")?.value;
+    const user = await verifyToken(token);
+
+    // Verify ownership
+    const proyeccion = await prisma.proyeccion.findUnique({
+      where: { id },
+    });
+
+    if (!proyeccion) {
+      throw new Error("Proyección no encontrada");
+    }
+
+    if (proyeccion.estudianteRut !== user.rut) {
+      throw new Error("No tienes permiso para eliminar esta proyección");
+    }
+
+    await prisma.proyeccion.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error al eliminar la proyección:", error);
+    throw new Error("Error al eliminar la proyección");
+  }
+}
