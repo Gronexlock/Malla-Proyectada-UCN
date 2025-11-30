@@ -1,10 +1,10 @@
-import { CursoProyeccion } from "./curso";
+import { Curso } from "./curso";
 
-export interface ProyeccionSemestre {
-  cursos: CursoProyeccion[];
-  semestre: string;
-}
-
-export interface Proyeccion {
-  proyecciones: ProyeccionSemestre[];
-}
+export type Proyeccion = {
+  id: number;
+  carrera: string;
+  semestres: {
+    semestre: string;
+    cursos: Curso[];
+  }[];
+};

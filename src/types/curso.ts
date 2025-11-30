@@ -1,23 +1,18 @@
-export interface CursoMalla {
+export enum CursoStatus {
+  APROBADO = "APROBADO",
+  PENDIENTE = "PENDIENTE",
+  INSCRITO = "INSCRITO",
+  REPROBADO = "REPROBADO",
+  BLOQUEADO = "BLOQUEADO",
+}
+
+export type Curso = {
   codigo: string;
   asignatura: string;
   creditos: number;
   nivel: number;
-  prereq: string;
-}
-
-export interface CursoAvance {
+  prerrequisitos: Curso[];
   nrc: string;
-  period: string;
-  student: string;
-  course: string;
-  excluded: boolean;
-  inscriptionType: string;
-  status: "APROBADO" | "REPROBADO" | "INSCRITO";
-}
-
-export interface CursoProyeccion {
-  asignatura: string;
-  codigo: string;
-  semestre: string;
-}
+  periodo: string;
+  status: CursoStatus[];
+};

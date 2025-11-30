@@ -1,15 +1,14 @@
-"use client";
+import { AvanceCronoView } from "@/components/views/avance-crono-view";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getAvanceCronologico } from "@/src/utils/cursosUtils";
 
-import { AvanceCronoView } from "@/components/avance-crono-view";
-import CarreraSelect from "@/components/carrera-select";
-import { useUserStore } from "@/src/store/useUserStore";
-
-export default function Page() {
-  const { rut, selectedCarrera } = useUserStore();
+export default async function Page() {
+  const { selectedCarrera } = await getUser();
+  const cursos = await getAvanceCronologico(selectedCarrera);
 
   return (
     <div className="p-4 ">
-      <AvanceCronoView carrera={selectedCarrera} rut={rut} />
+      <AvanceCronoView cursos={cursos} />
     </div>
   );
 }

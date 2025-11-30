@@ -1,31 +1,13 @@
-"use client";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getProyecciones } from "@/src/utils/proyeccionUtils";
 
-import { useUserStore } from "@/src/store/useUserStore";
+export default async function NuevaProyeccionPage() {
+  const { selectedCarrera } = await getUser();
+  const proyecciones = await getProyecciones(selectedCarrera);
 
-export default function Page() {
-  const { rut, carreras, proyecciones } = useUserStore();
   return (
     <div>
-      <p>RUT: {rut}</p>
-      <p>
-        Carreras:{" "}
-        {carreras
-          .map((c) => `${c.nombre}-${c.codigo}-${c.catalogo}`)
-          .join(", ")}
-      </p>
-      <p>
-        Cursos Proyección:{" "}
-        {proyecciones.map((p) =>
-          p.proyecciones
-            .map(
-              (ps) =>
-                `${ps.semestre}: [${ps.cursos
-                  .map((c) => c.codigo)
-                  .join(", ")}] `
-            )
-            .join("; ")
-        )}
-      </p>
+      <pre>{JSON.stringify(proyecciones, null, 2)}</pre>
     </div>
   );
 }

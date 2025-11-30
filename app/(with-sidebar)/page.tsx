@@ -1,13 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Link from "next/link";
-import CarreraSelect from "@/components/carrera-select";
-import { useUserStore } from "@/src/store/useUserStore";
 
 export default function HomePage() {
-  const { selectedCarrera } = useUserStore();
-
   return (
     <div>
       <div className="flex flex-col items-center justify-center min-h-screen p-6 gap-6">
@@ -17,6 +20,16 @@ export default function HomePage() {
         <Link href="/test">
           <Button>Ver información del usuario</Button>
         </Link>
+        <Select>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Selecciona una opción" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="opcion1">Opción 1</SelectItem>
+            <SelectItem value="opcion2">Opción 2</SelectItem>
+            <SelectItem value="opcion3">Opción 3</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

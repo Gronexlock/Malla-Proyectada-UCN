@@ -1,4 +1,4 @@
-import { Calendar, NotebookPen, User } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,42 +12,19 @@ import {
   SidebarMenuItem,
   SidebarMenuSub,
 } from "@/components/ui/sidebar";
-import LogoutButton from "./logout-button";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getSidebarItems } from "@/src/constants/sidebarItems";
 import Link from "next/link";
-import CarreraSelect from "./carrera-select";
+import LogoutButton from "./auth/logout-button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "./ui/collapsible";
 
-const items = [
-  {
-    title: "Mallas",
-    icon: Calendar,
-    subitems: [
-      { title: "ICI", url: "/mallas/ici" },
-      { title: "ICCI", url: "/mallas/icci" },
-      { title: "ITI", url: "/mallas/iti" },
-    ],
-  },
-  {
-    title: "Proyecciones",
-    icon: NotebookPen,
-    subitems: [
-      {
-        title: "Crear proyección",
-        url: "/proyecciones/nueva",
-      },
-      { title: "Mis proyecciones", url: "/proyecciones" },
-    ],
-  },
-  {
-    title: "Estudiante",
-    icon: User,
-    subitems: [
-      { title: "Mi avance curricular", url: "/estudiante/avance" },
-      { title: "Mi avance cronológico", url: "/estudiante/avance-cronologico" },
-    ],
-  },
-];
-
-export function AppSidebar() {
+export async function AppSidebar() {
+  const user = await getUser();
+  const sidebarItems = getSidebarItems(user);
   return (
     <Sidebar>
       <SidebarHeader>
@@ -59,7 +36,7 @@ export function AppSidebar() {
             >
               <Link href="/">
                 <span className="text-base font-semibold">
-                  Proyección de Avance
+                  Proyección Curricular
                 </span>
               </Link>
             </SidebarMenuButton>
@@ -70,27 +47,35 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem className="pb-4">
-                <CarreraSelect />
-              </SidebarMenuItem>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <span>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </span>
-                  </SidebarMenuButton>
-                  <SidebarMenuSub>
-                    {item.subitems.map((subitem) => (
-                      <SidebarMenuItem key={subitem.title}>
-                        <SidebarMenuButton asChild>
-                          <Link href={subitem.url}>{subitem.title}</Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenuSub>
-                </SidebarMenuItem>
+              {sidebarItems.map((item) => (
+                <Collapsible
+                  key={item.title}
+                  defaultOpen
+                  className="group/collapsible"
+                >
+                  <SidebarMenuItem key={item.title}>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <span>
+                          <item.icon />
+                          {item.title}
+                          <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                        </span>
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.subitems.map((subitem) => (
+                          <SidebarMenuItem key={subitem.title}>
+                            <SidebarMenuButton asChild>
+                              <Link href={subitem.url}>{subitem.title}</Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
