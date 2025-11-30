@@ -22,7 +22,6 @@ export async function GET() {
       }),
     ]);
     const data = await Promise.all([res1.json(), res2.json(), res3.json()]);
-    console.log(data);
     const cursos = data.flat().map((curso) => {
       return { codigo: curso.codigo };
     });

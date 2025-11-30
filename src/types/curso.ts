@@ -3,6 +3,7 @@ export enum CursoStatus {
   PENDIENTE = "PENDIENTE",
   INSCRITO = "INSCRITO",
   REPROBADO = "REPROBADO",
+  BLOQUEADO = "BLOQUEADO",
 }
 
 export type Curso = {
