@@ -3,10 +3,12 @@
 import { ProyeccionDetail } from "@/components/proyeccion/proyeccion-detail";
 import { ProyeccionesList } from "@/components/proyeccion/proyecciones-list";
 import { Proyeccion } from "@/src/types/proyeccion";
+import { ProyeccionHeaderView } from "../header/header-view";
 import { FolderSearch } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { setSelectedCarrera } from "@/src/actions/cookiesActions";
 
 type ProyeccionesViewProps = {
   proyecciones: Proyeccion[];
