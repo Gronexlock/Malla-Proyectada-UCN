@@ -6,9 +6,7 @@ import { generarProyeccionOptima } from "@/src/utils/generarProyeccionOptima";
 import {
   aplicarEstadosProyeccion,
   aprobarCursosInscritos,
-  desinscribirCursos,
   irSemestreAnterior,
-  limpiarProyeccionActual,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
 } from "@/src/utils/proyeccionUtils";
@@ -50,7 +48,9 @@ export function ProyeccionProvider({
   children,
   cursosIniciales,
 }: ProyeccionProviderProps) {
-  const [cursos, setCursos] = useState<Curso[]>(cursosIniciales);
+  const [cursos, setCursos] = useState<Curso[]>(
+    cursosIniciales.map((curso) => ({ ...curso, status: [...curso.status] }))
+  );
   const [semestres, setSemestres] = useState<string[]>([
     getSemestreSiguiente(getSemestreActual()),
   ]);
@@ -121,9 +121,16 @@ export function ProyeccionProvider({
   }
 
   function limpiarTodo() {
-    setCursos(desinscribirCursos(cursos));
-    setProyeccionesPorSemestre(
-      limpiarProyeccionActual(proyeccionesPorSemestre)
+    const firstSemester = getSemestreSiguiente(getSemestreActual());
+    setSemestres([firstSemester]);
+    setSemestreIndex(0);
+    setProyeccionesPorSemestre({ [firstSemester]: [] });
+    setProyeccionesPreview({});
+    setCursos(
+      cursosIniciales.map((curso) => ({
+        ...curso,
+        status: [...curso.status],
+      }))
     );
   }
 

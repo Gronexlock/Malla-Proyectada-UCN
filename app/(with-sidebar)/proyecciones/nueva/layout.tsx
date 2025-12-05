@@ -11,7 +11,7 @@ export default async function NuevaProyeccionLayout({
   const { selectedCarrera } = await getUser();
   const cursos = aprobarCursosInscritos(
     await getAvanceAgrupado(selectedCarrera)
-  );
+  ).filter((curso) => curso.codigo !== `ECIN-0${selectedCarrera.codigo}`);
 
   return (
     <ProyeccionProvider cursosIniciales={cursos}>{children}</ProyeccionProvider>

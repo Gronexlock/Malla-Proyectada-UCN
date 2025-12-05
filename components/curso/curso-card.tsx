@@ -1,35 +1,52 @@
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { Curso } from "@/src/types/curso";
-import { getLevelColor } from "@/src/utils/mallaUtils";
-import { ColorConfig } from "../views/malla-view";
 
-export type CursoCardProps = {
+type CursoCardProps = {
   curso: Curso;
-  colorConfig: ColorConfig;
+  prerrequisitos: Curso[];
 };
 
-export function CursoCard({ curso, colorConfig }: CursoCardProps) {
-  const color = getLevelColor(
-    curso.nivel,
-    colorConfig.totalLevels,
-    colorConfig.cardStart,
-    colorConfig.cardEnd
+export default function CursoCard({ curso, prerrequisitos }: CursoCardProps) {
+  const cardContent = (
+    <div
+      key={curso.codigo}
+      className={cn(
+        `flex flex-col p-2 rounded-lg border min-w-36 bg-muted`,
+        curso.codigo === "ECIN-01000" && "h-full justify-center items-center"
+      )}
+    >
+      <div className="flex justify-between">
+        <p className="opacity-70 font-mono text-[11px]">{curso.codigo}</p>
+      </div>
+      <p className="text-sm text-foreground">{curso.asignatura}</p>
+      <span className="text-[11px] opacity-70 mt-1">{curso.creditos} SCT</span>
+    </div>
   );
 
-  return (
-    <Card
-      className={cn("rounded p-0 w-36 shadow-xs overflow-hidden relative")}
-      style={{ backgroundColor: color }}
-    >
-      <div className="absolute text-xs right-0.5 top-0.5">{curso.creditos}</div>
-      <CardContent className="p-0 flex h-full">
-        <div className="flex flex-col flex-1">
-          <div className="px-2 py-8 flex h-12 flex-col justify-center items-center">
-            <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  if (prerrequisitos.length > 0) {
+    return (
+      <Tooltip delayDuration={200}>
+        <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
+        <TooltipContent side="right" className="max-w-xs">
+          <p className="font-semibold text-xs mb-1">Prerrequisitos:</p>
+          <ul className="text-xs space-y-0.5">
+            {prerrequisitos.map((prereq) =>
+              prereq.asignatura ? (
+                <li key={prereq.codigo} className="flex items-center gap-1">
+                  {prereq.asignatura}
+                </li>
+              ) : null
+            )}
+          </ul>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return cardContent;
 }

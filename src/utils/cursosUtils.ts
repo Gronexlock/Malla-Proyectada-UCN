@@ -1,6 +1,5 @@
 import { fetchAvance } from "../actions/avanceActions";
 import { fetchMalla } from "../actions/mallaActions";
-import { nombresCompletos } from "../constants/carrerasInfo";
 import { CursoMalla } from "../schemas/mallaSchema";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
@@ -22,7 +21,7 @@ function getPrerrequisitosAsCursos(
     const cursoMalla = cursosMalla.find((c) => c.codigo === code);
     const curso: Curso = {
       codigo: cursoMalla?.codigo || code,
-      asignatura: cursoMalla?.asignatura || code,
+      asignatura: cursoMalla?.asignatura || "",
       creditos: cursoMalla?.creditos || 0,
       nivel: cursoMalla?.nivel || 0,
       prerrequisitos: [], // Evitar recursividad
@@ -78,9 +77,6 @@ export function getCursoStatus(curso: Curso): CursoStatus {
 export async function getMalla(carrera: Carrera): Promise<Curso[]> {
   const cursosMalla = await fetchMalla(carrera.codigo, carrera.catalogo);
   const cursos: Curso[] = [];
-  const practicaCodes = Object.keys(nombresCompletos).map(
-    (codigo) => `ECIN-0${codigo}`
-  );
 
   for (const cursoMalla of cursosMalla) {
     const curso: Curso = {
@@ -90,7 +86,7 @@ export async function getMalla(carrera: Carrera): Promise<Curso[]> {
       periodo: "",
       status: [CursoStatus.PENDIENTE],
     };
-    !practicaCodes.includes(curso.codigo) && cursos.push(curso);
+    cursos.push(curso);
   }
   return cursos;
 }

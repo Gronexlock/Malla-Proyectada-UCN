@@ -11,7 +11,7 @@ export function NuevaProyeccionView() {
 
   return (
     <div className={`h-[calc(100vh-2.5rem)] flex flex-col`}>
-      <div className="flex min-h-0">
+      <div className="flex h-3/5 min-h-0">
         <MallaCurricular cursos={cursos} onCursoClick={toggleCursoProyeccion} />
         <ProyeccionPreview proyeccionesPreview={proyeccionesPreview} />
       </div>

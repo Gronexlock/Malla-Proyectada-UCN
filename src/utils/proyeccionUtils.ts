@@ -71,19 +71,18 @@ export function toggleEstadoCurso(
   cursos: Curso[],
   cursoToToggle: Curso
 ): Curso[] {
-  const cursosActualizados: Curso[] = [];
-  for (const curso of cursos) {
+  return cursos.map((curso) => {
     if (curso.codigo === cursoToToggle.codigo) {
       const isInscrito = curso.status.includes(CursoStatus.INSCRITO);
-      if (isInscrito) {
-        curso.status = curso.status.filter((s) => s !== CursoStatus.INSCRITO);
-      } else {
-        curso.status.push(CursoStatus.INSCRITO);
-      }
+      return {
+        ...curso,
+        status: isInscrito
+          ? curso.status.filter((s) => s !== CursoStatus.INSCRITO)
+          : [...curso.status, CursoStatus.INSCRITO],
+      };
     }
-    cursosActualizados.push(curso);
-  }
-  return cursosActualizados;
+    return curso;
+  });
 }
 
 /**
@@ -314,6 +313,15 @@ export function irSemestreAnterior(
     }
     indexActual--;
   }
+
+  const proyeccionDelSemestre = proyeccionesPorSemestre[semestreObjetivo] || [];
+  proyeccionDelSemestre.forEach((cursoProyectado) => {
+    const cursoMalla = cursos.find((c) => c.codigo === cursoProyectado.codigo);
+    if (cursoMalla && !cursoMalla.status.includes(CursoStatus.INSCRITO)) {
+      cursoMalla.status.push(CursoStatus.INSCRITO);
+    }
+  });
+
   const llaves = Object.keys(proyeccionesPorSemestre);
   const ultimaLlave = llaves[llaves.length - 1];
   const nuevaPreview = { ...proyeccionesPorSemestre };

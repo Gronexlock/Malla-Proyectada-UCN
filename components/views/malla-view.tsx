@@ -3,7 +3,7 @@ import { Carrera } from "@/src/types/carrera";
 import { Curso } from "@/src/types/curso";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import { getLevelColor } from "@/src/utils/mallaUtils";
-import { CursoCard } from "../curso/curso-card";
+import CursoCard from "../curso/curso-card";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 type MallaViewProps = {
@@ -12,34 +12,28 @@ type MallaViewProps = {
   className?: string;
 };
 
-export type ColorConfig = {
-  start: string;
-  end: string;
-  totalLevels: number;
-  cardStart: string;
-  cardEnd: string;
+type ColorConfig = {
+  [key in Carrera["codigo"]]: {
+    start: string;
+    end: string;
+    totalLevels: number;
+  };
 };
 
-const colors: Record<Carrera["codigo"], ColorConfig> = {
+const colors: ColorConfig = {
   8266: {
     start: "hsl(121 30.7% 50.2%)",
     end: "hsl(121 44.3% 34.5%)",
-    cardStart: "hsl(0 0% 92.2%)",
-    cardEnd: "hsl(0 0% 73.3%)",
     totalLevels: 8,
   },
   8606: {
     start: "hsl(209 88.7% 54.9%)",
     end: "hsl(209 90.8% 33.9%)",
-    cardStart: "hsl(0 0% 91.4%)",
-    cardEnd: "hsl(0 0% 71.4%)",
     totalLevels: 10,
   },
   8616: {
     start: "hsl(18 87% 51.8%)",
     end: "hsl(18 61.1% 41.4%)",
-    cardStart: "hsl(0 0% 91.4%)",
-    cardEnd: "hsl(0 0% 71.4%)",
     totalLevels: 10,
   },
 };
@@ -56,7 +50,7 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
           .map((nivel) => (
             <div key={nivel} className="flex flex-col gap-8">
               <div
-                className={`rounded flex justify-center items-center mb-2 text-white`}
+                className={`rounded flex justify-center items-center text-white p-1`}
                 style={{
                   backgroundColor: getLevelColor(
                     Number(nivel),
@@ -71,13 +65,15 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
                 </h2>
               </div>
 
-              {cursosPorNivel[Number(nivel)].map((course) => (
-                <CursoCard
-                  key={course.codigo}
-                  curso={course}
-                  colorConfig={colorConfig}
-                />
-              ))}
+              {cursosPorNivel[Number(nivel)].map((course) => {
+                return (
+                  <CursoCard
+                    key={course.codigo}
+                    curso={course}
+                    prerrequisitos={course.prerrequisitos}
+                  />
+                );
+              })}
             </div>
           ))}
       </div>

@@ -1,7 +1,7 @@
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { Curso } from "@/src/types/curso";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
-import { CursoCard } from "../curso/curso-card";
+import CursoCard from "../curso/curso-card";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 type AvanceViewProps = {
@@ -25,7 +25,11 @@ export function AvanceView({ cursos }: AvanceViewProps) {
               </div>
 
               {cursosPorNivel[Number(nivel)].map((curso) => (
-                <CursoCard key={curso.codigo} curso={curso} />
+                <CursoCard
+                  key={curso.codigo}
+                  curso={curso}
+                  prerrequisitos={curso.prerrequisitos}
+                />
               ))}
             </div>
           ))}

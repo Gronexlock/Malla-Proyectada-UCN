@@ -51,7 +51,7 @@ export function ProyeccionPreview({
             <div className="flex flex-col gap-2" key={nivel}>
               <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
                 <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
-                  <span className="text-[11px] font-semibold text-green-500 dark:text-green-400">
+                  <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">
                     {nivel}
                   </span>
                 </div>
