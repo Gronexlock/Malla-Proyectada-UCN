@@ -16,14 +16,14 @@ export default function CursoCard({ curso, prerrequisitos }: CursoCardProps) {
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border min-w-36 bg-muted`,
+        `flex flex-col p-2 rounded-lg border min-w-36 bg-muted max-w-42 h-23 justify-center`,
         curso.codigo === "ECIN-01000" && "h-full justify-center items-center"
       )}
     >
       <div className="flex justify-between">
         <p className="opacity-70 font-mono text-[11px]">{curso.codigo}</p>
       </div>
-      <p className="text-sm text-foreground">{curso.asignatura}</p>
+      <p className="text-sm text-foreground text-wrap">{curso.asignatura}</p>
       <span className="text-[11px] opacity-70 mt-1">{curso.creditos} SCT</span>
     </div>
   );

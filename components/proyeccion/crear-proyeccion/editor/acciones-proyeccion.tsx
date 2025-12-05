@@ -88,10 +88,10 @@ export function AccionesProyeccion() {
             onClick={generarProyeccionAutomatica}
           >
             <Sparkles className="h-4 w-4" />
-            Generar Proyección Óptima
+            Proyección Óptima
           </Button>
           <Button
-            className="bg-green-500 hover:bg-green-600 font-semibold mb-3 hover:cursor-pointer flex-1"
+            className="bg-green-500 hover:bg-green-600 font-semibold mb-3 hover:cursor-pointer flex-1 "
             onClick={guardar}
             disabled={!isProyeccionCompleta(cursos)}
           >
