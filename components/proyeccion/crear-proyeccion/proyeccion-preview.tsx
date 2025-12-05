@@ -17,16 +17,16 @@ export function ProyeccionPreview({
   proyeccionesPreview,
 }: ProyeccionPreviewProps) {
   return (
-    <section className="flex flex-col border-t border-l border-zinc-700 w-1/2 min-h-0">
+    <section className="flex flex-col border-t border-l border-zinc-300 dark:border-zinc-700 w-1/2 min-h-0">
       {/* Header Proyección */}
-      <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
+      <header className="flex flex-col p-3 border-b border-zinc-300 dark:border-zinc-700 gap-2">
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Target className="text-green-600" size={18} />
             <h2 className="font-semibold text-sm">Proyección</h2>
           </div>
           {/* Créditos/semestres*/}
-          <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
+          <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
             {getCreditosProyeccionTotal(proyeccionesPreview)} SCT /{" "}
             {getCantidadSemestresProyeccion(proyeccionesPreview)} sem.
           </span>
@@ -49,9 +49,9 @@ export function ProyeccionPreview({
         {Object.keys(proyeccionesPreview).length > 0 ? (
           Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
             <div className="flex flex-col gap-2" key={nivel}>
-              <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
-                <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-[11px] font-semibold text-green-400">
+              <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
+                <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
+                  <span className="text-[11px] font-semibold text-green-500 dark:text-green-400">
                     {nivel}
                   </span>
                 </div>
@@ -65,7 +65,7 @@ export function ProyeccionPreview({
                 return (
                   <div
                     key={curso.codigo}
-                    className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg min-w-36`}
+                    className={`flex flex-col bg-zinc-100 shadow dark:bg-zinc-900 border dark:border-zinc-700 p-2 rounded-lg min-w-36`}
                   >
                     <div className="flex justify-between">
                       <p className="opacity-70 font-mono text-[11px]">

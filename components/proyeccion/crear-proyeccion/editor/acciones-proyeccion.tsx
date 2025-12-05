@@ -26,11 +26,11 @@ export function AccionesProyeccion() {
   } = useProyeccion();
 
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
+    <div className="bg-zinc-100 dark:bg-zinc-900 border shadow dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
       <header className="px-3">Acciones</header>
       <div className="px-3 pt-2  overflow-y-auto">
         {/* Switch para ignorar restricciones */}
-        <div className="flex items-center justify-between bg-zinc-800 p-3 border rounded-lg mb-3">
+        <div className="flex items-center justify-between dark:bg-zinc-800 p-3 border rounded-lg mb-3">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 text-amber-500" />
             <Label htmlFor="ignorar-restricciones" className="text-sm">
@@ -45,7 +45,7 @@ export function AccionesProyeccion() {
         </div>
 
         {/* Resumen de la proyección */}
-        <div className="flex flex-col bg-zinc-800 p-3 border rounded-lg mb-3">
+        <div className="flex flex-col bg-zinc-100 dark:bg-zinc-800 p-3 border rounded-lg mb-3">
           <span className="text-sm text-muted-foreground mb-1">
             Resumen de la proyección
           </span>

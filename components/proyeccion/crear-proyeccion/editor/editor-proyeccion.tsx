@@ -32,7 +32,7 @@ export function EditorProyeccion() {
   } = useProyeccion();
 
   return (
-    <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
+    <section className="p-3 border-t border-zinc-300 dark:border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
       <header className="flex mb-4 justify-between items-center">
         <div className="flex flex-col">
@@ -52,7 +52,7 @@ export function EditorProyeccion() {
         </div>
         <div className="flex items-center gap-2">
           <Select value={semestreActual} onValueChange={cambiarSemestre}>
-            <SelectTrigger className="w-[150px] !bg-zinc-950 !border-zinc-800 hover:!bg-primary-foreground">
+            <SelectTrigger className="w-[150px] dark:!bg-zinc-950 dark:!border-zinc-800 hover:!bg-zinc-100 dark:hover:!bg-primary-foreground transition-all">
               <SelectValue placeholder="Selecciona un semestre" />
             </SelectTrigger>
             <SelectContent>
@@ -64,7 +64,7 @@ export function EditorProyeccion() {
             </SelectContent>
           </Select>
           <Button
-            className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
+            className="bg-card-secondary text-foreground border hover:bg-primary-foreground hover:cursor-pointer"
             onClick={irSiguienteSemestre}
             disabled={
               proyeccionActual.length === 0 ||

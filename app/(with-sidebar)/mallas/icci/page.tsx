@@ -11,5 +11,9 @@ export default async function Page() {
     return "Error";
   }
 
-  return <MallaView cursos={cursos} />;
+  return (
+    <div className="p-4 flex justify-center">
+      <MallaView cursos={cursos} carrera={carrera} />
+    </div>
+  );
 }

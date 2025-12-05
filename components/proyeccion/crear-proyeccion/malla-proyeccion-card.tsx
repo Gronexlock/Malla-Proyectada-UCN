@@ -21,23 +21,38 @@ const statusStyles: Record<
   { class: string; icon: React.ComponentType<any> }
 > = {
   [CursoStatus.APROBADO]: {
-    class: "bg-emerald-500/20 border-emerald-500/50 text-emerald-400",
+    class: [
+      "dark:bg-emerald-500/20 dark:border-emerald-500/50 dark:text-emerald-400",
+      "bg-emerald-500/40 border-emerald-500/70 text-emerald-700",
+    ].join(" "),
     icon: CircleCheckBig,
   },
   [CursoStatus.PENDIENTE]: {
-    class: "bg-blue-500/20 border-blue-500/50 text-blue-400",
+    class: [
+      "dark:bg-blue-500/20 dark:border-blue-500/50 dark:text-blue-400",
+      "bg-blue-500/40 border-blue-500/70 text-blue-700",
+    ].join(" "),
     icon: Clock4,
   },
   [CursoStatus.REPROBADO]: {
-    class: "bg-red-500/20 border-red-500/50 text-red-400",
+    class: [
+      "dark:bg-red-500/20 dark:border-red-500/50 dark:text-red-400",
+      "bg-red-500/40 border-red-500/70 text-red-700",
+    ].join(" "),
     icon: CircleX,
   },
   [CursoStatus.INSCRITO]: {
-    class: "bg-blue-500/20 border-blue-500/50 text-blue-400",
+    class: [
+      "dark:bg-blue-500/20 dark:border-blue-500/50 dark:text-blue-400",
+      "bg-blue-500/40 border-blue-500/70 text-blue-700",
+    ].join(" "),
     icon: Clock4,
   },
   [CursoStatus.BLOQUEADO]: {
-    class: "bg-orange-500/20 border-orange-500/50 text-orange-400",
+    class: [
+      "dark:bg-orange-500/20 dark:border-orange-500/50 dark:text-orange-400",
+      "bg-orange-500/40 border-orange-500/70 text-orange-700",
+    ].join(" "),
     icon: Lock,
   },
 };
@@ -68,7 +83,7 @@ export default function MallaProyeccionCard({
       key={curso.codigo}
       className={cn(
         `flex flex-col p-2 rounded-lg border min-w-36 ${statusStyles[status].class}`,
-        isInscrito && "ring-2 ring-green-500",
+        isInscrito && "ring-2 dark:ring-blue-500",
         isClickable
           ? "hover:scale-[1.02] transition-all cursor-pointer"
           : "opacity-80",
