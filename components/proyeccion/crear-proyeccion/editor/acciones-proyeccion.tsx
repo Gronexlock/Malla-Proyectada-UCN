@@ -32,7 +32,7 @@ export function AccionesProyeccion() {
         {/* Switch para ignorar restricciones */}
         <div className="flex items-center justify-between dark:bg-zinc-800 p-3 border rounded-lg mb-3">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 text-amber-500" />
+            <ShieldAlert className="h-4 w-4 dark:text-amber-500 text-amber-600" />
             <Label htmlFor="ignorar-restricciones" className="text-sm">
               Ignorar restricciones
             </Label>
