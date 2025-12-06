@@ -7,7 +7,7 @@ export default async function Page() {
   const cursos = await getAvanceCronologico(selectedCarrera);
 
   return (
-    <div className="p-4 border border-blue-500 h-full min-h-0">
+    <div className="p-4 h-full min-h-0">
       <AvanceCronoView cursos={cursos} />
     </div>
   );
