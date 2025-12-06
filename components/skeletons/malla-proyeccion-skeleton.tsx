@@ -1,6 +1,6 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Curso } from "@/src/types/curso";
-import { getCursosPorNivel } from "@/src/utils/cursosUtils";
+import { colors } from "@/src/constants/mallaStyles";
+import { Carrera } from "@/src/types/carrera";
 import {
   calcularPorcentajeAvance,
   getCursosBloqueantes,
@@ -8,18 +8,23 @@ import {
   isDisperso,
 } from "@/src/utils/proyeccionUtils";
 import { BookOpen } from "lucide-react";
-import MallaProyeccionCard from "./malla-proyeccion-card";
 
-type MallaCurricularProps = {
-  cursos: Curso[];
-  onCursoClick: (curso: Curso) => void;
+type MallaProyeccionSkeletonProps = {
+  carrera: Carrera;
 };
 
-export function MallaCurricular({
-  cursos,
-  onCursoClick,
-}: MallaCurricularProps) {
-  const cursosPorNivel = getCursosPorNivel(cursos);
+export function MallaProyeccionSkeleton({
+  carrera,
+}: MallaProyeccionSkeletonProps) {
+  const colorConfig = colors[carrera.codigo];
+  const niveles = Array.from({ length: colorConfig.totalLevels }, (_, idx) => {
+    return {
+      nivel: idx + 1,
+      cursos: Array.from({ length: colorConfig.coursesPerLevel }, (_, j) => ({
+        codigo: `skeleton-${idx + 1}-${j}`,
+      })),
+    };
+  });
 
   return (
     <section className="flex flex-col border-t border-zinc-300 dark:border-zinc-700 w-1/2 min-h-0">
@@ -31,7 +36,7 @@ export function MallaCurricular({
             <h2 className="font-semibold text-sm">Malla Curricular</h2>
           </div>
           {/* Porcentaje de avance */}
-          <span className="shadow-xs text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+          <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
             {calcularPorcentajeAvance(cursos)}% avance
           </span>
         </div>

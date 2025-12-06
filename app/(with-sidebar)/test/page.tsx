@@ -1,4 +1,4 @@
-import { AvanceCronoSkeleton } from "@/components/skeletons/avance-crono-skeleton";
+import { NuevaProyeccionSkeleton } from "@/components/skeletons/crear-proyeccion-skeleton";
 import { carreras } from "@/src/constants/carrerasInfo";
 
 export default async function TestPage() {
@@ -6,7 +6,7 @@ export default async function TestPage() {
 
   return (
     <div className="p-4 flex justify-center">
-      <AvanceCronoSkeleton />
+      <NuevaProyeccionSkeleton carrera={carrera} />
     </div>
   );
 }

@@ -18,7 +18,7 @@ export function ListaCursosAgregados({
   onRemoverCurso,
 }: ListaCursosAgregadosProps) {
   return (
-    <div className="bg-zinc-100 shadow-sm dark:bg-zinc-900 border dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
+    <div className="bg-zinc-100 shadow-md dark:bg-zinc-900 border dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
       <div className="flex justify-between px-3 items-center">
         <header className="">Cursos en {semestreActual}</header>
         <div
@@ -29,7 +29,7 @@ export function ListaCursosAgregados({
               : "border-zinc-300 dark:border-zinc-700"
           )}
         >
-          <span className="text-xs font-semibold">
+          <span className="text-xs font-semibold shadow-sm">
             {getCreditosProyeccion(cursos)} créditos
           </span>
         </div>

@@ -40,7 +40,7 @@ export function ListaCursosDisponibles({
   }, [cursos, busqueda]);
 
   return (
-    <div className="dark:bg-zinc-900 bg-muted shadow-sm border dark:border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-8">
+    <div className="dark:bg-zinc-900 bg-muted shadow-md border dark:border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-8">
       <header className="px-3">Buscar Cursos Disponibles</header>
       <div className="px-3 pt-2">
         <InputGroup>
@@ -64,7 +64,7 @@ export function ListaCursosDisponibles({
             cursosFiltrados.map((curso) => (
               <div
                 key={curso.codigo}
-                className="flex border items-center rounded-lg p-2 justify-between hover:bg-zinc-200 dark:hover:bg-secondary transition-all hover:cursor-pointer dark:hover:border-green-500/50 hover:border-green-500/70"
+                className="flex border items-center rounded-lg p-2 shadow-sm justify-between hover:bg-zinc-200 dark:hover:bg-secondary transition-all hover:cursor-pointer dark:hover:border-green-500/50 hover:border-green-500/70"
                 onClick={() => onAgregarCurso(curso)}
               >
                 <div className="flex flex-col">

@@ -50,8 +50,8 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
               </div>
             </div>
             {/* Porcentaje de avance */}
-            <Skeleton className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md shadow-sm">
-              &nbsp;&nbsp;% avance
+            <Skeleton className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md shadow-xs">
+              0% avance
             </Skeleton>
           </div>
           <div className="flex justify-center gap-4">

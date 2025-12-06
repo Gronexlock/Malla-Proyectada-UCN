@@ -27,7 +27,7 @@ export function ProyeccionPreview({
             <h2 className="font-semibold text-sm">Proyección</h2>
           </div>
           {/* Créditos/semestres*/}
-          <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+          <span className="shadow-xs text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
             {getCreditosProyeccionTotal(proyeccionesPreview)} SCT /{" "}
             {getCantidadSemestresProyeccion(proyeccionesPreview)} sem.
           </span>

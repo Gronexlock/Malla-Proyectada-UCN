@@ -42,7 +42,7 @@ export default function MallaProyeccionCard({
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border min-w-36 ${statusStyles[status].class}`,
+        `flex flex-col p-2 rounded-lg border min-w-36 shadow-md ${statusStyles[status].class}`,
         isInscrito && "ring-2 dark:ring-blue-500",
         isClickable
           ? "hover:scale-[1.02] transition-all cursor-pointer"
