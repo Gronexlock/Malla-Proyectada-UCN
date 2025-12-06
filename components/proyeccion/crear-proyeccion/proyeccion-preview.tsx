@@ -46,10 +46,10 @@ export function ProyeccionPreview({
           </div>
         </div>
       </header>
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="flex p-3 gap-3 min-w-max">
-          {Object.keys(proyeccionesPreview).length > 0 ? (
-            Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
+      {Object.keys(proyeccionesPreview).length > 0 ? (
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="flex p-3 gap-3 min-w-max">
+            {Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
               <div className="flex flex-col gap-2" key={nivel}>
                 <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
                   <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
@@ -84,19 +84,19 @@ export function ProyeccionPreview({
                   );
                 })}
               </div>
-            ))
-          ) : (
-            <div className="flex justify-center items-center flex-col w-full">
-              <Target className="text-zinc-700 mb-1" size={42} />
-              <p className="text-muted-foreground">Sin proyección aún</p>
-              <p className="text-muted-foreground text-sm">
-                Avanza un semestre para ver tu proyección
-              </p>
-            </div>
-          )}
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : (
+        <div className="flex justify-center items-center flex-col w-full h-full">
+          <Target className="text-zinc-700 mb-1" size={42} />
+          <p className="text-muted-foreground">Sin proyección aún</p>
+          <p className="text-muted-foreground text-sm">
+            Avanza un semestre para ver tu proyección
+          </p>
         </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      )}
     </section>
   );
 }

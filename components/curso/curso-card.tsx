@@ -13,7 +13,10 @@ type CursoCardProps = {
 };
 
 export default function CursoCard({ curso }: CursoCardProps) {
-  const status = getCursoStatus(curso);
+  const status =
+    getCursoStatus(curso) === CursoStatus.INSCRITO
+      ? CursoStatus.INSCRITO_MALLA
+      : getCursoStatus(curso);
 
   const cardContent = (
     <div
