@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Curso } from "@/src/types/curso";
 import {
   getCantidadSemestresProyeccion,
@@ -45,54 +46,57 @@ export function ProyeccionPreview({
           </div>
         </div>
       </header>
-      <main className="flex p-3 gap-3 overflow-auto flex-1">
-        {Object.keys(proyeccionesPreview).length > 0 ? (
-          Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
-            <div className="flex flex-col gap-2" key={nivel}>
-              <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
-                <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
-                  <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">
-                    {nivel}
-                  </span>
-                </div>
-                <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
-                  <span className="text-[10px] font-semibold">
-                    {getCreditosProyeccion(cursosNivel)} SCT
-                  </span>
-                </div>
-              </div>
-              {cursosNivel.map((curso) => {
-                return (
-                  <div
-                    key={curso.codigo}
-                    className={`flex flex-col bg-zinc-100 shadow dark:bg-zinc-900 border dark:border-zinc-700 p-2 rounded-lg min-w-36`}
-                  >
-                    <div className="flex justify-between">
-                      <p className="opacity-70 font-mono text-[11px]">
-                        {curso.codigo}
-                      </p>
-                    </div>
-                    <p className="text-sm text-foreground truncate">
-                      {curso.asignatura}
-                    </p>
-                    <span className="text-[11px] opacity-70 mt-1">
-                      {curso.creditos} SCT
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="flex p-3 gap-3 min-w-max">
+          {Object.keys(proyeccionesPreview).length > 0 ? (
+            Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
+              <div className="flex flex-col gap-2" key={nivel}>
+                <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
+                  <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
+                    <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">
+                      {nivel}
                     </span>
                   </div>
-                );
-              })}
+                  <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
+                    <span className="text-[10px] font-semibold">
+                      {getCreditosProyeccion(cursosNivel)} SCT
+                    </span>
+                  </div>
+                </div>
+                {cursosNivel.map((curso) => {
+                  return (
+                    <div
+                      key={curso.codigo}
+                      className={`flex flex-col bg-zinc-100 shadow dark:bg-zinc-900 border dark:border-zinc-700 p-2 rounded-lg min-w-36`}
+                    >
+                      <div className="flex justify-between">
+                        <p className="opacity-70 font-mono text-[11px]">
+                          {curso.codigo}
+                        </p>
+                      </div>
+                      <p className="text-sm text-foreground truncate">
+                        {curso.asignatura}
+                      </p>
+                      <span className="text-[11px] opacity-70 mt-1">
+                        {curso.creditos} SCT
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-center items-center flex-col w-full">
+              <Target className="text-zinc-700 mb-1" size={42} />
+              <p className="text-muted-foreground">Sin proyección aún</p>
+              <p className="text-muted-foreground text-sm">
+                Avanza un semestre para ver tu proyección
+              </p>
             </div>
-          ))
-        ) : (
-          <div className="flex justify-center items-center flex-col w-full">
-            <Target className="text-zinc-700 mb-1" size={42} />
-            <p className="text-muted-foreground">Sin proyección aún</p>
-            <p className="text-muted-foreground text-sm">
-              Avanza un semestre para ver tu proyección
-            </p>
-          </div>
-        )}
-      </main>
+          )}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </section>
   );
 }

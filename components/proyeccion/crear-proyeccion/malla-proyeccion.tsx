@@ -1,3 +1,4 @@
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Curso } from "@/src/types/curso";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import {
@@ -55,32 +56,35 @@ export function MallaCurricular({
         </div>
       </header>
       {/* Malla */}
-      <main className="flex p-3 gap-3 overflow-auto flex-1">
-        {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
-          <div className="flex flex-col gap-2" key={nivel}>
-            <div className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
-              <div className="flex bg-zinc-200 dark:bg-secondary size-5 items-center justify-center rounded-full">
-                <span className="text-[10px] font-semibold">{nivel}</span>
+      <ScrollArea className="flex-1 min-h-0">
+        <div className="flex p-3 gap-3 min-w-max">
+          {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
+            <div className="flex flex-col gap-2" key={nivel}>
+              <div className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
+                <div className="flex bg-zinc-200 dark:bg-secondary size-5 items-center justify-center rounded-full">
+                  <span className="text-[10px] font-semibold">{nivel}</span>
+                </div>
+                <h3 className="text-muted-foreground text-sm">Nivel {nivel}</h3>
               </div>
-              <h3 className="text-muted-foreground text-sm">Nivel {nivel}</h3>
-            </div>
-            {cursosNivel.map((curso) => {
-              const disperso = isDisperso(curso, getNivelEstudiante(cursos));
-              const cursosBloqueantes = getCursosBloqueantes(curso, cursos);
+              {cursosNivel.map((curso) => {
+                const disperso = isDisperso(curso, getNivelEstudiante(cursos));
+                const cursosBloqueantes = getCursosBloqueantes(curso, cursos);
 
-              return (
-                <MallaProyeccionCard
-                  key={curso.codigo}
-                  curso={curso}
-                  onCursoClick={onCursoClick}
-                  disperso={disperso}
-                  cursosBloqueantes={cursosBloqueantes}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </main>
+                return (
+                  <MallaProyeccionCard
+                    key={curso.codigo}
+                    curso={curso}
+                    onCursoClick={onCursoClick}
+                    disperso={disperso}
+                    cursosBloqueantes={cursosBloqueantes}
+                  />
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </section>
   );
 }
