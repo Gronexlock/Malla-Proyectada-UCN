@@ -56,7 +56,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
           </div>
           <div className="flex justify-center gap-4">
             {niveles.map(({ nivel, cursos }) => (
-              <div key={nivel} className="flex flex-col gap-6">
+              <div key={nivel} className="flex flex-col gap-4">
                 <div
                   className={`rounded flex justify-center items-center p-1 bg-muted`}
                 >
