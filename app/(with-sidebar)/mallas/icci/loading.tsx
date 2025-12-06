@@ -1,9 +1,11 @@
 import { MallaSkeleton } from "@/components/skeletons/malla-skeleton";
+import { carreras } from "@/src/constants/carrerasInfo";
 
-export default function Loading() {
+export default async function Loading() {
+  const carrera = carreras["icci"];
   return (
-    <div className="p-4">
-      <MallaSkeleton nombreCarrera="icci" />
+    <div className="p-4 flex justify-center">
+      <MallaSkeleton carrera={carrera} />
     </div>
   );
 }

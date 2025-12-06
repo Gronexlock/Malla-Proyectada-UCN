@@ -1,13 +1,12 @@
-import { getUser } from "@/src/actions/cookiesActions";
-import { getProyecciones } from "@/src/utils/proyeccionUtils";
+import { MallaSkeleton } from "@/components/skeletons/malla-skeleton";
+import { carreras } from "@/src/constants/carrerasInfo";
 
-export default async function NuevaProyeccionPage() {
-  const { selectedCarrera } = await getUser();
-  const proyecciones = await getProyecciones(selectedCarrera);
+export default async function TestPage() {
+  const carrera = carreras["icci"];
 
   return (
-    <div>
-      <pre>{JSON.stringify(proyecciones, null, 2)}</pre>
+    <div className="p-4 flex justify-center">
+      <MallaSkeleton carrera={carrera} />
     </div>
   );
 }

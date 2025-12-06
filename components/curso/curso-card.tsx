@@ -4,7 +4,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Curso } from "@/src/types/curso";
+import { statusStyles } from "@/src/constants/statusStyles";
+import { Curso, CursoStatus } from "@/src/types/curso";
+import { getCursoStatus } from "@/src/utils/cursosUtils";
 
 type CursoCardProps = {
   curso: Curso;
@@ -12,15 +14,18 @@ type CursoCardProps = {
 };
 
 export default function CursoCard({ curso, prerrequisitos }: CursoCardProps) {
+  const status = getCursoStatus(curso);
+
   const cardContent = (
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border min-w-36 bg-muted max-w-42 h-23 justify-center`,
-        curso.codigo === "ECIN-01000" && "h-full justify-center items-center"
+        `flex flex-col p-2 rounded-lg border bg-muted w-40 h-23 justify-center`,
+        curso.codigo === "ECIN-01000" && "h-full justify-center items-center",
+        status !== CursoStatus.PENDIENTE && statusStyles[status].class
       )}
     >
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-2">
         <p className="opacity-70 font-mono text-[11px]">{curso.codigo}</p>
       </div>
       <p className="text-sm text-foreground text-wrap">{curso.asignatura}</p>

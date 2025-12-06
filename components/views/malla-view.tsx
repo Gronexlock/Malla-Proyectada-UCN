@@ -48,8 +48,8 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
   const colorConfig = colors[carrera.codigo];
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap ${className}`}>
-      <div className="flex flex-col items-center">
+    <ScrollArea className={`w-full whitespace-nowrap ${className} pb-8`}>
+      <div className="flex flex-col items-center min-w-max">
         <p
           className={`text-center text-3xl bg-gradient-to-r ${colorConfig.gradient} w-fit bg-clip-text text-transparent font-semibold mb-4`}
         >
