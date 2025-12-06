@@ -31,14 +31,14 @@ export function AvanceCronoView({ cursos }: AvanceCronoViewProps) {
           </div>
         </div>
         <div className="pb-6 pr-6 min-h-0 min-w-0 max-w-full flex-1">
-          <ScrollArea className="w-full h-full pb-2 pr-2">
+          <ScrollArea className="w-full h-full pr-2">
             <div className="min-w-max flex flex-col">
               <div className="flex gap-4 sticky top-0 z-10 bg-background pb-4">
                 {Object.keys(cursosPorSemestre)
                   .sort((a, b) => Number(a) - Number(b))
                   .map((semestre) => (
                     <div
-                      className="rounded flex justify-center items-center bg-muted p-1 w-40"
+                      className="rounded flex justify-center items-center bg-muted p-1 w-40 shadow-sm border"
                       key={`header-${semestre}`}
                     >
                       <h2 className="text-center font-semibold">
@@ -51,7 +51,7 @@ export function AvanceCronoView({ cursos }: AvanceCronoViewProps) {
                 {Object.keys(cursosPorSemestre)
                   .sort((a, b) => Number(a) - Number(b))
                   .map((semestre) => (
-                    <div className="flex flex-col gap-4" key={semestre}>
+                    <div className="flex flex-col gap-4 pb-2" key={semestre}>
                       {cursosPorSemestre[semestre].map((curso) => (
                         <CursoCard key={curso.nrc} curso={curso} />
                       ))}

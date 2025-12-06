@@ -1,4 +1,4 @@
-import { MallaSkeleton } from "@/components/skeletons/malla-skeleton";
+import { AvanceCronoSkeleton } from "@/components/skeletons/avance-crono-skeleton";
 import { carreras } from "@/src/constants/carrerasInfo";
 
 export default async function TestPage() {
@@ -6,7 +6,7 @@ export default async function TestPage() {
 
   return (
     <div className="p-4 flex justify-center">
-      <MallaSkeleton carrera={carrera} />
+      <AvanceCronoSkeleton />
     </div>
   );
 }

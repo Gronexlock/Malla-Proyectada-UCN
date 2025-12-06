@@ -6,8 +6,8 @@ export default async function AlternarCarreraPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-2xl space-y-6">
-        <div className="flex justify-center">
+      <div className="w-full max-w-3xl space-y-6">
+        <div className="flex flex-col items-center">
           <CarreraSelectorForm user={user} />
         </div>
       </div>

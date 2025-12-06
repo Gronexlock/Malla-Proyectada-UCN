@@ -19,7 +19,7 @@ export default function CursoCard({ curso }: CursoCardProps) {
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border bg-muted w-40 h-23 justify-center`,
+        `flex flex-col p-2 rounded-lg border shadow-md bg-muted w-40 h-23 justify-center`,
         curso.codigo === "ECIN-01000" && "h-full justify-center items-center",
         status !== CursoStatus.PENDIENTE && statusStyles[status].class
       )}

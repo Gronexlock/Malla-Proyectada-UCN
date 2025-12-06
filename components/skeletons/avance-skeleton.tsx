@@ -24,7 +24,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
   });
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap pb-8`}>
+    <ScrollArea className={`w-full whitespace-nowrap`}>
       <div className="flex flex-col items-center">
         <div className="flex flex-col w-fit gap-4">
           {/* Leyenda de colores */}
@@ -50,15 +50,15 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
               </div>
             </div>
             {/* Porcentaje de avance */}
-            <Skeleton className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+            <Skeleton className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md shadow-sm">
               &nbsp;&nbsp;% avance
             </Skeleton>
           </div>
           <div className="flex justify-center gap-4">
             {niveles.map(({ nivel, cursos }) => (
-              <div key={nivel} className="flex flex-col gap-4">
+              <div key={nivel} className="flex flex-col gap-4 pb-2 ">
                 <div
-                  className={`rounded flex justify-center items-center p-1 bg-muted`}
+                  className={`rounded flex justify-center items-center p-1 bg-muted border shadow-sm`}
                 >
                   <h2 className="text-center font-semibold">
                     {romanNumerals[Number(nivel)]}
@@ -69,7 +69,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
                     <Skeleton
                       key={course.codigo}
                       className={cn(
-                        "rounded-lg w-40",
+                        "rounded-lg w-40 shadow-md border",
                         course.codigo === "last" ? "h-full" : "h-23"
                       )}
                     />

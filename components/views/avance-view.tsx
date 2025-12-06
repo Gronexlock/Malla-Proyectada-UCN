@@ -13,7 +13,7 @@ export function AvanceView({ cursos }: AvanceViewProps) {
   const cursosPorNivel = getCursosPorNivel(cursos);
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap pb-8`}>
+    <ScrollArea className={`w-full whitespace-nowrap`}>
       <div className="flex flex-col items-center">
         <div className="flex flex-col w-fit gap-4">
           {/* Leyenda de colores */}
@@ -39,7 +39,7 @@ export function AvanceView({ cursos }: AvanceViewProps) {
               </div>
             </div>
             {/* Porcentaje de avance */}
-            <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+            <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md shadow-sm">
               {calcularPorcentajeAvance(cursos)}% avance
             </span>
           </div>
@@ -47,9 +47,9 @@ export function AvanceView({ cursos }: AvanceViewProps) {
             {Object.keys(cursosPorNivel)
               .sort((a, b) => Number(a) - Number(b))
               .map((nivel) => (
-                <div key={nivel} className="flex flex-col gap-4">
+                <div key={nivel} className="flex flex-col gap-4 pb-2">
                   <div
-                    className={`rounded flex justify-center items-center p-1 bg-muted`}
+                    className={`rounded flex justify-center items-center p-1 bg-muted shadow-sm border`}
                   >
                     <h2 className="text-center font-semibold">
                       {romanNumerals[Number(nivel)]}

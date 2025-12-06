@@ -82,7 +82,7 @@ export default function CarreraSelectorForm({ user }: CarreraSelectorProps) {
             Carrera
           </label>
           <Select value={selected} onValueChange={handleSelect}>
-            <SelectTrigger id="carrera-select">
+            <SelectTrigger id="carrera-select" className="mt-1">
               <SelectValue placeholder="Selecciona una carrera..." />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export default function CarreraSelectorForm({ user }: CarreraSelectorProps) {
           }
           className="w-full"
         >
-          {isLoading ? "Guardando..." : "Guardar Carrera"}
+          {isLoading ? "Alternando..." : "Alternar Carrera"}
         </Button>
       </CardContent>
     </Card>

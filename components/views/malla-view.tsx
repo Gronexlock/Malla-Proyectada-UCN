@@ -48,7 +48,7 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
   const colorConfig = colors[carrera.codigo];
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap ${className} pb-8`}>
+    <ScrollArea className={`w-full whitespace-nowrap ${className}`}>
       <div className="flex flex-col items-center min-w-max">
         <p
           className={`text-center text-3xl bg-gradient-to-r ${colorConfig.gradient} w-fit bg-clip-text text-transparent font-semibold mb-4`}
@@ -59,7 +59,7 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
           {Object.keys(cursosPorNivel)
             .sort((a, b) => Number(a) - Number(b))
             .map((nivel) => (
-              <div key={nivel} className="flex flex-col gap-4">
+              <div key={nivel} className="flex flex-col gap-4 pb-2">
                 <div
                   className={`rounded flex justify-center items-center text-white p-1`}
                   style={{

@@ -25,7 +25,7 @@ export function MallaSkeleton({ carrera }: MallaViewProps) {
   });
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap pb-8`}>
+    <ScrollArea className={`w-full whitespace-nowrap`}>
       <div className="flex flex-col items-center min-w-max">
         <p
           className={`text-center text-3xl bg-gradient-to-r ${colorConfig.gradient} w-fit bg-clip-text text-transparent font-semibold mb-4`}
@@ -34,7 +34,7 @@ export function MallaSkeleton({ carrera }: MallaViewProps) {
         </p>
         <div className="flex justify-center min-w-max gap-4">
           {niveles.map(({ nivel, cursos }) => (
-            <div key={nivel} className="flex flex-col gap-4">
+            <div key={nivel} className="flex flex-col gap-4 pb-2">
               <div
                 className="rounded flex justify-center items-center text-white p-1"
                 style={{
@@ -55,7 +55,7 @@ export function MallaSkeleton({ carrera }: MallaViewProps) {
                 <Skeleton
                   key={course.codigo}
                   className={cn(
-                    "rounded-lg w-40",
+                    "rounded-lg w-40 shadow-md border",
                     course.codigo === "last" ? "h-full" : "h-23"
                   )}
                 />
