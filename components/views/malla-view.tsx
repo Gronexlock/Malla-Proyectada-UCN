@@ -76,13 +76,7 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
                   </h2>
                 </div>
                 {cursosPorNivel[Number(nivel)].map((course) => {
-                  return (
-                    <CursoCard
-                      key={course.codigo}
-                      curso={course}
-                      prerrequisitos={course.prerrequisitos}
-                    />
-                  );
+                  return <CursoCard key={course.codigo} curso={course} />;
                 })}
               </div>
             ))}

@@ -1,16 +1,27 @@
+import { cn } from "@/lib/utils";
+import { colors } from "@/src/constants/mallaStyles";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
-import { Curso } from "@/src/types/curso";
-import { getCursosPorNivel } from "@/src/utils/cursosUtils";
-import { calcularPorcentajeAvance } from "@/src/utils/proyeccionUtils";
-import CursoCard from "../curso/curso-card";
+import { Carrera } from "@/src/types/carrera";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { Skeleton } from "../ui/skeleton";
 
-type AvanceViewProps = {
-  cursos: Curso[];
+type AvanceSkeletonProps = {
+  carrera: Carrera;
 };
 
-export function AvanceView({ cursos }: AvanceViewProps) {
-  const cursosPorNivel = getCursosPorNivel(cursos);
+export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
+  const colorConfig = colors[carrera.codigo];
+  const niveles = Array.from({ length: colorConfig.totalLevels }, (_, idx) => {
+    const isLast = idx === colorConfig.totalLevels - 1;
+    return {
+      nivel: idx + 1,
+      cursos: isLast
+        ? [{ codigo: `last` }]
+        : Array.from({ length: colorConfig.coursesPerLevel }, (_, j) => ({
+            codigo: `skeleton-${idx + 1}-${j}`,
+          })),
+    };
+  });
 
   return (
     <ScrollArea className={`w-full whitespace-nowrap pb-8`}>
@@ -39,27 +50,33 @@ export function AvanceView({ cursos }: AvanceViewProps) {
               </div>
             </div>
             {/* Porcentaje de avance */}
-            <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
-              {calcularPorcentajeAvance(cursos)}% avance
-            </span>
+            <Skeleton className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+              &nbsp;&nbsp;% avance
+            </Skeleton>
           </div>
           <div className="flex justify-center gap-4">
-            {Object.keys(cursosPorNivel)
-              .sort((a, b) => Number(a) - Number(b))
-              .map((nivel) => (
-                <div key={nivel} className="flex flex-col gap-6">
-                  <div
-                    className={`rounded flex justify-center items-center p-1 bg-muted`}
-                  >
-                    <h2 className="text-center font-semibold">
-                      {romanNumerals[Number(nivel)]}
-                    </h2>
-                  </div>
-                  {cursosPorNivel[Number(nivel)].map((course) => {
-                    return <CursoCard key={course.codigo} curso={course} />;
-                  })}
+            {niveles.map(({ nivel, cursos }) => (
+              <div key={nivel} className="flex flex-col gap-6">
+                <div
+                  className={`rounded flex justify-center items-center p-1 bg-muted`}
+                >
+                  <h2 className="text-center font-semibold">
+                    {romanNumerals[Number(nivel)]}
+                  </h2>
                 </div>
-              ))}
+                {cursos.map((course) => {
+                  return (
+                    <Skeleton
+                      key={course.codigo}
+                      className={cn(
+                        "rounded-lg w-40",
+                        course.codigo === "last" ? "h-full" : "h-23"
+                      )}
+                    />
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </div>

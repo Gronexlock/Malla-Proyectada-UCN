@@ -28,8 +28,8 @@ export const statusStyles: Record<
   },
   [CursoStatus.INSCRITO]: {
     class: [
-      "dark:bg-blue-500/20 dark:border-blue-500/50 dark:text-blue-400",
-      "bg-blue-500/40 border-blue-500/70 text-blue-700",
+      "dark:bg-yellow-500/20 dark:border-yellow-500/50 dark:text-yellow-400",
+      "bg-yellow-500/40 border-yellow-500/70 text-yellow-700",
     ].join(" "),
     icon: Clock4,
   },

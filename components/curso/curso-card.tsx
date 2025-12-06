@@ -10,10 +10,9 @@ import { getCursoStatus } from "@/src/utils/cursosUtils";
 
 type CursoCardProps = {
   curso: Curso;
-  prerrequisitos: Curso[];
 };
 
-export default function CursoCard({ curso, prerrequisitos }: CursoCardProps) {
+export default function CursoCard({ curso }: CursoCardProps) {
   const status = getCursoStatus(curso);
 
   const cardContent = (
@@ -33,14 +32,14 @@ export default function CursoCard({ curso, prerrequisitos }: CursoCardProps) {
     </div>
   );
 
-  if (prerrequisitos.length > 0) {
+  if (curso.prerrequisitos.length > 0) {
     return (
       <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
         <TooltipContent side="right" className="max-w-xs">
           <p className="font-semibold text-xs mb-1">Prerrequisitos:</p>
           <ul className="text-xs space-y-0.5">
-            {prerrequisitos.map((prereq) =>
+            {curso.prerrequisitos.map((prereq) =>
               prereq.asignatura ? (
                 <li key={prereq.codigo} className="flex items-center gap-1">
                   {prereq.asignatura}
