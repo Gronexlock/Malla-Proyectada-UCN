@@ -34,7 +34,7 @@ export function MallaSkeleton({ carrera }: MallaViewProps) {
         </p>
         <div className="flex justify-center min-w-max gap-4">
           {niveles.map(({ nivel, cursos }) => (
-            <div key={nivel} className="flex flex-col gap-6">
+            <div key={nivel} className="flex flex-col gap-4">
               <div
                 className="rounded flex justify-center items-center text-white p-1"
                 style={{

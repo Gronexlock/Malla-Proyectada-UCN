@@ -59,7 +59,7 @@ export function MallaView({ cursos, carrera, className }: MallaViewProps) {
           {Object.keys(cursosPorNivel)
             .sort((a, b) => Number(a) - Number(b))
             .map((nivel) => (
-              <div key={nivel} className="flex flex-col gap-6">
+              <div key={nivel} className="flex flex-col gap-4">
                 <div
                   className={`rounded flex justify-center items-center text-white p-1`}
                   style={{
