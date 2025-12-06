@@ -1,26 +1,12 @@
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { colors } from "@/src/constants/mallaStyles";
-import { Carrera } from "@/src/types/carrera";
-import {
-  calcularPorcentajeAvance,
-  getCursosBloqueantes,
-  getNivelEstudiante,
-  isDisperso,
-} from "@/src/utils/proyeccionUtils";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BookOpen } from "lucide-react";
 
-type MallaProyeccionSkeletonProps = {
-  carrera: Carrera;
-};
-
-export function MallaProyeccionSkeleton({
-  carrera,
-}: MallaProyeccionSkeletonProps) {
-  const colorConfig = colors[carrera.codigo];
-  const niveles = Array.from({ length: colorConfig.totalLevels }, (_, idx) => {
+export function MallaProyeccionSkeleton() {
+  const niveles = Array.from({ length: 10 }, (_, idx) => {
     return {
       nivel: idx + 1,
-      cursos: Array.from({ length: colorConfig.coursesPerLevel }, (_, j) => ({
+      cursos: Array.from({ length: 7 }, (_, j) => ({
         codigo: `skeleton-${idx + 1}-${j}`,
       })),
     };
@@ -36,8 +22,8 @@ export function MallaProyeccionSkeleton({
             <h2 className="font-semibold text-sm">Malla Curricular</h2>
           </div>
           {/* Porcentaje de avance */}
-          <span className="text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
-            {calcularPorcentajeAvance(cursos)}% avance
+          <span className="shadow-xs text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
+            0% avance
           </span>
         </div>
         {/* Leyenda de colores */}
@@ -63,7 +49,7 @@ export function MallaProyeccionSkeleton({
       {/* Malla */}
       <ScrollArea className="flex-1 min-h-0">
         <div className="flex p-3 gap-3 min-w-max">
-          {Object.entries(cursosPorNivel).map(([nivel, cursosNivel]) => (
+          {niveles.map(({ nivel, cursos }) => (
             <div className="flex flex-col gap-2" key={nivel}>
               <div className="flex items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
                 <div className="flex bg-zinc-200 dark:bg-secondary size-5 items-center justify-center rounded-full">
@@ -71,17 +57,11 @@ export function MallaProyeccionSkeleton({
                 </div>
                 <h3 className="text-muted-foreground text-sm">Nivel {nivel}</h3>
               </div>
-              {cursosNivel.map((curso) => {
-                const disperso = isDisperso(curso, getNivelEstudiante(cursos));
-                const cursosBloqueantes = getCursosBloqueantes(curso, cursos);
-
+              {cursos.map((curso) => {
                 return (
-                  <MallaProyeccionCard
+                  <Skeleton
                     key={curso.codigo}
-                    curso={curso}
-                    onCursoClick={onCursoClick}
-                    disperso={disperso}
-                    cursosBloqueantes={cursosBloqueantes}
+                    className="w-36 rounded-lg shadow-md border h-[75px]"
                   />
                 );
               })}

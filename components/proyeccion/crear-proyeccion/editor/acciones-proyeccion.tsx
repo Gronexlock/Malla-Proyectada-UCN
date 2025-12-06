@@ -44,7 +44,7 @@ export function AccionesProyeccion() {
           />
         </div>
       </header>
-      <div className="px-3 pt-2 overflow-y-auto">
+      <div className="px-3 pt-2 overflow-y-auto h-full flex flex-col justify-center">
         {/* Resumen de la proyección */}
         <div className="flex flex-col bg-zinc-100 dark:bg-zinc-800 p-3 border rounded-lg mb-3 shadow-sm">
           <span className="text-sm text-muted-foreground mb-1">
@@ -81,7 +81,7 @@ export function AccionesProyeccion() {
           </div>
         </div>
 
-        <div className="flex flex-col w-full gap-2">
+        <div className="flex flex-col w-full gap-3">
           {/* Botón para generar proyección automática */}
           <div className="flex gap-2 w-full ">
             <Button
