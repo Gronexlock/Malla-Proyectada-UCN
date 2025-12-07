@@ -53,7 +53,7 @@ export function AccionesProyeccion({
           />
         </div>
       </header>
-      <div className="px-3 pt-2 overflow-y-auto h-full flex flex-col justify-center">
+      <div className="px-3 pt-2 h-full flex flex-col justify-center">
         {/* Resumen de la proyección */}
         <div className="flex flex-col bg-zinc-100 dark:bg-zinc-800 p-3 border rounded-lg mb-3 shadow-sm">
           <span className="text-sm text-muted-foreground mb-1">

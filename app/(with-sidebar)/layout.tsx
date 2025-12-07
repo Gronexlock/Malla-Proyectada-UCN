@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { cookies } from "next/headers";
 import "../globals.css";
 
@@ -17,6 +18,7 @@ export default async function RootLayout({
       <main className="w-full overflow-x-hidden h-screen flex flex-col">
         <SidebarTrigger className="mt-2 ml-2" />
         {children}
+        <Toaster position="top-center" />
       </main>
     </SidebarProvider>
   );
