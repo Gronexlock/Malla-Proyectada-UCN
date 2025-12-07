@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/src/lib/prisma";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { ProyeccionSchema } from "../schemas/proyeccionSchema";
 import { CarreraSchema } from "../schemas/userSchema";
@@ -108,5 +109,25 @@ export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
   } catch (error) {
     console.error("Error al guardar la proyección:", error);
     throw new Error("Error al guardar la proyección");
+  }
+}
+
+export async function eliminarProyeccion(proyeccionId: number) {
+  try {
+    const token = (await cookies()).get("token")?.value;
+    await verifyToken(token);
+
+    await prisma.proyeccion.deleteMany({
+      where: {
+        id: proyeccionId,
+      },
+    });
+
+    revalidatePath("/proyecciones");
+
+    return { success: true, message: "Proyección eliminada correctamente" };
+  } catch (error) {
+    console.error("Error al eliminar la proyección:", error);
+    throw new Error("Error al eliminar la proyección");
   }
 }
