@@ -150,9 +150,11 @@ export default function ProyeccionesView({
                     align="end"
                     className="bg-zinc-900 border-zinc-800"
                   >
-                    <DropdownMenuItem className="text-zinc-300 focus:bg-zinc-800 focus:text-zinc-100 gap-2">
-                      <Eye className="h-4 w-4" /> Ver detalles
-                    </DropdownMenuItem>
+                    <Link href={`/proyecciones/${proyeccion.id}`}>
+                      <DropdownMenuItem className="text-zinc-300 focus:bg-zinc-800 focus:text-zinc-100 gap-2">
+                        <Eye className="h-4 w-4" /> Ver detalles
+                      </DropdownMenuItem>
+                    </Link>
                     <DropdownMenuItem
                       className="text-red-400 focus:bg-zinc-800 focus:text-red-400 gap-2"
                       onClick={() => handleEliminarProyeccion(proyeccion.id)}
@@ -187,7 +189,10 @@ export default function ProyeccionesView({
                 <p className="dark:text-zinc-500 text-sm mb-2">VISTA PREVIA</p>
                 <div className="flex gap-2">
                   {proyeccion.semestres.slice(0, 3).map((semestre) => (
-                    <div className="flex flex-col bg-secondary dark:bg-zinc-800 w-25 p-2 rounded-md">
+                    <div
+                      key={semestre.semestre}
+                      className="flex flex-col bg-secondary dark:bg-zinc-800 w-25 p-2 rounded-md"
+                    >
                       <p className="text-emerald-500 text-sm font-semibold">
                         {semestre.semestre}
                       </p>
@@ -206,10 +211,12 @@ export default function ProyeccionesView({
                   )}
                 </div>
               </div>
-              <Button className="flex items-center gap-4 !bg-secondary hover:!bg-zinc-200 dark:!bg-zinc-900 hover:dark:!bg-zinc-800 border text-foreground/90 mt-8 hover:cursor-pointer">
-                <Eye />
-                Ver Proyección Completa
-              </Button>
+              <Link href={`/proyecciones/${proyeccion.id}`}>
+                <Button className="flex items-center gap-4 !bg-secondary hover:!bg-zinc-200 dark:!bg-zinc-900 hover:dark:!bg-zinc-800 border text-foreground/90 mt-8 hover:cursor-pointer">
+                  <Eye />
+                  Ver Proyección Completa
+                </Button>
+              </Link>
             </div>
           );
         })}

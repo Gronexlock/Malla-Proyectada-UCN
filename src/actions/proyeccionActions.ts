@@ -131,3 +131,31 @@ export async function eliminarProyeccion(proyeccionId: number) {
     throw new Error("Error al eliminar la proyección");
   }
 }
+
+export async function fetchProyeccionById(proyeccionId: number) {
+  try {
+    const token = (await cookies()).get("token")?.value;
+    const user = await verifyToken(token);
+
+    const proyeccion = await prisma.proyeccion.findUnique({
+      where: {
+        id: proyeccionId,
+      },
+      include: {
+        cursos: true,
+      },
+    });
+
+    if (!proyeccion) {
+      throw new Error("Proyección no encontrada");
+    }
+    if (proyeccion.estudianteRut !== user.rut) {
+      throw new Error("No tienes permiso para ver esta proyección");
+    }
+
+    return proyeccion;
+  } catch (error) {
+    console.error("Error al obtener la proyección por ID:", error);
+    throw new Error("Error al obtener la proyección");
+  }
+}

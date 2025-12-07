@@ -1,4 +1,7 @@
-import { fetchProyecciones } from "../actions/proyeccionActions";
+import {
+  fetchProyeccionById,
+  fetchProyecciones,
+} from "../actions/proyeccionActions";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
 import { Proyeccion } from "../types/proyeccion";
@@ -41,6 +44,47 @@ export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
       semestres,
     };
   });
+}
+
+/**
+ * Obtiene la proyección por su ID y la formatea con los cursos correspondientes de la malla.
+ * @param proyeccionId La ID de la proyección.
+ * @param carrera La carrera del estudiante.
+ * @returns La proyección formateada.
+ */
+export async function getProyeccionById(
+  proyeccionId: number,
+  carrera: Carrera
+): Promise<Proyeccion> {
+  const [malla, proyeccion] = await Promise.all([
+    getMalla(carrera),
+    fetchProyeccionById(proyeccionId),
+  ]);
+  const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
+
+  const cursosPorSemestre = new Map<string, Curso[]>();
+  proyeccion.cursos.forEach((item) => {
+    const curso = cursosMap.get(item.cursoCodigo);
+    if (curso) {
+      const cursos = cursosPorSemestre.get(item.semestre) || [];
+      cursos.push(curso);
+      cursosPorSemestre.set(item.semestre, cursos);
+    }
+  });
+
+  const semestres = Array.from(cursosPorSemestre.entries()).map(
+    ([semestre, cursos]) => ({
+      semestre,
+      cursos,
+    })
+  );
+  semestres.sort((a, b) => a.semestre.localeCompare(b.semestre));
+
+  return {
+    id: proyeccion.id,
+    carrera: proyeccion.carreraCodigo,
+    semestres,
+  };
 }
 
 /**

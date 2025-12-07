@@ -1,12 +1,9 @@
-import { NuevaProyeccionSkeleton } from "@/components/skeletons/crear-proyeccion/crear-proyeccion-skeleton";
-import { carreras } from "@/src/constants/carrerasInfo";
+import { ProyeccionViewSkeleton } from "@/components/skeletons/proyeccion-view-skeleton";
 
 export default async function TestPage() {
-  const carrera = carreras["icci"];
-
   return (
     <div>
-      <NuevaProyeccionSkeleton carrera={carrera} />
+      <ProyeccionViewSkeleton />
     </div>
   );
 }
