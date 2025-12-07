@@ -1,30 +1,13 @@
-"use client";
-
 import { NuevaProyeccionView } from "@/components/proyeccion/crear-proyeccion/crear-proyeccion-view";
-import { NuevaProyeccionSkeleton } from "@/components/skeletons/crear-proyeccion/crear-proyeccion-skeleton";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
-import { useEffect, useState } from "react";
+import { getUser } from "@/src/actions/cookiesActions";
+import { getAvanceAgrupado } from "@/src/utils/cursosUtils";
+import { aprobarCursosInscritos } from "@/src/utils/proyeccionUtils";
 
-export default function NuevaProyeccionPage() {
-  const { cursos, proyeccionesPreview, toggleCursoProyeccion } =
-    useProyeccion();
-  const [isLoading, setIsLoading] = useState(true);
+export default async function NuevaProyeccionPage() {
+  const { selectedCarrera } = await getUser();
+  const cursos = aprobarCursosInscritos(
+    await getAvanceAgrupado(selectedCarrera)
+  ).filter((curso) => curso.codigo !== `ECIN-0${selectedCarrera.codigo}`);
 
-  useEffect(() => {
-    if (cursos && cursos.length > 0) {
-      setIsLoading(false);
-    }
-  }, [cursos]);
-
-  if (isLoading) {
-    return <NuevaProyeccionSkeleton />;
-  }
-
-  return (
-    <NuevaProyeccionView
-      cursos={cursos}
-      proyeccionesPreview={proyeccionesPreview}
-      toggleCursoProyeccion={toggleCursoProyeccion}
-    />
-  );
+  return <NuevaProyeccionView cursosIniciales={cursos} />;
 }

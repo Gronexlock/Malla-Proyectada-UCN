@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
+import { Curso } from "@/src/types/curso";
 import {
   getCreditosProyeccion,
   getCursosDisponibles,
@@ -19,18 +19,37 @@ import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
 import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
 
-export function EditorProyeccion() {
-  const {
-    cursos,
-    semestres,
-    semestreActual,
-    proyeccionActual,
-    ignorarRestricciones,
-    toggleCursoProyeccion,
-    irSiguienteSemestre,
-    cambiarSemestre,
-  } = useProyeccion();
+type EditorProyeccionProps = {
+  cursos: Curso[];
+  semestres: string[];
+  semestreActual: string;
+  proyeccionActual: Curso[];
+  ignorarRestricciones: boolean;
+  toggleCursoProyeccion: (curso: Curso) => void;
+  irSiguienteSemestre: () => void;
+  cambiarSemestre: (semestre: string) => void;
+  proyeccionesPreview: Record<string, Curso[]>;
+  setIgnorarRestricciones: (value: boolean) => void;
+  guardar: () => Promise<void>;
+  limpiarTodo: () => void;
+  generarProyeccionAutomatica: () => void;
+};
 
+export function EditorProyeccion({
+  cursos,
+  semestres,
+  semestreActual,
+  proyeccionActual,
+  ignorarRestricciones,
+  toggleCursoProyeccion,
+  irSiguienteSemestre,
+  cambiarSemestre,
+  proyeccionesPreview,
+  setIgnorarRestricciones,
+  guardar,
+  limpiarTodo,
+  generarProyeccionAutomatica,
+}: EditorProyeccionProps) {
   return (
     <section className="p-3 border-t border-zinc-300 dark:border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
@@ -88,7 +107,16 @@ export function EditorProyeccion() {
           semestreActual={semestreActual}
           onRemoverCurso={toggleCursoProyeccion}
         />
-        <AccionesProyeccion />
+        <AccionesProyeccion
+          cursos={cursos}
+          semestreActual={semestreActual}
+          proyeccionesPreview={proyeccionesPreview}
+          ignorarRestricciones={ignorarRestricciones}
+          setIgnorarRestricciones={setIgnorarRestricciones}
+          guardar={guardar}
+          limpiarTodo={limpiarTodo}
+          generarProyeccionAutomatica={generarProyeccionAutomatica}
+        />
       </main>
     </section>
   );

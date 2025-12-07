@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
+import { Curso } from "@/src/types/curso";
 import {
   getCantidadCreditosRestantes,
   getCantidadCursosPendientes,
@@ -13,18 +13,27 @@ import {
 } from "@/src/utils/proyeccionUtils";
 import { ArrowDownToLine, ShieldAlert, Sparkles, Trash2 } from "lucide-react";
 
-export function AccionesProyeccion() {
-  const {
-    cursos,
-    semestreActual,
-    proyeccionesPreview,
-    ignorarRestricciones,
-    setIgnorarRestricciones,
-    guardar,
-    limpiarTodo,
-    generarProyeccionAutomatica,
-  } = useProyeccion();
+type AccionesProyeccionProps = {
+  cursos: Curso[];
+  semestreActual: string;
+  proyeccionesPreview: Record<string, Curso[]>;
+  ignorarRestricciones: boolean;
+  setIgnorarRestricciones: (value: boolean) => void;
+  guardar: () => Promise<void>;
+  limpiarTodo: () => void;
+  generarProyeccionAutomatica: () => void;
+};
 
+export function AccionesProyeccion({
+  cursos,
+  semestreActual,
+  proyeccionesPreview,
+  ignorarRestricciones,
+  setIgnorarRestricciones,
+  guardar,
+  limpiarTodo,
+  generarProyeccionAutomatica,
+}: AccionesProyeccionProps) {
   return (
     <div className="bg-zinc-100 dark:bg-zinc-900 border shadow-md dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-4 min-h-0">
       <header className="px-3 flex items-center w-full justify-between">

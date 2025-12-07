@@ -13,11 +13,13 @@ import MallaProyeccionCard from "./malla-proyeccion-card";
 type MallaCurricularProps = {
   cursos: Curso[];
   onCursoClick: (curso: Curso) => void;
+  ignorarRestricciones: boolean;
 };
 
 export function MallaCurricular({
   cursos,
   onCursoClick,
+  ignorarRestricciones,
 }: MallaCurricularProps) {
   const cursosPorNivel = getCursosPorNivel(cursos);
 
@@ -77,6 +79,7 @@ export function MallaCurricular({
                     onCursoClick={onCursoClick}
                     disperso={disperso}
                     cursosBloqueantes={cursosBloqueantes}
+                    ignorarRestricciones={ignorarRestricciones}
                   />
                 );
               })}

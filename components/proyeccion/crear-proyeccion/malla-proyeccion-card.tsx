@@ -5,7 +5,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { statusStyles } from "@/src/constants/statusStyles";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
 import { Curso, CursoStatus } from "@/src/types/curso";
 import { getCursoStatus } from "@/src/utils/cursosUtils";
 import { XCircle } from "lucide-react";
@@ -15,6 +14,7 @@ type MallaProyeccionCardProps = {
   onCursoClick: (curso: Curso) => void;
   disperso: boolean;
   cursosBloqueantes: Curso[];
+  ignorarRestricciones: boolean;
 };
 
 export default function MallaProyeccionCard({
@@ -22,9 +22,8 @@ export default function MallaProyeccionCard({
   onCursoClick,
   disperso,
   cursosBloqueantes,
+  ignorarRestricciones,
 }: MallaProyeccionCardProps) {
-  const { ignorarRestricciones } = useProyeccion();
-
   const estaBloqueado = cursosBloqueantes.length > 0 || disperso;
   const statusReal = getCursoStatus(curso);
   const status = estaBloqueado ? CursoStatus.BLOQUEADO : statusReal;
