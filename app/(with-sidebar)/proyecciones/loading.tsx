@@ -1,6 +1,6 @@
 import ProyeccionesViewSkeleton from "@/components/skeletons/proyecciones-view-skeleton";
 
-export default async function TestPage() {
+export default function Loading() {
   return (
     <div className="flex p-6 justify-center">
       <ProyeccionesViewSkeleton />

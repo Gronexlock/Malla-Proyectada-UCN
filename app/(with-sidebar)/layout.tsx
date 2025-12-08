@@ -16,7 +16,7 @@ export default async function RootLayout({
     <SidebarProvider defaultOpen={defaultOpen} className="absolute">
       <AppSidebar />
       <main className="w-full overflow-x-hidden h-screen flex flex-col bg-gradient-to-b from-sky-50 to-sky-200 dark:from-zinc-950 dark:to-slate-950">
-        <SidebarTrigger className="m-2 bg-zinc-50 shadow hover:zinc-200 dark:hover:bg-zinc-700 hover:cursor-pointer border dark:bg-zinc-800 rounded-full p-4" />
+        <SidebarTrigger className="m-1.5 bg-zinc-50 shadow hover:zinc-200 dark:hover:bg-zinc-700 hover:cursor-pointer border dark:bg-zinc-800 rounded-full" />
         {children}
         <Toaster position="top-center" />
       </main>
