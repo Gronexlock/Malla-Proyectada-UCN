@@ -53,3 +53,19 @@ export async function setSelectedCarrera(codigo: string) {
     };
   }
 }
+
+export async function hasSeenTutorial(): Promise<boolean> {
+  const cookieStore = await cookies();
+  return cookieStore.has("seenTutorial");
+}
+
+export async function setSeenTutorial() {
+  const cookieStore = await cookies();
+  cookieStore.set("seenTutorial", "true", {
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 30 * 12,
+    sameSite: "lax",
+  });
+}

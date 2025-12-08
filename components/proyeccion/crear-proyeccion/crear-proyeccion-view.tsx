@@ -22,10 +22,12 @@ import { ProyeccionPreview } from "./proyeccion-preview";
 
 type NuevaProyeccionViewProps = {
   cursosIniciales: Curso[];
+  hasSeenTutorial: boolean;
 };
 
 export function NuevaProyeccionView({
   cursosIniciales,
+  hasSeenTutorial,
 }: NuevaProyeccionViewProps) {
   const [cursos, setCursos] = useState<Curso[]>(
     cursosIniciales.map((curso) => ({ ...curso, status: [...curso.status] }))
@@ -167,6 +169,7 @@ export function NuevaProyeccionView({
         guardar={guardar}
         limpiarTodo={limpiarTodo}
         generarProyeccionAutomatica={generarProyeccionAutomatica}
+        hasSeenTutorial={hasSeenTutorial}
       />
     </div>
   );

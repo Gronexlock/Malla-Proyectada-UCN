@@ -60,7 +60,15 @@ export function LoginForm({
           <form onSubmit={handleSubmit}>
             <FieldGroup className="relative">
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel
+                  htmlFor="email"
+                  className="flex justify-between pr-1"
+                >
+                  Email
+                  {error && (
+                    <p className="text-sm text-red-500 font-medium">{error}</p>
+                  )}
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -98,9 +106,6 @@ export function LoginForm({
                   </Button>
                 </div>
               </Field>
-              {error && (
-                <p className="text-sm text-red-500 font-medium">{error}</p>
-              )}
               <Field>
                 <Button
                   type="submit"

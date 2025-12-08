@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { setSeenTutorial } from "@/src/actions/cookiesActions";
 import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
 import { Curso } from "@/src/types/curso";
 import {
@@ -35,6 +36,7 @@ type EditorProyeccionProps = {
   guardar: () => Promise<void>;
   limpiarTodo: () => void;
   generarProyeccionAutomatica: () => void;
+  hasSeenTutorial: boolean;
 };
 
 export function EditorProyeccion({
@@ -51,8 +53,16 @@ export function EditorProyeccion({
   guardar,
   limpiarTodo,
   generarProyeccionAutomatica,
+  hasSeenTutorial,
 }: EditorProyeccionProps) {
-  const [showTutorial, setShowTutorial] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(!hasSeenTutorial);
+
+  async function handleCloseTutorial(open: boolean) {
+    setShowTutorial(open);
+    if (!open && !hasSeenTutorial) {
+      await setSeenTutorial();
+    }
+  }
 
   return (
     <section className="p-3 border-t border-zinc-300 dark:border-zinc-700 flex flex-col flex-1 min-h-0">
@@ -126,7 +136,7 @@ export function EditorProyeccion({
           generarProyeccionAutomatica={generarProyeccionAutomatica}
         />
       </main>
-      <TutorialDialog open={showTutorial} onOpenChange={setShowTutorial} />
+      <TutorialDialog open={showTutorial} onOpenChange={handleCloseTutorial} />
     </section>
   );
 }
