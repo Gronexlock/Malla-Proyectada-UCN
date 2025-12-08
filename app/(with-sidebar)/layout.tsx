@@ -10,7 +10,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
+  const sidebarState = cookieStore.get("sidebar_state")?.value;
+  const defaultOpen =
+    sidebarState !== undefined ? sidebarState === "true" : true;
 
   return (
     <SidebarProvider defaultOpen={defaultOpen} className="absolute">
