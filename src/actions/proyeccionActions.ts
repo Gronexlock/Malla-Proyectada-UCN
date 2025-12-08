@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { ProyeccionSchema } from "../schemas/proyeccionSchema";
 import { CarreraSchema } from "../schemas/userSchema";
 import { Curso } from "../types/curso";
+import { comprobarProyeccionValida } from "../utils/proyeccionUtils";
 import { verifyToken } from "./authActions";
 import { getUser } from "./cookiesActions";
 
@@ -47,7 +48,10 @@ export async function fetchProyecciones(page: number = 1, limit: number = 10) {
   }
 }
 
-export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
+export async function guardarProyeccion(
+  proyeccion: Record<string, Curso[]>,
+  cursosIniciales: Curso[]
+) {
   try {
     const token = (await cookies()).get("token")?.value;
     const [user, { selectedCarrera }] = await Promise.all([
@@ -67,6 +71,10 @@ export async function guardarProyeccion(proyeccion: Record<string, Curso[]>) {
 
     if (!proyeccion || Object.keys(proyeccion).length === 0) {
       throw new Error("La proyección no puede estar vacía");
+    }
+
+    if (!comprobarProyeccionValida(proyeccion, cursosIniciales)) {
+      throw new Error("La proyección no es válida");
     }
 
     const proyeccionFormatted = Object.entries(proyeccion).map(

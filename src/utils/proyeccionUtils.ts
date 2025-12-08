@@ -444,3 +444,46 @@ export function aplicarEstadosProyeccion(
     return curso;
   });
 }
+
+/**
+ * Comprueba si la proyección es válida en base a los cursos iniciales. Todos los
+ * cursos pendientes deben estar incluidos en la proyección y no deben incluirse
+ * cursos ya aprobados en la proyección.
+ * @param proyeccion
+ * @param cursosIniciales
+ */
+export function comprobarProyeccionValida(
+  proyeccion: Record<string, Curso[]>,
+  cursosIniciales: Curso[]
+): boolean {
+  if (proyeccion === null || Object.keys(proyeccion).length === 0) {
+    return false;
+  }
+
+  // Cursos pendientes o reprobados (cursos que se pueden elegir
+  // en la proyección)
+  const cursosPendientes = cursosIniciales.filter(
+    (curso) => !curso.status.includes(CursoStatus.APROBADO)
+  );
+
+  for (const semestre of Object.keys(proyeccion)) {
+    for (const curso of proyeccion[semestre]) {
+      const cursoValido = cursosPendientes.find(
+        (c) => c.codigo === curso.codigo
+      );
+
+      if (!cursoValido) {
+        return false;
+      }
+      // Eliminar el curso válido de los pendientes
+      cursosPendientes.splice(cursosPendientes.indexOf(cursoValido), 1);
+    }
+  }
+
+  // Si quedan cursos pendientes, la proyección no es válida
+  if (cursosPendientes.length > 0) {
+    return false;
+  }
+
+  return true;
+}

@@ -94,7 +94,7 @@ export function NuevaProyeccionView({
 
   async function guardar() {
     try {
-      await guardarProyeccion(proyeccionesPreview);
+      await guardarProyeccion(proyeccionesPreview, cursosIniciales);
       toast.success("Proyección guardada exitosamente");
     } catch (error) {
       toast.error("Error al guardar la proyección");
