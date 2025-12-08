@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Curso } from "@/src/types/curso";
 import {
   getCantidadSemestresProyeccion,
@@ -17,16 +18,16 @@ export function ProyeccionPreview({
   proyeccionesPreview,
 }: ProyeccionPreviewProps) {
   return (
-    <section className="flex flex-col border-t border-l border-zinc-700 w-1/2 min-h-0">
+    <section className="flex flex-col border-t border-l border-zinc-300 dark:border-zinc-700 w-1/2 min-h-0">
       {/* Header Proyección */}
-      <header className="flex flex-col p-3 border-b border-zinc-700 gap-2">
+      <header className="flex flex-col p-3 border-b border-zinc-300 dark:border-zinc-700 gap-2">
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
             <Target className="text-green-600" size={18} />
             <h2 className="font-semibold text-sm">Proyección</h2>
           </div>
           {/* Créditos/semestres*/}
-          <span className="text-[13px] font-medium border border-zinc-700 px-2 rounded-md">
+          <span className="shadow-xs text-[13px] font-medium border border-zinc-300 dark:border-zinc-700 px-2 rounded-md">
             {getCreditosProyeccionTotal(proyeccionesPreview)} SCT /{" "}
             {getCantidadSemestresProyeccion(proyeccionesPreview)} sem.
           </span>
@@ -45,54 +46,60 @@ export function ProyeccionPreview({
           </div>
         </div>
       </header>
-      <main className="flex p-3 gap-3 overflow-auto flex-1">
-        {Object.keys(proyeccionesPreview).length > 0 ? (
-          Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
-            <div className="flex flex-col gap-2" key={nivel}>
-              <div className="flex justify-between items-center gap-2 border-b border-zinc-700 pb-2">
-                <div className="h-5 px-2 rounded-full bg-green-500/20 flex items-center justify-center">
-                  <span className="text-[11px] font-semibold text-green-400">
-                    {nivel}
-                  </span>
-                </div>
-                <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
-                  <span className="text-[10px] font-semibold">
-                    {getCreditosProyeccion(cursosNivel)} SCT
-                  </span>
-                </div>
-              </div>
-              {cursosNivel.map((curso) => {
-                return (
-                  <div
-                    key={curso.codigo}
-                    className={`flex flex-col bg-zinc-900 border border-zinc-700 p-2 rounded-lg min-w-36`}
-                  >
-                    <div className="flex justify-between">
-                      <p className="opacity-70 font-mono text-[11px]">
-                        {curso.codigo}
-                      </p>
-                    </div>
-                    <p className="text-sm text-foreground truncate">
-                      {curso.asignatura}
-                    </p>
-                    <span className="text-[11px] opacity-70 mt-1">
-                      {curso.creditos} SCT
+      {Object.keys(proyeccionesPreview).length > 0 ? (
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="flex p-3 gap-3 min-w-max">
+            {Object.entries(proyeccionesPreview).map(([nivel, cursosNivel]) => (
+              <div className="flex flex-col gap-2" key={nivel}>
+                <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2">
+                  <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">
+                    <span className="text-[11px] font-semibold text-green-600 dark:text-green-400">
+                      {nivel}
                     </span>
                   </div>
-                );
-              })}
-            </div>
-          ))
-        ) : (
-          <div className="flex justify-center items-center flex-col w-full">
-            <Target className="text-zinc-700 mb-1" size={42} />
-            <p className="text-muted-foreground">Sin proyección aún</p>
-            <p className="text-muted-foreground text-sm">
-              Avanza un semestre para ver tu proyección
-            </p>
+                  <div className="flex bg-secondary h-5 px-2 items-center justify-center rounded-full">
+                    <span className="text-[10px] font-semibold">
+                      {getCreditosProyeccion(cursosNivel)} SCT
+                    </span>
+                  </div>
+                </div>
+                {cursosNivel.map((curso) => {
+                  return (
+                    <div
+                      key={curso.codigo}
+                      className={`flex flex-col bg-zinc-100 shadow dark:bg-zinc-900 border dark:border-zinc-700 p-2 rounded-lg min-w-36`}
+                    >
+                      <div className="flex justify-between">
+                        <p className="opacity-70 font-mono text-[11px]">
+                          {curso.codigo}
+                        </p>
+                      </div>
+                      <p className="text-sm text-foreground truncate">
+                        {curso.asignatura}
+                      </p>
+                      <span className="text-[11px] opacity-70 mt-1">
+                        {curso.creditos} SCT
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
-        )}
-      </main>
+          <ScrollBar
+            orientation="horizontal"
+            thumbColor="bg-slate-300 dark:bg-slate-800"
+          />
+        </ScrollArea>
+      ) : (
+        <div className="flex justify-center items-center flex-col w-full h-full">
+          <Target className="text-zinc-700 mb-1" size={42} />
+          <p className="text-muted-foreground">Sin proyección aún</p>
+          <p className="text-muted-foreground text-sm">
+            Avanza un semestre para ver tu proyección
+          </p>
+        </div>
+      )}
     </section>
   );
 }

@@ -6,5 +6,9 @@ export default async function ProyeccionesPage() {
   const { selectedCarrera } = await getUser();
   const proyecciones = await getProyecciones(selectedCarrera);
 
-  return <ProyeccionesView proyecciones={proyecciones} />;
+  return (
+    <div className="flex p-6 justify-center">
+      <ProyeccionesView proyecciones={proyecciones} />
+    </div>
+  );
 }

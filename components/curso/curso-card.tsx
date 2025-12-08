@@ -1,63 +1,59 @@
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { statusStyles } from "@/src/constants/statusStyles";
 import { Curso, CursoStatus } from "@/src/types/curso";
+import { getCursoStatus } from "@/src/utils/cursosUtils";
 
-export type CursoCardProps = {
+type CursoCardProps = {
   curso: Curso;
-  bloqueantes?: Curso[];
-  disperso?: boolean;
-  muted?: boolean;
-  onClick?: () => void;
 };
 
-const statusColors: Record<CursoStatus, string> = {
-  [CursoStatus.APROBADO]: "bg-green-500",
-  [CursoStatus.REPROBADO]: "bg-red-500",
-  [CursoStatus.INSCRITO]: "bg-yellow-400",
-  [CursoStatus.PENDIENTE]: "",
-};
+export default function CursoCard({ curso }: CursoCardProps) {
+  const status =
+    getCursoStatus(curso) === CursoStatus.INSCRITO
+      ? CursoStatus.INSCRITO_MALLA
+      : getCursoStatus(curso);
 
-export function CursoCard({
-  curso,
-  bloqueantes,
-  disperso,
-  muted,
-  onClick,
-}: CursoCardProps) {
-  const isClickable = !!onClick && !curso.status.includes(CursoStatus.APROBADO);
-  (bloqueantes && bloqueantes.length > 0) || disperso;
-
-  return (
-    <Card
+  const cardContent = (
+    <div
+      key={curso.codigo}
       className={cn(
-        "rounded-md p-0 w-36 shadow-sm overflow-hidden relative",
-        isClickable &&
-          "cursor-pointer hover:bg-zinc-50 hover:-translate-y-1 transition-all",
-        muted && "opacity-50"
+        `flex flex-col p-2 rounded-lg border shadow-md bg-muted w-40 h-23 justify-center`,
+        curso.codigo === "ECIN-01000" && "h-full justify-center items-center",
+        status !== CursoStatus.PENDIENTE && statusStyles[status].class
       )}
-      onClick={isClickable ? onClick : undefined}
     >
-      <CardContent className="p-0 flex h-full">
-        <div
-          className={`w-1.5 ${statusColors[curso.status[0]]} absolute h-full`}
-        ></div>
-        <div className="flex flex-col flex-1">
-          <div className={`h-6 flex justify-between items-center border-b`}>
-            <span
-              className={cn(
-                "font-semibold text-xs",
-                curso.status.includes(CursoStatus.PENDIENTE) ? "pl-1" : "pl-2.5"
-              )}
-            >
-              {curso.creditos} SCT
-            </span>
-            <span className="font-semibold pr-1 text-xs">{curso.codigo}</span>
-          </div>
-          <div className="px-2 py-8 mb-2 flex h-12 flex-col justify-center items-center">
-            <p className="text-sm text-center text-wrap">{curso.asignatura}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="flex justify-between gap-2">
+        <p className="opacity-70 font-mono text-[11px]">{curso.codigo}</p>
+      </div>
+      <p className="text-sm text-foreground text-wrap">{curso.asignatura}</p>
+      <span className="text-[11px] opacity-70 mt-1">{curso.creditos} SCT</span>
+    </div>
   );
+
+  if (curso.prerrequisitos.length > 0) {
+    return (
+      <Tooltip delayDuration={200}>
+        <TooltipTrigger asChild>{cardContent}</TooltipTrigger>
+        <TooltipContent side="right" className="max-w-xs">
+          <p className="font-semibold text-xs mb-1">Prerrequisitos:</p>
+          <ul className="text-xs space-y-0.5">
+            {curso.prerrequisitos.map((prereq) =>
+              prereq.asignatura ? (
+                <li key={prereq.codigo} className="flex items-center gap-1">
+                  {prereq.asignatura}
+                </li>
+              ) : null
+            )}
+          </ul>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return cardContent;
 }

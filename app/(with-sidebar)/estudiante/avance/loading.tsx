@@ -1,9 +1,11 @@
-import { MallaSkeleton } from "@/components/skeletons/malla-skeleton";
+import { AvanceSkeleton } from "@/components/skeletons/avance-skeleton";
+import { getUser } from "@/src/actions/cookiesActions";
 
-export default function Loading() {
+export default async function Loading() {
+  const { selectedCarrera } = await getUser();
   return (
     <div className="p-4">
-      <MallaSkeleton nombreCarrera="icci" />
+      <AvanceSkeleton carrera={selectedCarrera} />
     </div>
   );
 }

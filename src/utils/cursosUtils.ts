@@ -21,7 +21,7 @@ function getPrerrequisitosAsCursos(
     const cursoMalla = cursosMalla.find((c) => c.codigo === code);
     const curso: Curso = {
       codigo: cursoMalla?.codigo || code,
-      asignatura: cursoMalla?.asignatura || code,
+      asignatura: cursoMalla?.asignatura || "",
       creditos: cursoMalla?.creditos || 0,
       nivel: cursoMalla?.nivel || 0,
       prerrequisitos: [], // Evitar recursividad
@@ -77,6 +77,7 @@ export function getCursoStatus(curso: Curso): CursoStatus {
 export async function getMalla(carrera: Carrera): Promise<Curso[]> {
   const cursosMalla = await fetchMalla(carrera.codigo, carrera.catalogo);
   const cursos: Curso[] = [];
+
   for (const cursoMalla of cursosMalla) {
     const curso: Curso = {
       ...cursoMalla,

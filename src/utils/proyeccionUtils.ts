@@ -1,4 +1,7 @@
-import { fetchProyecciones } from "../actions/proyeccionActions";
+import {
+  fetchProyeccionById,
+  fetchProyecciones,
+} from "../actions/proyeccionActions";
 import { Carrera } from "../types/carrera";
 import { Curso, CursoStatus } from "../types/curso";
 import { Proyeccion } from "../types/proyeccion";
@@ -44,19 +47,61 @@ export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
 }
 
 /**
+ * Obtiene la proyección por su ID y la formatea con los cursos correspondientes de la malla.
+ * @param proyeccionId La ID de la proyección.
+ * @param carrera La carrera del estudiante.
+ * @returns La proyección formateada.
+ */
+export async function getProyeccionById(
+  proyeccionId: number,
+  carrera: Carrera
+): Promise<Proyeccion> {
+  const [malla, proyeccion] = await Promise.all([
+    getMalla(carrera),
+    fetchProyeccionById(proyeccionId),
+  ]);
+  const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
+
+  const cursosPorSemestre = new Map<string, Curso[]>();
+  proyeccion.cursos.forEach((item) => {
+    const curso = cursosMap.get(item.cursoCodigo);
+    if (curso) {
+      const cursos = cursosPorSemestre.get(item.semestre) || [];
+      cursos.push(curso);
+      cursosPorSemestre.set(item.semestre, cursos);
+    }
+  });
+
+  const semestres = Array.from(cursosPorSemestre.entries()).map(
+    ([semestre, cursos]) => ({
+      semestre,
+      cursos,
+    })
+  );
+  semestres.sort((a, b) => a.semestre.localeCompare(b.semestre));
+
+  return {
+    id: proyeccion.id,
+    carrera: proyeccion.carreraCodigo,
+    semestres,
+  };
+}
+
+/**
  * Agrega el estado de aprobado a los cursos que están inscritos.
  * @param cursos Lista de cursos a actualizar.
  * @returns Lista de cursos actualizados.
  */
 export function aprobarCursosInscritos(cursos: Curso[]): Curso[] {
-  const cursosActualizados: Curso[] = [];
-  for (const curso of cursos) {
+  return cursos.map((curso) => {
     if (curso.status.includes(CursoStatus.INSCRITO)) {
-      curso.status.push(CursoStatus.APROBADO);
+      return {
+        ...curso,
+        status: [...curso.status, CursoStatus.APROBADO],
+      };
     }
-    cursosActualizados.push(curso);
-  }
-  return cursosActualizados;
+    return curso;
+  });
 }
 
 /**
@@ -71,19 +116,21 @@ export function toggleEstadoCurso(
   cursos: Curso[],
   cursoToToggle: Curso
 ): Curso[] {
-  const cursosActualizados: Curso[] = [];
-  for (const curso of cursos) {
+  if (cursoToToggle.status.includes(CursoStatus.APROBADO)) {
+    return cursos;
+  }
+  return cursos.map((curso) => {
     if (curso.codigo === cursoToToggle.codigo) {
       const isInscrito = curso.status.includes(CursoStatus.INSCRITO);
-      if (isInscrito) {
-        curso.status = curso.status.filter((s) => s !== CursoStatus.INSCRITO);
-      } else {
-        curso.status.push(CursoStatus.INSCRITO);
-      }
+      return {
+        ...curso,
+        status: isInscrito
+          ? curso.status.filter((s) => s !== CursoStatus.INSCRITO)
+          : [...curso.status, CursoStatus.INSCRITO],
+      };
     }
-    cursosActualizados.push(curso);
-  }
-  return cursosActualizados;
+    return curso;
+  });
 }
 
 /**
@@ -314,6 +361,15 @@ export function irSemestreAnterior(
     }
     indexActual--;
   }
+
+  const proyeccionDelSemestre = proyeccionesPorSemestre[semestreObjetivo] || [];
+  proyeccionDelSemestre.forEach((cursoProyectado) => {
+    const cursoMalla = cursos.find((c) => c.codigo === cursoProyectado.codigo);
+    if (cursoMalla && !cursoMalla.status.includes(CursoStatus.INSCRITO)) {
+      cursoMalla.status.push(CursoStatus.INSCRITO);
+    }
+  });
+
   const llaves = Object.keys(proyeccionesPorSemestre);
   const ultimaLlave = llaves[llaves.length - 1];
   const nuevaPreview = { ...proyeccionesPorSemestre };
@@ -366,4 +422,72 @@ export function limpiarProyeccionActual(
   const ultimaLlave = keys[keys.length - 1];
   delete proyeccionesPorSemestre[ultimaLlave];
   return proyeccionesPorSemestre;
+}
+
+/**
+ * Aplica los estados de los cursos basándose en una proyección generada.
+ * Cada uno de los cursos en la proyección se marcan como APROBADO.
+ * @param cursos Lista de cursos de la malla.
+ * @param proyeccionGenerada Proyección generada con cursos por semestre.
+ * @returns Lista de cursos con los estados actualizados.
+ */
+export function aplicarEstadosProyeccion(
+  cursos: Curso[],
+  proyeccionGenerada: Record<string, Curso[]>
+): Curso[] {
+  const codigosProyectados = new Set(
+    Object.values(proyeccionGenerada)
+      .flat()
+      .map((c) => c.codigo)
+  );
+
+  return cursos.map((curso) => {
+    if (codigosProyectados.has(curso.codigo)) {
+      return { ...curso, status: [CursoStatus.APROBADO] };
+    }
+    return curso;
+  });
+}
+
+/**
+ * Comprueba si la proyección es válida en base a los cursos iniciales. Todos los
+ * cursos pendientes deben estar incluidos en la proyección y no deben incluirse
+ * cursos ya aprobados en la proyección.
+ * @param proyeccion
+ * @param cursosIniciales
+ */
+export function comprobarProyeccionValida(
+  proyeccion: Record<string, Curso[]>,
+  cursosIniciales: Curso[]
+): boolean {
+  if (proyeccion === null || Object.keys(proyeccion).length === 0) {
+    return false;
+  }
+
+  // Cursos pendientes o reprobados (cursos que se pueden elegir
+  // en la proyección)
+  const cursosPendientes = cursosIniciales.filter(
+    (curso) => !curso.status.includes(CursoStatus.APROBADO)
+  );
+
+  for (const semestre of Object.keys(proyeccion)) {
+    for (const curso of proyeccion[semestre]) {
+      const cursoValido = cursosPendientes.find(
+        (c) => c.codigo === curso.codigo
+      );
+
+      if (!cursoValido) {
+        return false;
+      }
+      // Eliminar el curso válido de los pendientes
+      cursosPendientes.splice(cursosPendientes.indexOf(cursoValido), 1);
+    }
+  }
+
+  // Si quedan cursos pendientes, la proyección no es válida
+  if (cursosPendientes.length > 0) {
+    return false;
+  }
+
+  return true;
 }

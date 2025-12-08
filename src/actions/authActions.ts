@@ -15,7 +15,7 @@ export async function login(email: string, password: string) {
 
   const data = await response.json();
   if (data.error) {
-    throw new Error("Credenciales inválidas");
+    return { success: false, message: "Credenciales inválidas" };
   }
 
   const parsedData = UserSchema.safeParse(data);
@@ -49,6 +49,20 @@ export async function logout() {
   const cookieStore = await cookies();
 
   cookieStore.set("token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  cookieStore.set("user", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  cookieStore.set("tutorial-seen", "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     expires: new Date(0),

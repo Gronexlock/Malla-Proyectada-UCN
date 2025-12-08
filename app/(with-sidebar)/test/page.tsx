@@ -1,13 +1,9 @@
-import { getUser } from "@/src/actions/cookiesActions";
-import { getProyecciones } from "@/src/utils/proyeccionUtils";
+import ProyeccionesViewSkeleton from "@/components/skeletons/proyecciones-view-skeleton";
 
-export default async function NuevaProyeccionPage() {
-  const { selectedCarrera } = await getUser();
-  const proyecciones = await getProyecciones(selectedCarrera);
-
+export default async function TestPage() {
   return (
-    <div>
-      <pre>{JSON.stringify(proyecciones, null, 2)}</pre>
+    <div className="flex p-6 justify-center">
+      <ProyeccionesViewSkeleton />
     </div>
   );
 }

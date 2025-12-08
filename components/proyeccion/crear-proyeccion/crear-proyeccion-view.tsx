@@ -1,13 +1,12 @@
 "use client";
 
 import { guardarProyeccion } from "@/src/actions/proyeccionActions";
-import { Curso, CursoStatus } from "@/src/types/curso";
+import { Curso } from "@/src/types/curso";
 import { generarProyeccionOptima } from "@/src/utils/generarProyeccionOptima";
 import {
+  aplicarEstadosProyeccion,
   aprobarCursosInscritos,
-  desinscribirCursos,
   irSemestreAnterior,
-  limpiarProyeccionActual,
   toggleCursoProyeccionActual,
   toggleEstadoCurso,
 } from "@/src/utils/proyeccionUtils";
@@ -15,22 +14,24 @@ import {
   getSemestreActual,
   getSemestreSiguiente,
 } from "@/src/utils/semestreUtils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { EditorProyeccion } from "./editor/editor-proyeccion";
 import { MallaCurricular } from "./malla-proyeccion";
 import { ProyeccionPreview } from "./proyeccion-preview";
 
-type CrearProyeccionViewProps = {
-  cursos: Curso[];
+type NuevaProyeccionViewProps = {
+  cursosIniciales: Curso[];
+  hasSeenTutorial: boolean;
 };
 
-export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
-  const [cursos, setCursos] = useState<Curso[]>(cursosProp.cursos);
-
-  useEffect(() => {
-    setCursos(cursosProp.cursos);
-  }, [cursosProp.cursos]);
-
+export function NuevaProyeccionView({
+  cursosIniciales,
+  hasSeenTutorial,
+}: NuevaProyeccionViewProps) {
+  const [cursos, setCursos] = useState<Curso[]>(
+    cursosIniciales.map((curso) => ({ ...curso, status: [...curso.status] }))
+  );
   const [semestres, setSemestres] = useState<string[]>([
     getSemestreSiguiente(getSemestreActual()),
   ]);
@@ -38,15 +39,13 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
   const [proyeccionesPorSemestre, setProyeccionesPorSemestre] = useState<
     Record<string, Curso[]>
   >({ [semestres[0]]: [] });
-
-  const semestreActual = semestres[semestreIndex];
-  const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
-
   const [proyeccionesPreview, setProyeccionesPreview] = useState<
     Record<string, Curso[]>
   >({});
+  const [ignorarRestricciones, setIgnorarRestricciones] = useState(false);
 
-  const [ignorarReestricciones, setIgnorarReestricciones] = useState(false);
+  const semestreActual = semestres[semestreIndex];
+  const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
 
   function toggleCursoProyeccion(cursoToToggle: Curso) {
     const nuevaProyeccion = toggleCursoProyeccionActual(
@@ -77,7 +76,7 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
     }));
   }
 
-  function handleCambiarSemestre(semestreObjetivo: string) {
+  function cambiarSemestre(semestreObjetivo: string) {
     const { nuevosCursos, nuevosSemestres, nuevasProyecciones, nuevaPreview } =
       irSemestreAnterior(
         semestreObjetivo,
@@ -93,74 +92,84 @@ export function NuevaProyeccionView(cursosProp: CrearProyeccionViewProps) {
     setSemestreIndex(nuevosSemestres.length - 1);
   }
 
-  async function handleGuardarProyeccion() {
-    await guardarProyeccion(proyeccionesPorSemestre);
+  async function guardar() {
+    try {
+      await guardarProyeccion(proyeccionesPreview, cursosIniciales);
+      toast.success("Proyección guardada exitosamente");
+    } catch (error) {
+      toast.error("Error al guardar la proyección");
+    }
   }
 
-  function handleLimpiarTodo() {
-    setCursos(desinscribirCursos(cursos));
-    setProyeccionesPorSemestre(
-      limpiarProyeccionActual(proyeccionesPorSemestre)
+  function limpiarTodo() {
+    const firstSemester = getSemestreSiguiente(getSemestreActual());
+    setSemestres([firstSemester]);
+    setSemestreIndex(0);
+    setProyeccionesPorSemestre({ [firstSemester]: [] });
+    setProyeccionesPreview({});
+    setCursos(
+      cursosIniciales.map((curso) => ({
+        ...curso,
+        status: [...curso.status],
+      }))
     );
   }
 
-  function handleGenerarProyeccionAutomatica() {
-    const proyeccionGenerada = generarProyeccionOptima(cursos);
-
+  function generarProyeccionAutomatica() {
+    const proyeccionGenerada = generarProyeccionOptima(cursosIniciales);
     const semestresGenerados = Object.keys(proyeccionGenerada).sort();
-    setSemestres(semestresGenerados);
-    setSemestreIndex(0);
-    setProyeccionesPorSemestre(proyeccionGenerada);
 
-    const previewSemestres: Record<string, Curso[]> = {};
-    semestresGenerados.slice(0, -1).forEach((semestre) => {
-      previewSemestres[semestre] = proyeccionGenerada[semestre];
-    });
-    setProyeccionesPreview(previewSemestres);
-
-    let cursosActualizados = [...cursos];
-
-    semestresGenerados.slice(0, -1).forEach((semestre) => {
-      proyeccionGenerada[semestre].forEach((cursoProyectado) => {
-        cursosActualizados = cursosActualizados.map((c) =>
-          c.codigo === cursoProyectado.codigo
-            ? { ...c, status: [CursoStatus.APROBADO] }
-            : c
-        );
-      });
-    });
+    if (semestresGenerados.length === 0) {
+      toast.info("Todos los cursos ya están aprobados o proyectados.");
+      return;
+    }
 
     const ultimoSemestre = semestresGenerados[semestresGenerados.length - 1];
-    proyeccionGenerada[ultimoSemestre].forEach((cursoProyectado) => {
-      cursosActualizados = cursosActualizados.map((c) =>
-        c.codigo === cursoProyectado.codigo
-          ? { ...c, status: [CursoStatus.INSCRITO] }
-          : c
-      );
+    const semestreSiguiente = getSemestreSiguiente(ultimoSemestre);
+    const todosLosSemestres = [...semestresGenerados, semestreSiguiente];
+
+    setSemestres(todosLosSemestres);
+    setSemestreIndex(todosLosSemestres.length - 1);
+
+    setProyeccionesPorSemestre({
+      ...proyeccionGenerada,
+      [semestreSiguiente]: [],
     });
 
+    setProyeccionesPreview({ ...proyeccionGenerada });
+
+    const cursosActualizados = aplicarEstadosProyeccion(
+      cursosIniciales,
+      proyeccionGenerada
+    );
     setCursos(cursosActualizados);
   }
 
   return (
     <div className={`h-[calc(100vh-2.5rem)] flex flex-col`}>
-      <div className="flex flex-[2] min-h-0">
-        <MallaCurricular cursos={cursos} onCursoClick={toggleCursoProyeccion} />
+      <div className="flex h-3/5 min-h-0">
+        <MallaCurricular
+          cursos={cursos}
+          onCursoClick={toggleCursoProyeccion}
+          ignorarRestricciones={ignorarRestricciones}
+        />
         <ProyeccionPreview proyeccionesPreview={proyeccionesPreview} />
       </div>
-
       <EditorProyeccion
         cursos={cursos}
         semestres={semestres}
         semestreActual={semestreActual}
         proyeccionActual={proyeccionActual}
+        ignorarRestricciones={ignorarRestricciones}
+        toggleCursoProyeccion={toggleCursoProyeccion}
+        irSiguienteSemestre={irSiguienteSemestre}
+        cambiarSemestre={cambiarSemestre}
         proyeccionesPreview={proyeccionesPreview}
-        onAgregarCurso={toggleCursoProyeccion}
-        onRemoverCurso={toggleCursoProyeccion}
-        onSiguienteSemestre={irSiguienteSemestre}
-        onCambiarSemestre={handleCambiarSemestre}
-        onGuardar={handleGuardarProyeccion}
-        onLimpiar={handleLimpiarTodo}
+        setIgnorarRestricciones={setIgnorarRestricciones}
+        guardar={guardar}
+        limpiarTodo={limpiarTodo}
+        generarProyeccionAutomatica={generarProyeccionAutomatica}
+        hasSeenTutorial={hasSeenTutorial}
       />
     </div>
   );

@@ -4,6 +4,7 @@ export enum CursoStatus {
   INSCRITO = "INSCRITO",
   REPROBADO = "REPROBADO",
   BLOQUEADO = "BLOQUEADO",
+  INSCRITO_MALLA = "INSCRITO_MALLA",
 }
 
 export type Curso = {

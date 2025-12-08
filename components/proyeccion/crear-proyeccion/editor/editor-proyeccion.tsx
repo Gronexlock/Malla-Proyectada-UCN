@@ -1,5 +1,6 @@
 "use client";
 
+import { TutorialDialog } from "@/components/tutorial-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -8,14 +9,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { setSeenTutorial } from "@/src/actions/cookiesActions";
 import { LIMITE_CREDITOS } from "@/src/constants/proyeccionConstants";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
 import { Curso } from "@/src/types/curso";
 import {
   getCreditosProyeccion,
   getCursosDisponibles,
 } from "@/src/utils/proyeccionUtils";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, HelpCircle, Plus } from "lucide-react";
+import { useState } from "react";
 import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
 import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
@@ -23,33 +25,47 @@ import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
 type EditorProyeccionProps = {
   cursos: Curso[];
   semestres: string[];
-  proyeccionActual: Curso[];
-  proyeccionesPreview: Record<string, Curso[]>;
   semestreActual: string;
-  onAgregarCurso: (curso: Curso) => void;
-  onRemoverCurso: (curso: Curso) => void;
-  onSiguienteSemestre: () => void;
-  onCambiarSemestre: (semestre: string) => void;
-  onGuardar: () => void;
-  onLimpiar: () => void;
+  proyeccionActual: Curso[];
+  ignorarRestricciones: boolean;
+  toggleCursoProyeccion: (curso: Curso) => void;
+  irSiguienteSemestre: () => void;
+  cambiarSemestre: (semestre: string) => void;
+  proyeccionesPreview: Record<string, Curso[]>;
+  setIgnorarRestricciones: (value: boolean) => void;
+  guardar: () => Promise<void>;
+  limpiarTodo: () => void;
+  generarProyeccionAutomatica: () => void;
+  hasSeenTutorial: boolean;
 };
 
 export function EditorProyeccion({
   cursos,
   semestres,
-  proyeccionActual,
-  proyeccionesPreview,
   semestreActual,
-  onAgregarCurso,
-  onRemoverCurso,
-  onSiguienteSemestre,
-  onCambiarSemestre,
-  onGuardar,
-  onLimpiar,
+  proyeccionActual,
+  ignorarRestricciones,
+  toggleCursoProyeccion,
+  irSiguienteSemestre,
+  cambiarSemestre,
+  proyeccionesPreview,
+  setIgnorarRestricciones,
+  guardar,
+  limpiarTodo,
+  generarProyeccionAutomatica,
+  hasSeenTutorial,
 }: EditorProyeccionProps) {
-  const { ignorarRestricciones } = useProyeccion();
+  const [showTutorial, setShowTutorial] = useState(!hasSeenTutorial);
+
+  async function handleCloseTutorial(open: boolean) {
+    setShowTutorial(open);
+    if (!open && !hasSeenTutorial) {
+      await setSeenTutorial();
+    }
+  }
+
   return (
-    <section className="p-3 border-t border-zinc-700 flex flex-col flex-1 min-h-0">
+    <section className="p-3 border-t border-zinc-300 dark:border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
       <header className="flex mb-4 justify-between items-center">
         <div className="flex flex-col">
@@ -68,8 +84,16 @@ export function EditorProyeccion({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Select value={semestreActual} onValueChange={onCambiarSemestre}>
-            <SelectTrigger className="w-[150px] !bg-zinc-950 !border-zinc-800 hover:!bg-primary-foreground">
+          <Button
+            onClick={() => setShowTutorial(true)}
+            variant="outline"
+            className=""
+          >
+            <HelpCircle className="h-4 w-4" />
+            Tutorial
+          </Button>
+          <Select value={semestreActual} onValueChange={cambiarSemestre}>
+            <SelectTrigger className="w-[150px] transition-all shadow-sm bg-background hover:bg-muted">
               <SelectValue placeholder="Selecciona un semestre" />
             </SelectTrigger>
             <SelectContent>
@@ -81,12 +105,13 @@ export function EditorProyeccion({
             </SelectContent>
           </Select>
           <Button
-            className="bg-card-secondary text-white border hover:bg-primary-foreground hover:cursor-pointer"
-            onClick={onSiguienteSemestre}
+            className="text-foreground border hover:cursor-pointer shadow-sm"
+            variant="outline"
+            onClick={irSiguienteSemestre}
             disabled={
+              proyeccionActual.length === 0 ||
               (!ignorarRestricciones &&
-                getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS) ||
-              proyeccionActual.length === 0
+                getCreditosProyeccion(proyeccionActual) > LIMITE_CREDITOS)
             }
           >
             <ArrowRight />
@@ -98,21 +123,25 @@ export function EditorProyeccion({
       <main className="grid grid-cols-3 flex-1 gap-3 min-h-0">
         <ListaCursosDisponibles
           cursos={getCursosDisponibles(cursos)}
-          onAgregarCurso={onAgregarCurso}
+          onAgregarCurso={toggleCursoProyeccion}
         />
         <ListaCursosAgregados
           cursos={proyeccionActual}
           semestreActual={semestreActual}
-          onRemoverCurso={onRemoverCurso}
+          onRemoverCurso={toggleCursoProyeccion}
         />
         <AccionesProyeccion
           cursos={cursos}
-          proyeccionesPreview={proyeccionesPreview}
           semestreActual={semestreActual}
-          onGuardar={onGuardar}
-          onLimpiar={onLimpiar}
+          proyeccionesPreview={proyeccionesPreview}
+          ignorarRestricciones={ignorarRestricciones}
+          setIgnorarRestricciones={setIgnorarRestricciones}
+          guardar={guardar}
+          limpiarTodo={limpiarTodo}
+          generarProyeccionAutomatica={generarProyeccionAutomatica}
         />
       </main>
+      <TutorialDialog open={showTutorial} onOpenChange={handleCloseTutorial} />
     </section>
   );
 }

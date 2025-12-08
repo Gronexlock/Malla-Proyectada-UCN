@@ -11,5 +11,9 @@ export default async function Page() {
     return "Error";
   }
 
-  return <MallaView cursos={malla} />;
+  return (
+    <div className="p-4">
+      <MallaView cursos={malla} carrera={carrera} />
+    </div>
+  );
 }

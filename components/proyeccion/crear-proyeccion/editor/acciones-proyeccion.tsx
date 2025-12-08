@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { useProyeccion } from "@/src/contexts/ProyeccionContext";
 import { Curso } from "@/src/types/curso";
 import {
   getCantidadCreditosRestantes,
@@ -12,40 +11,51 @@ import {
   getUltimoSemestreProyeccion,
   isProyeccionCompleta,
 } from "@/src/utils/proyeccionUtils";
-import { ArrowDownToLine } from "lucide-react";
+import { ArrowDownToLine, ShieldAlert, Sparkles, Trash2 } from "lucide-react";
 
 type AccionesProyeccionProps = {
   cursos: Curso[];
-  proyeccionesPreview: Record<string, Curso[]>;
   semestreActual: string;
-  onGuardar: () => void;
-  onLimpiar: () => void;
+  proyeccionesPreview: Record<string, Curso[]>;
+  ignorarRestricciones: boolean;
+  setIgnorarRestricciones: (value: boolean) => void;
+  guardar: () => Promise<void>;
+  limpiarTodo: () => void;
+  generarProyeccionAutomatica: () => void;
 };
 
 export function AccionesProyeccion({
   cursos,
-  proyeccionesPreview,
   semestreActual,
-  onGuardar,
-  onLimpiar,
+  proyeccionesPreview,
+  ignorarRestricciones,
+  setIgnorarRestricciones,
+  guardar,
+  limpiarTodo,
+  generarProyeccionAutomatica,
 }: AccionesProyeccionProps) {
-  const { ignorarRestricciones, setIgnorarRestricciones } = useProyeccion();
-
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
-      <div className="flex justify-between px-3">
-        <header>Acciones</header>
-        <div className="flex items-center space-x-2">
+    <div className="bg-zinc-100 dark:bg-zinc-900 border shadow-md dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-4 min-h-0">
+      <header className="px-3 flex items-center w-full justify-between gap-2">
+        <div className="flex-1">Acciones</div>
+        {/* Switch para ignorar restricciones */}
+        <div className="shadow-sm flex items-center gap-2 justify-between dark:bg-zinc-800 p-3 border rounded-lg">
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="h-4 w-4 dark:text-amber-500 text-amber-600" />
+            <Label htmlFor="ignorar-restricciones" className="text-sm">
+              Ignorar restricciones
+            </Label>
+          </div>
           <Switch
+            id="ignorar-restricciones"
             checked={ignorarRestricciones}
             onCheckedChange={setIgnorarRestricciones}
-            id="ignorar-reestricciones"
           />
-          <Label htmlFor="ignorar-reestricciones">Ignorar restricciones</Label>
         </div>
-      </div>
-      <div className="px-3 pt-2">
-        <div className="flex flex-col bg-zinc-800 p-3 border rounded-lg mb-3">
+      </header>
+      <div className="px-3 pt-2 h-full flex flex-col justify-center">
+        {/* Resumen de la proyección */}
+        <div className="flex flex-col bg-zinc-100 dark:bg-zinc-800 p-3 border rounded-lg mb-3 shadow-sm">
           <span className="text-sm text-muted-foreground mb-1">
             Resumen de la proyección
           </span>
@@ -79,20 +89,35 @@ export function AccionesProyeccion({
             </div>
           </div>
         </div>
-        <Button
-          className="bg-green-500 hover:bg-green-600 font-semibold w-full mb-3 hover:cursor-pointer"
-          onClick={onGuardar}
-          disabled={!isProyeccionCompleta(cursos)}
-        >
-          <ArrowDownToLine />
-          Guardar Proyección
-        </Button>
-        <Button
-          className="bg-primary-foreground text-primary hover:bg-secondary font-semibold border w-full hover:cursor-pointer"
-          onClick={onLimpiar}
-        >
-          Limpiar Todo
-        </Button>
+
+        <div className="flex flex-col w-full gap-3">
+          {/* Botón para generar proyección automática */}
+          <div className="flex gap-2 w-full ">
+            <Button
+              className="shadow-sm bg-purple-500 hover:bg-purple-600 font-semibold hover:cursor-pointer flex-1"
+              onClick={generarProyeccionAutomatica}
+            >
+              <Sparkles className="h-4 w-4" />
+              Proyección Óptima
+            </Button>
+            <Button
+              className="text-primary font-semibold border hover:cursor-pointer flex-1 shadow-sm"
+              onClick={limpiarTodo}
+              variant="outline"
+            >
+              <Trash2 className="h-4 w-4" />
+              Limpiar Todo
+            </Button>
+          </div>
+          <Button
+            className="shadow-sm bg-green-500 hover:bg-green-600 font-semibold mb-3 hover:cursor-pointer flex-1 "
+            onClick={guardar}
+            disabled={!isProyeccionCompleta(cursos)}
+          >
+            <ArrowDownToLine />
+            Guardar Proyección
+          </Button>
+        </div>
       </div>
     </div>
   );

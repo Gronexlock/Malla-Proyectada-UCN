@@ -48,8 +48,11 @@ function calcularPotencialDesbloqueo(cursos: Curso[]): Map<string, number> {
  * son los cursos proyectados para ese semestre.
  */
 export function generarProyeccionOptima(
-  cursos: Curso[]
+  cursosInput: Curso[]
 ): Record<string, Curso[]> {
+  // Creamos una copia profunda para no mutar el array original
+  const cursos = cursosInput.map((c) => ({ ...c, status: [...c.status] }));
+
   const potencialDesbloqueo = calcularPotencialDesbloqueo(cursos);
   const proyeccionesGeneradas: Record<string, Curso[]> = {};
   let semestreActual = getSemestreSiguiente(getSemestreActual());

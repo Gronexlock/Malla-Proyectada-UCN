@@ -34,9 +34,9 @@ export async function AppSidebar() {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <Link href="/">
-                <span className="text-base font-semibold">
-                  Proyección Curricular
+              <Link href="/proyecciones/nueva">
+                <span className="text-base bg-gradient-to-r from-zinc-500 dark:to-zinc-200 to-zinc-800 font-mono bg-clip-text text-transparent  font-semibold">
+                  PICHIDANGUI
                 </span>
               </Link>
             </SidebarMenuButton>
