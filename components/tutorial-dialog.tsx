@@ -32,7 +32,7 @@ const tutorialSteps = [
     title: (
       <span>
         Bienvenido a{" "}
-        <span className="bg-gradient-to-r dark:from-zinc-500 dark:to-zinc-200 bg-clip-text text-transparent font-mono">
+        <span className="bg-gradient-to-r from-zinc-500 to-zinc-800 dark:from-zinc-500 dark:to-zinc-200 bg-clip-text text-transparent font-mono">
           PICHIDANGUI
         </span>
       </span>

@@ -36,7 +36,7 @@ export function LoginForm({
     try {
       const result = await login(email, password);
       if (result.success) {
-        router.push("/");
+        router.push("/proyecciones/nueva");
       } else {
         setError(result.message ?? "Error en el inicio de sesión");
       }

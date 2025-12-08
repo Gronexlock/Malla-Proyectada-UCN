@@ -114,8 +114,13 @@ export function NuevaProyeccionView({
   }
 
   function generarProyeccionAutomatica() {
-    const proyeccionGenerada = generarProyeccionOptima(cursos);
+    const proyeccionGenerada = generarProyeccionOptima(cursosIniciales);
     const semestresGenerados = Object.keys(proyeccionGenerada).sort();
+
+    if (semestresGenerados.length === 0) {
+      toast.info("Todos los cursos ya están aprobados o proyectados.");
+      return;
+    }
 
     const ultimoSemestre = semestresGenerados[semestresGenerados.length - 1];
     const semestreSiguiente = getSemestreSiguiente(ultimoSemestre);
@@ -132,7 +137,7 @@ export function NuevaProyeccionView({
     setProyeccionesPreview({ ...proyeccionGenerada });
 
     const cursosActualizados = aplicarEstadosProyeccion(
-      cursos,
+      cursosIniciales,
       proyeccionGenerada
     );
     setCursos(cursosActualizados);
