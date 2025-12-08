@@ -221,7 +221,7 @@ const tutorialSteps = [
     ),
   },
   {
-    title: "Retrocedera a Semestres Anteriores",
+    title: "Retroceder a Semestres Anteriores",
     description:
       "Puedes regresar a semestres previos para ajustar tu proyección.",
     icon: CornerDownLeft,
