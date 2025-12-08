@@ -10,7 +10,7 @@ interface ThemeLogoProps {
 }
 
 export function ThemeLogo({ src, alt }: ThemeLogoProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,8 @@ export function ThemeLogo({ src, alt }: ThemeLogoProps) {
     return null;
   }
 
-  const imageSrc = theme === "dark" ? `/${src}-dark.png` : `/${src}.png`;
+  const imageSrc =
+    resolvedTheme === "dark" ? `/${src}-dark.png` : `/${src}.png`;
 
   return (
     <Image
