@@ -300,8 +300,8 @@ export function TutorialDialog({ open, onOpenChange }: TutorialDialogProps) {
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+          <div className="flex items-center gap-3 mb-2 ">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary">
               <Icon className="h-5 w-5 text-primary-foreground" />
             </div>
             <div className="space-y-1">
