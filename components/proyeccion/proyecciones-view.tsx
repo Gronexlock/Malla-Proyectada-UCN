@@ -69,7 +69,7 @@ export default function ProyeccionesView({
   return (
     <div className="flex flex-col w-full gap-8 max-w-7xl">
       <div className="grid grid-cols-3 grid-rows-1 gap-4">
-        <div className="shadow-md dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
+        <div className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
           <div className="flex w-full justify-center gap-3">
             <div className=" p-3.5 bg-emerald-600/20 flex justify-center items-center rounded-lg">
               <BookOpen className="text-emerald-500" />
@@ -86,7 +86,7 @@ export default function ProyeccionesView({
             </div>
           </div>
         </div>
-        <div className="shadow-md dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
+        <div className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
           <div className="flex w-full justify-center gap-3">
             <div className=" p-3.5 bg-blue-600/20 flex justify-center items-center rounded-lg">
               <GraduationCap className="text-blue-500" />
@@ -101,7 +101,7 @@ export default function ProyeccionesView({
             </div>
           </div>
         </div>
-        <div className="shadow-md dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
+        <div className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
           <div className="flex w-full justify-center gap-3">
             <div className=" p-3.5 bg-purple-600/20 flex justify-center items-center rounded-lg">
               <Clock className="text-purple-500" />
@@ -130,7 +130,7 @@ export default function ProyeccionesView({
           return (
             <div
               key={proyeccion.id}
-              className="shadow-md rounded-lg border p-6 flex flex-col w-full h-100 dark:bg-zinc-900"
+              className="shadow-md rounded-lg border p-6 flex flex-col w-full h-100 bg-zinc-50 dark:bg-zinc-900"
             >
               <div className="flex justify-between gap-1 mb-8 items-center">
                 <h3 className="text-xl font-semibold">
@@ -212,7 +212,7 @@ export default function ProyeccionesView({
                 </div>
               </div>
               <Link href={`/proyecciones/${proyeccion.id}`}>
-                <Button className="flex items-center gap-4 !bg-secondary hover:!bg-zinc-200 dark:!bg-zinc-900 hover:dark:!bg-zinc-800 border text-foreground/90 mt-8 hover:cursor-pointer">
+                <Button className="flex w-full items-center gap-4 !bg-secondary hover:!bg-zinc-200 dark:!bg-zinc-900 hover:dark:!bg-zinc-800 border text-foreground/90 mt-8 hover:cursor-pointer">
                   <Eye />
                   Ver Proyección Completa
                 </Button>
@@ -221,7 +221,7 @@ export default function ProyeccionesView({
           );
         })}
         <Link href="/proyecciones/nueva">
-          <div className="shadow-md flex flex-col h-100 items-center justify-center border-2 hover:border-emerald-500/50 border-dotted dark:bg-zinc-900 opacity-70 hover:opacity-100 transition-all rounded-lg hover:cursor-pointer group">
+          <div className="shadow-md flex flex-col h-100 items-center justify-center border-2 hover:border-emerald-500/50 border-dotted bg-zinc-50 dark:bg-zinc-900 opacity-70 hover:opacity-100 transition-all rounded-lg hover:cursor-pointer group">
             <div className="flex justify-center items-center bg-secondary group-hover:bg-emerald-500/20 size-16 rounded-full mb-4 transition-colors">
               <Plus
                 size={32}

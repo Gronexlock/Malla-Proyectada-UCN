@@ -28,7 +28,7 @@ export function ProyeccionView({ proyeccion }: ProyeccionViewProps) {
         <div className="pb-6 pr-6 min-h-0 min-w-0 max-w-full flex-1">
           <ScrollArea className="w-full h-full pr-2">
             <div className="min-w-max flex flex-col">
-              <div className="flex gap-4 sticky top-0 z-10 bg-background pb-4">
+              <div className="flex gap-4 sticky top-0 z-10 pb-4">
                 {proyeccion.semestres.map((semestre) => (
                   <div className="flex justify-between items-center gap-2 border-b border-zinc-300 dark:border-zinc-700 pb-2 w-full">
                     <div className="h-5 px-2 rounded-full bg-emerald-500/30 dark:bg-green-500/20 flex items-center justify-center">

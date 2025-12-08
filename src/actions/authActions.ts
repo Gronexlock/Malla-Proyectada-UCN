@@ -54,6 +54,20 @@ export async function logout() {
     expires: new Date(0),
     path: "/",
   });
+
+  cookieStore.set("user", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+    path: "/",
+  });
+
+  cookieStore.set("tutorial-seen", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+    path: "/",
+  });
 }
 
 export async function verifyToken(token: string | undefined) {

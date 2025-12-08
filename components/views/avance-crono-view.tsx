@@ -33,7 +33,7 @@ export function AvanceCronoView({ cursos }: AvanceCronoViewProps) {
         <div className="pb-6 pr-6 min-h-0 min-w-0 max-w-full flex-1">
           <ScrollArea className="w-full h-full pr-2">
             <div className="min-w-max flex flex-col">
-              <div className="flex gap-4 sticky top-0 z-10 bg-background pb-4">
+              <div className="flex gap-4 sticky top-0 z-10 pb-4">
                 {Object.keys(cursosPorSemestre)
                   .sort((a, b) => Number(a) - Number(b))
                   .map((semestre) => (

@@ -101,8 +101,9 @@ export function AccionesProyeccion({
               Proyección Óptima
             </Button>
             <Button
-              className="bg-primary-foreground text-primary hover:bg-secondary font-semibold border hover:cursor-pointer flex-1 shadow-sm"
+              className="text-primary font-semibold border hover:cursor-pointer flex-1 shadow-sm"
               onClick={limpiarTodo}
+              variant="outline"
             >
               <Trash2 className="h-4 w-4" />
               Limpiar Todo
