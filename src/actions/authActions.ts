@@ -15,7 +15,7 @@ export async function login(email: string, password: string) {
 
   const data = await response.json();
   if (data.error) {
-    throw new Error("Credenciales inválidas");
+    return { success: false, message: "Credenciales inválidas" };
   }
 
   const parsedData = UserSchema.safeParse(data);

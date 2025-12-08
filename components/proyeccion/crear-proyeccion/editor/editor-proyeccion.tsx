@@ -1,5 +1,6 @@
 "use client";
 
+import { TutorialDialog } from "@/components/tutorial-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,7 +15,8 @@ import {
   getCreditosProyeccion,
   getCursosDisponibles,
 } from "@/src/utils/proyeccionUtils";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, HelpCircle, Plus } from "lucide-react";
+import { useState } from "react";
 import { AccionesProyeccion } from "./acciones-proyeccion";
 import { ListaCursosAgregados } from "./lista-cursos-agregados";
 import { ListaCursosDisponibles } from "./lista-cursos-disponibles";
@@ -50,6 +52,8 @@ export function EditorProyeccion({
   limpiarTodo,
   generarProyeccionAutomatica,
 }: EditorProyeccionProps) {
+  const [showTutorial, setShowTutorial] = useState(false);
+
   return (
     <section className="p-3 border-t border-zinc-300 dark:border-zinc-700 flex flex-col flex-1 min-h-0">
       {/* Header de Editor */}
@@ -70,6 +74,10 @@ export function EditorProyeccion({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Button onClick={() => setShowTutorial(true)} variant="outline">
+            <HelpCircle className="h-4 w-4" />
+            Tutorial
+          </Button>
           <Select value={semestreActual} onValueChange={cambiarSemestre}>
             <SelectTrigger className="w-[150px] dark:!bg-zinc-950 dark:!border-zinc-800 hover:!bg-zinc-100 dark:hover:!bg-primary-foreground transition-all shadow-sm">
               <SelectValue placeholder="Selecciona un semestre" />
@@ -118,6 +126,7 @@ export function EditorProyeccion({
           generarProyeccionAutomatica={generarProyeccionAutomatica}
         />
       </main>
+      <TutorialDialog open={showTutorial} onOpenChange={setShowTutorial} />
     </section>
   );
 }

@@ -54,8 +54,8 @@ export function ListaCursosDisponibles({
           />
         </InputGroup>
       </div>
-      <ScrollArea className="flex-1 min-h-0">
-        <div className="pt-2 gap-2 flex flex-col px-3">
+      <ScrollArea className="flex-1 min-h-0  flex flex-col">
+        <div className="pt-2 gap-2 flex flex-col px-3 h-full flex-1">
           {cursosFiltrados.length === 0 ? (
             <div className="text-center text-muted-foreground py-4">
               No se encontraron cursos

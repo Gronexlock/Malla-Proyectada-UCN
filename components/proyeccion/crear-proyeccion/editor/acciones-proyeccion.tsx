@@ -36,8 +36,8 @@ export function AccionesProyeccion({
 }: AccionesProyeccionProps) {
   return (
     <div className="bg-zinc-100 dark:bg-zinc-900 border shadow-md dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-4 min-h-0">
-      <header className="px-3 flex items-center w-full justify-between">
-        <div>Acciones</div>
+      <header className="px-3 flex items-center w-full justify-between gap-2">
+        <div className="flex-1">Acciones</div>
         {/* Switch para ignorar restricciones */}
         <div className="shadow-sm flex items-center gap-2 justify-between dark:bg-zinc-800 p-3 border rounded-lg">
           <div className="flex items-center gap-2">

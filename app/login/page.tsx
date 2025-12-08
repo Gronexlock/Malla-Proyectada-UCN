@@ -1,16 +1,13 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { LoginForm } from "@/components/login-form";
+import { ThemeLogo } from "@/components/theme-logo";
 
-export default function LoginPage() {
+export default function Page() {
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Iniciar sesión
-          </h1>
-          <p className="text-muted-foreground">
-            Ingresa tus credenciales para acceder
-          </p>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm ">
+        <div className="flex h-16 items-center justify-center gap-16 mb-6">
+          <ThemeLogo src="ucn-logo" alt="UCN Logo" />
+          <ThemeLogo src="eic-logo" alt="EIC Logo" />
         </div>
         <LoginForm />
       </div>
