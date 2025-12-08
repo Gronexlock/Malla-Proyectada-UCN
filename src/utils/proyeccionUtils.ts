@@ -93,14 +93,15 @@ export async function getProyeccionById(
  * @returns Lista de cursos actualizados.
  */
 export function aprobarCursosInscritos(cursos: Curso[]): Curso[] {
-  const cursosActualizados: Curso[] = [];
-  for (const curso of cursos) {
+  return cursos.map((curso) => {
     if (curso.status.includes(CursoStatus.INSCRITO)) {
-      curso.status.push(CursoStatus.APROBADO);
+      return {
+        ...curso,
+        status: [...curso.status, CursoStatus.APROBADO],
+      };
     }
-    cursosActualizados.push(curso);
-  }
-  return cursosActualizados;
+    return curso;
+  });
 }
 
 /**
@@ -115,6 +116,9 @@ export function toggleEstadoCurso(
   cursos: Curso[],
   cursoToToggle: Curso
 ): Curso[] {
+  if (cursoToToggle.status.includes(CursoStatus.APROBADO)) {
+    return cursos;
+  }
   return cursos.map((curso) => {
     if (curso.codigo === cursoToToggle.codigo) {
       const isInscrito = curso.status.includes(CursoStatus.INSCRITO);
