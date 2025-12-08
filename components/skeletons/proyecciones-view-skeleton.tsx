@@ -1,14 +1,16 @@
 "use client";
 
+import { PageTitle } from "../page-title";
 import { Skeleton } from "../ui/skeleton";
 
 export default function ProyeccionesViewSkeleton() {
   const proyecciones = Array.from({ length: 3 }, (_, i) => ({ index: i + 1 }));
 
   return (
-    <div className="flex flex-col w-full gap-8 max-w-7xl">
+    <div className="flex flex-col w-full gap-4 max-w-7xl">
+      <PageTitle title="Mis Proyecciones" />
       <div className="grid grid-cols-3 grid-rows-1 gap-4">
-        <Skeleton className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3"></Skeleton>
+        <Skeleton className="mb-4 shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3"></Skeleton>
         <Skeleton className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3"></Skeleton>
         <Skeleton className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3"></Skeleton>
       </div>

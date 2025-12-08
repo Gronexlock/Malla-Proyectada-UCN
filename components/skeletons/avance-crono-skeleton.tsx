@@ -1,3 +1,4 @@
+import { PageTitle } from "../page-title";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
 
@@ -14,7 +15,8 @@ export function AvanceCronoSkeleton() {
   return (
     <div className="w-full whitespace-nowrap h-full flex flex-col items-center">
       <div className="flex flex-col items-center max-h-full max-w-full">
-        <div className="flex flex-col pb-4 w-full">
+        <div className="flex flex-col pb-4 w-full gap-4 mb-2">
+          <PageTitle title="Avance Cronológico" />
           <div className="flex gap-2">
             <div className="flex items-center gap-1">
               <div className="size-3 bg-emerald-500/70 dark:bg-emerald-500/50 rounded-full"></div>

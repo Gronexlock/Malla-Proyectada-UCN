@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { PageTitle } from "../page-title";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -67,9 +68,10 @@ export default function ProyeccionesView({
   }
 
   return (
-    <div className="flex flex-col w-full gap-8 max-w-7xl">
+    <div className="flex flex-col w-full gap-4 max-w-7xl">
+      <PageTitle title="Mis Proyecciones" />
       <div className="grid grid-cols-3 grid-rows-1 gap-4">
-        <div className="shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3">
+        <div className="mb-4 shadow-md bg-zinc-50 dark:bg-zinc-900 border rounded-lg h-32 flex items-center justify-center gap-3 relative">
           <div className="flex w-full justify-center gap-3">
             <div className=" p-3.5 bg-emerald-600/20 flex justify-center items-center rounded-lg">
               <BookOpen className="text-emerald-500" />

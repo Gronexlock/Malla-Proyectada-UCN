@@ -11,5 +11,9 @@ export default async function ProyeccionPage({
   const { selectedCarrera } = await getUser();
   const proyeccion = await getProyeccionById(Number(id), selectedCarrera!);
 
-  return <ProyeccionView proyeccion={proyeccion} />;
+  return (
+    <div className="p-4">
+      <ProyeccionView proyeccion={proyeccion} />
+    </div>
+  );
 }

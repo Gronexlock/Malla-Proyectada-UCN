@@ -3,6 +3,7 @@ import { Curso } from "@/src/types/curso";
 import { getCursosPorNivel } from "@/src/utils/cursosUtils";
 import { calcularPorcentajeAvance } from "@/src/utils/proyeccionUtils";
 import CursoCard from "../curso/curso-card";
+import { PageTitle } from "../page-title";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 type AvanceViewProps = {
@@ -13,9 +14,10 @@ export function AvanceView({ cursos }: AvanceViewProps) {
   const cursosPorNivel = getCursosPorNivel(cursos);
 
   return (
-    <ScrollArea className={`w-full whitespace-nowrap`}>
+    <ScrollArea className={`w-full whitespace-nowrap `}>
       <div className="flex flex-col items-center">
         <div className="flex flex-col w-fit gap-4">
+          <PageTitle title="Avance Curricular" />
           {/* Leyenda de colores */}
           <div className="flex justify-between">
             <div className="flex flex-col min-w-max">

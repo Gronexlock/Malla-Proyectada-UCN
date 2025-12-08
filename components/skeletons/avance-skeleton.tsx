@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { colors } from "@/src/constants/mallaStyles";
 import { romanNumerals } from "@/src/constants/numerosRomanos";
 import { Carrera } from "@/src/types/carrera";
+import { PageTitle } from "../page-title";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Skeleton } from "../ui/skeleton";
 
@@ -27,6 +28,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
     <ScrollArea className={`w-full whitespace-nowrap`}>
       <div className="flex flex-col items-center">
         <div className="flex flex-col w-fit gap-4">
+          <PageTitle title="Avance Curricular" />
           {/* Leyenda de colores */}
           <div className="flex justify-between">
             <div className="flex flex-col min-w-max">
