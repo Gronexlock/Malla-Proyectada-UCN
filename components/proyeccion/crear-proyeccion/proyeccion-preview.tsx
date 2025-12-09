@@ -86,10 +86,7 @@ export function ProyeccionPreview({
               </div>
             ))}
           </div>
-          <ScrollBar
-            orientation="horizontal"
-            thumbColor="bg-slate-300 dark:bg-slate-800"
-          />
+          <ScrollBar orientation="horizontal" />
         </ScrollArea>
       ) : (
         <div className="flex justify-center items-center flex-col w-full h-full">
