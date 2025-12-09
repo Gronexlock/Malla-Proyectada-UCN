@@ -20,9 +20,9 @@ export async function getProyecciones(carrera: Carrera): Promise<Proyeccion[]> {
   ]);
   const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
 
-  return proyeccionesDB.map((proyeccionDB) => {
+  return proyeccionesDB.map((proyeccionDB: any) => {
     const cursosPorSemestre = new Map<string, Curso[]>();
-    proyeccionDB.cursos.forEach((item) => {
+    proyeccionDB.cursos.forEach((item: any) => {
       const curso = cursosMap.get(item.cursoCodigo);
       if (curso) {
         const cursos = cursosPorSemestre.get(item.semestre) || [];
@@ -63,7 +63,7 @@ export async function getProyeccionById(
   const cursosMap = new Map(malla.map((c) => [c.codigo, c]));
 
   const cursosPorSemestre = new Map<string, Curso[]>();
-  proyeccion.cursos.forEach((item) => {
+  proyeccion.cursos.forEach((item: any) => {
     const curso = cursosMap.get(item.cursoCodigo);
     if (curso) {
       const cursos = cursosPorSemestre.get(item.semestre) || [];
