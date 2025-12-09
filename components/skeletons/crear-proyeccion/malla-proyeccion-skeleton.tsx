@@ -61,7 +61,7 @@ export function MallaProyeccionSkeleton() {
                 return (
                   <Skeleton
                     key={curso.codigo}
-                    className="w-36 rounded-lg shadow-md border h-[75px]"
+                    className="w-36 rounded-lg shadow-md border h-[71px]"
                   />
                 );
               })}

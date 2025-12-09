@@ -15,7 +15,7 @@ export function AvanceCronoSkeleton() {
   return (
     <div className="w-full whitespace-nowrap h-full flex flex-col items-center">
       <div className="flex flex-col items-center max-h-full max-w-full">
-        <div className="flex flex-col pb-4 w-full gap-4 mb-2">
+        <div className="flex flex-col pb-4 w-full gap-2">
           <PageTitle title="Avance Cronológico" />
           <div className="flex gap-2">
             <div className="flex items-center gap-1">

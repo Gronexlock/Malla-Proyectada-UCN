@@ -56,7 +56,7 @@ export function MallaSkeleton({ carrera }: MallaViewProps) {
                   key={course.codigo}
                   className={cn(
                     "rounded-lg w-40 shadow-md border",
-                    course.codigo === "last" ? "h-full" : "h-23"
+                    course.codigo === "last" ? "h-full" : "h-20"
                   )}
                 />
               ))}

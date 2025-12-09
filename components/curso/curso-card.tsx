@@ -22,7 +22,7 @@ export default function CursoCard({ curso }: CursoCardProps) {
     <div
       key={curso.codigo}
       className={cn(
-        `flex flex-col p-2 rounded-lg border shadow-md bg-muted w-40 h-23 justify-center`,
+        `flex flex-col p-2 rounded-lg border shadow-md bg-muted w-40 h-20 justify-center`,
         curso.codigo === "ECIN-01000" && "h-full justify-center items-center",
         status !== CursoStatus.PENDIENTE && statusStyles[status].class
       )}
@@ -30,7 +30,7 @@ export default function CursoCard({ curso }: CursoCardProps) {
       <div className="flex justify-between gap-2">
         <p className="opacity-70 font-mono text-[11px]">{curso.codigo}</p>
       </div>
-      <p className="text-sm text-foreground text-wrap">{curso.asignatura}</p>
+      <p className="text-xs text-foreground text-wrap">{curso.asignatura}</p>
       <span className="text-[11px] opacity-70 mt-1">{curso.creditos} SCT</span>
     </div>
   );

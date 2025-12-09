@@ -27,7 +27,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
   return (
     <ScrollArea className={`w-full whitespace-nowrap`}>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col w-fit gap-4">
+        <div className="flex flex-col w-fit gap-2">
           <PageTitle title="Avance Curricular" />
           {/* Leyenda de colores */}
           <div className="flex justify-between">
@@ -60,7 +60,7 @@ export function AvanceSkeleton({ carrera }: AvanceSkeletonProps) {
             {niveles.map(({ nivel, cursos }) => (
               <div key={nivel} className="flex flex-col gap-4 pb-2 ">
                 <div
-                  className={`rounded flex justify-center items-center p-1 bg-muted border shadow-sm`}
+                  className={`rounded flex justify-center items-center bg-muted border shadow-sm`}
                 >
                   <h2 className="text-center font-semibold">
                     {romanNumerals[Number(nivel)]}

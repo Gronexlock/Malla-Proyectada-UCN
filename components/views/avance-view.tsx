@@ -16,7 +16,7 @@ export function AvanceView({ cursos }: AvanceViewProps) {
   return (
     <ScrollArea className={`w-full whitespace-nowrap `}>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col w-fit gap-4">
+        <div className="flex flex-col w-fit gap-2">
           <PageTitle title="Avance Curricular" />
           {/* Leyenda de colores */}
           <div className="flex justify-between">
@@ -51,7 +51,7 @@ export function AvanceView({ cursos }: AvanceViewProps) {
               .map((nivel) => (
                 <div key={nivel} className="flex flex-col gap-4 pb-2">
                   <div
-                    className={`rounded flex justify-center items-center p-1 bg-muted shadow-sm border`}
+                    className={`rounded flex justify-center items-center bg-muted shadow-sm border`}
                   >
                     <h2 className="text-center font-semibold">
                       {romanNumerals[Number(nivel)]}
