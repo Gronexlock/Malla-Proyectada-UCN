@@ -5,9 +5,9 @@ import { getProyeccionById } from "@/src/utils/proyeccionUtils";
 export default async function ProyeccionPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = await params;
   const { selectedCarrera } = await getUser();
   const proyeccion = await getProyeccionById(Number(id), selectedCarrera!);
 
