@@ -36,10 +36,10 @@ export function AccionesProyeccion({
 }: AccionesProyeccionProps) {
   return (
     <div className="bg-zinc-100 dark:bg-zinc-900 border shadow-md dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-4 min-h-0">
-      <header className="px-3 flex items-center w-full justify-between gap-2">
+      <header className="px-3 flex w-full justify-between gap-2 items-center">
         <div className="flex-1">Acciones</div>
         {/* Switch para ignorar restricciones */}
-        <div className="shadow-sm flex items-center gap-2 justify-between dark:bg-zinc-800 p-3 border rounded-lg">
+        <div className="shadow-sm flex items-center gap-2 justify-between dark:bg-zinc-800 p-2 border rounded-lg">
           <div className="flex items-center gap-2">
             <ShieldAlert className="h-4 w-4 dark:text-amber-500 text-amber-600" />
             <Label htmlFor="ignorar-restricciones" className="text-sm">
@@ -101,6 +101,14 @@ export function AccionesProyeccion({
               Proyección Óptima
             </Button>
             <Button
+              className="shadow-sm bg-green-500 hover:bg-green-600 font-semibold mb-3 hover:cursor-pointer flex-1 "
+              onClick={guardar}
+              disabled={!isProyeccionCompleta(cursos)}
+            >
+              <ArrowDownToLine />
+              Guardar Proyección
+            </Button>
+            <Button
               className="text-primary font-semibold border hover:cursor-pointer flex-1 shadow-sm"
               onClick={limpiarTodo}
               variant="outline"
@@ -109,14 +117,6 @@ export function AccionesProyeccion({
               Limpiar Todo
             </Button>
           </div>
-          <Button
-            className="shadow-sm bg-green-500 hover:bg-green-600 font-semibold mb-3 hover:cursor-pointer flex-1 "
-            onClick={guardar}
-            disabled={!isProyeccionCompleta(cursos)}
-          >
-            <ArrowDownToLine />
-            Guardar Proyección
-          </Button>
         </div>
       </div>
     </div>

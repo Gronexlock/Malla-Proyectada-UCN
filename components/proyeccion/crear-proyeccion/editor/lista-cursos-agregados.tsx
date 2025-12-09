@@ -18,8 +18,8 @@ export function ListaCursosAgregados({
   onRemoverCurso,
 }: ListaCursosAgregadosProps) {
   return (
-    <div className="bg-zinc-100 shadow-md dark:bg-zinc-900 border dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-8 min-h-0">
-      <div className="flex justify-between px-3 items-center">
+    <div className="bg-zinc-100 shadow-md dark:bg-zinc-900 border dark:border-zinc-700 rounded-lg flex flex-col gap-2 py-4 min-h-0">
+      <div className="flex justify-between px-3 my-1.5 items-center">
         <header className="">Cursos en {semestreActual}</header>
         <div
           className={cn(

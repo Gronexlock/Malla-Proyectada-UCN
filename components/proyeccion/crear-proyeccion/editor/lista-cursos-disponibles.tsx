@@ -40,19 +40,21 @@ export function ListaCursosDisponibles({
   }, [cursos, busqueda]);
 
   return (
-    <div className="dark:bg-zinc-900 bg-muted shadow-md border dark:border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-8">
-      <header className="px-3">Buscar Cursos Disponibles</header>
-      <div className="px-3 pt-2">
-        <InputGroup>
-          <InputGroupAddon>
-            <Search size={16} />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder="Buscar curso por código o nombre..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-          />
-        </InputGroup>
+    <div className="dark:bg-zinc-900 bg-muted shadow-md border dark:border-zinc-700 rounded-lg flex flex-col gap-2 min-h-0 py-4">
+      <div className="flex justify-between items-center">
+        <header className="px-3">Buscar Cursos Disponibles</header>
+        <div className="px-3 w-1/2">
+          <InputGroup>
+            <InputGroupAddon>
+              <Search size={16} />
+            </InputGroupAddon>
+            <InputGroupInput
+              placeholder="Buscar curso por código o nombre..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+          </InputGroup>
+        </div>
       </div>
       <ScrollArea className="flex-1 min-h-0  flex flex-col">
         <div className="pt-2 gap-2 flex flex-col px-3 h-full flex-1">
@@ -72,6 +74,8 @@ export function ListaCursosDisponibles({
                     {curso.codigo}
                   </span>
                   <span className="">{curso.asignatura}</span>
+                </div>
+                <div className="flex gap-2">
                   <div className="flex mt-1 gap-1">
                     <div className="flex border border-zinc-300 dark:border-zinc-700 h-5 px-2 items-center justify-center rounded-full">
                       <span className="text-[10px] font-semibold">
@@ -79,9 +83,9 @@ export function ListaCursosDisponibles({
                       </span>
                     </div>
                   </div>
-                </div>
-                <div className="mr-1 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded p-1 transition-all">
-                  <Plus size={18} />
+                  <div className="mr-1 hover:bg-zinc-300 dark:hover:bg-zinc-700 rounded p-1 transition-all">
+                    <Plus size={18} />
+                  </div>
                 </div>
               </div>
             ))
