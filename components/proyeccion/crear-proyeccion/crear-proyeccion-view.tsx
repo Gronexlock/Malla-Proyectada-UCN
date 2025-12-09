@@ -14,6 +14,7 @@ import {
   getSemestreActual,
   getSemestreSiguiente,
 } from "@/src/utils/semestreUtils";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { EditorProyeccion } from "./editor/editor-proyeccion";
@@ -46,6 +47,8 @@ export function NuevaProyeccionView({
 
   const semestreActual = semestres[semestreIndex];
   const proyeccionActual = proyeccionesPorSemestre[semestreActual] || [];
+
+  const router = useRouter();
 
   function toggleCursoProyeccion(cursoToToggle: Curso) {
     const nuevaProyeccion = toggleCursoProyeccionActual(
@@ -96,6 +99,9 @@ export function NuevaProyeccionView({
     try {
       await guardarProyeccion(proyeccionesPreview, cursosIniciales);
       toast.success("Proyección guardada exitosamente");
+      setTimeout(() => {
+        router.push("/proyecciones");
+      }, 1500);
     } catch (error) {
       toast.error("Error al guardar la proyección");
     }
